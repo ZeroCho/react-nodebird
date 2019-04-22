@@ -1,0 +1,26 @@
+{
+  "name": "react-nodebird-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "ZeroCho",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cookie-parser": "^1.4.4",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "helmet": "^3.16.0",
+    "hpp": "^0.2.2",
+    "morgan": "^1.9.1",
+    "mysql2": "^1.6.5",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "sequelize": "^5.7.3",
+    "sequelize-cli": "^5.4.0"
+  }
+}

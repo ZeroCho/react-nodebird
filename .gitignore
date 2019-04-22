@@ -134,3 +134,4 @@ typings/
 
 # Serverless directories
 .serverless
+/front/build/
