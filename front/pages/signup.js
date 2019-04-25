@@ -6,6 +6,8 @@ import { SIGN_UP_REQUEST } from '../reducers/user';
 const SignUp = () => {
   const [id, setId] = useState('');
   const [idDuplicated, setIdDuplicated] = useState(false);
+  const [term, setTerm] = useState(false);
+  const [termError, setTermError] = useState(false);
   const [nick, setNick] = useState('');
   const [password, setPassword] = useState('');
   const [passwordChk, setPasswordChk] = useState('');
@@ -26,9 +28,11 @@ const SignUp = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     console.log('submit');
-
     if (password !== passwordChk) {
       return setPasswordError(true);
+    }
+    if (!term) {
+      return setTermError(true);
     }
     signUpAttempt();
   };
@@ -47,6 +51,12 @@ const SignUp = () => {
 
   const onChangePasswordChk = (e) => {
     setPasswordChk(e.target.value);
+    setPasswordError(e.target.value !== password);
+  };
+
+  const onChangeTerm = (e) => {
+    setTerm(e.target.checked);
+    setTermError(false);
   };
 
   return (
@@ -74,7 +84,8 @@ const SignUp = () => {
         {passwordError && <div>비밀번호 확인이 일치하지 않습니다.</div>}
       </div>
       <div>
-        <Checkbox name="user-term" required>약관에 동의합니다.</Checkbox>
+        <Checkbox name="user-term" value={term} onChange={onChangeTerm}>약관에 동의합니다.</Checkbox>
+        {termError && <div>약관에 동의해주세요.</div>}
       </div>
       <div style={{ marginTop: 10 }}>
         <Button type="primary" htmlType="submit">가입하기</Button>
