@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const session = require('express-session');
 const cookie = require('cookie-parser');
 const passport= require('passport');
+const cors = require('cors');
 
 const passportConfig = require('./passport');
 const db = require('./models');
@@ -20,7 +21,11 @@ if (process.env.NODE_ENV === 'production') {
   app.use(hpp());
   app.use(helmet());
   app.use(morgan('combined'));
+  app.use(cors({
+    origin: '배포 주소 여기에 넣기',
+  }));
 } else {
+  app.use(cors());
   app.use(morgan('dev'));
 }
 app.use(express.json());
