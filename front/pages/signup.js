@@ -13,7 +13,7 @@ const SignUp = () => {
   const [passwordChk, setPasswordChk] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const dispatch = useDispatch();
-  const signedUp = useSelector(state => state.user.signedUp);
+  const { signedUp, signUpErrorReason, isSigningUp } = useSelector(state => state.user);
   const signUpAttempt = useCallback(() => {
     dispatch({
       type: SIGN_UP_REQUEST,
@@ -87,8 +87,9 @@ const SignUp = () => {
         <Checkbox name="user-term" value={term} onChange={onChangeTerm}>약관에 동의합니다.</Checkbox>
         {termError && <div>약관에 동의해주세요.</div>}
       </div>
+      {signUpErrorReason && <div>{signUpErrorReason}</div>}
       <div style={{ marginTop: 10 }}>
-        <Button type="primary" htmlType="submit">가입하기</Button>
+        <Button type="primary" htmlType="submit" loading={isSigningUp}>가입하기</Button>
         {signedUp && <div>가입에 성공했습니다. 로그인해주세요.</div>}
       </div>
     </Form>

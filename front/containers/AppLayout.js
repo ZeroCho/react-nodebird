@@ -1,7 +1,10 @@
-import { Avatar, Button, Card, Col, Form, Input, Menu, Row } from 'antd';
+import React, { useEffect } from 'react';
+import { Avatar, Card, Col, Input, Menu, Row, Button } from 'antd';
 import { useState } from 'react';
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import LoginForm from './LoginForm';
+import { LOAD_USER_REQUEST, LOG_OUT_REQUEST } from '../reducers/user';
 
 const dummyUser = {
   name: '제로초',
@@ -9,10 +12,21 @@ const dummyUser = {
 
 const AppLayout = ({ children }) => {
   const [currentMenu, setCurrentMenu] = useState('home');
-  const user = useSelector(state => state.user);
-  console.log(user);
+  const { user, isLoggingOut } = useSelector(state => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!user) {
+      dispatch({ type: LOAD_USER_REQUEST });
+    }
+  }, []);
+
   const handleMenuClick = (e) => {
     setCurrentMenu(e.key);
+  };
+
+  const onLogOut = () => {
+    dispatch({ type: LOG_OUT_REQUEST });
   };
 
   return <div>
@@ -29,35 +43,23 @@ const AppLayout = ({ children }) => {
     </Menu>
     <Row gutter={8}>
       <Col xs={24} md={6}>
-        {user.isLoggedIn
+        {user
           ? (
             <Card
-              actions={[<div>짹짹<br />3개</div>, <div>팔로잉<br />0명</div>, <div>팔로워<br />1억명</div>]}
+              actions={[
+                <div key="twit">짹짹<br />3개</div>,
+                <div key="following">팔로잉<br />0명</div>,
+                <div key="follower">팔로워<br />1억명</div>,
+              ]}
             >
               <Card.Meta
                 avatar={<Avatar>{dummyUser.name[0]}</Avatar>}
                 title={dummyUser.name}
               />
+              <Button loading={isLoggingOut} onClick={onLogOut}>로그아웃</Button>
             </Card>
           )
-          : (
-            <Form style={{ padding: 10 }}>
-              <div>
-                <label htmlFor="user-id">아이디</label>
-                <br />
-                <Input name="user-id" />
-              </div>
-              <div>
-                <label htmlFor="user-pass">비밀번호</label>
-                <br />
-                <Input name="user-pass" type="password" />
-              </div>
-              <div style={{ marginTop: 10 }}>
-                <Button type="primary">로그인</Button>
-                <Link href="/signup"><a><Button>회원가입</Button></a></Link>
-              </div>
-            </Form>
-          )
+          : <LoginForm />
         }
       </Col>
       <Col xs={24} md={12}>
