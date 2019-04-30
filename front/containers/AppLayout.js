@@ -6,17 +6,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import LoginForm from './LoginForm';
 import { LOAD_USER_REQUEST, LOG_OUT_REQUEST } from '../reducers/user';
 
-const dummyUser = {
-  name: '제로초',
-};
-
 const AppLayout = ({ children }) => {
   const [currentMenu, setCurrentMenu] = useState('home');
-  const { user, isLoggingOut } = useSelector(state => state.user);
+  const { me, isLoggingOut } = useSelector(state => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!user) {
+    if (!me) {
       dispatch({ type: LOAD_USER_REQUEST });
     }
   }, []);
@@ -43,18 +39,18 @@ const AppLayout = ({ children }) => {
     </Menu>
     <Row gutter={8}>
       <Col xs={24} md={6}>
-        {user
+        {me
           ? (
             <Card
               actions={[
-                <div key="twit">짹짹<br />3개</div>,
-                <div key="following">팔로잉<br />0명</div>,
-                <div key="follower">팔로워<br />1억명</div>,
+                <div key="twit">짹짹<br />{me.Post.length}</div>,
+                <div key="following">팔로잉<br />{me.Followings.length}</div>,
+                <div key="follower">팔로워<br />{me.Followers.length}</div>,
               ]}
             >
               <Card.Meta
-                avatar={<Avatar>{dummyUser.name[0]}</Avatar>}
-                title={dummyUser.name}
+                avatar={<Avatar>{me.nickname[0]}</Avatar>}
+                title={me.nickname}
               />
               <Button loading={isLoggingOut} onClick={onLogOut}>로그아웃</Button>
             </Card>

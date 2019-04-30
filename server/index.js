@@ -6,6 +6,7 @@ const session = require('express-session');
 const cookie = require('cookie-parser');
 const passport= require('passport');
 const cors = require('cors');
+const path = require('path');
 
 const passportConfig = require('./passport');
 const db = require('./models');
@@ -33,6 +34,7 @@ if (process.env.NODE_ENV === 'production') {
   }));
   app.use(morgan('dev'));
 }
+app.use(express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookie(process.env.COOKIE_SECRET));
@@ -40,6 +42,10 @@ app.use(session({
   saveUninitialized: false,
   resave: false,
   secret: process.env.COOKIE_SECRET,
+  name: 'nbck',
+  cookie: {
+    httpOnly: true,
+  },
 }));
 app.use(passport.initialize());
 app.use(passport.session());

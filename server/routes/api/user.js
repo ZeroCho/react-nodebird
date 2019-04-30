@@ -1,3 +1,5 @@
+const { isLoggedIn, isNotLoggedIn } = require('../middleware');
+
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const express = require('express');
@@ -6,21 +8,17 @@ const db = require('../../models');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json(req.user);
-  } else {
-    res.status(401).json({ error: 'not logged in' });
-  }
+router.get('/', isLoggedIn, (req, res) => {
+  res.json(req.user);
 });
 
-router.post('/logout', (req, res) => {
+router.post('/logout', isLoggedIn, (req, res) => {
   req.session.destroy();
   req.logout();
   res.send('ok');
 });
 
-router.post('/signup', async (req, res, next) => {
+router.post('/signup', isNotLoggedIn, async (req, res, next) => {
   console.log(req.body);
   try {
     const exUser = await db.User.findOne({
@@ -45,7 +43,7 @@ router.post('/signup', async (req, res, next) => {
   }
 });
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', isNotLoggedIn, async (req, res, next) => {
   console.log(req.cookie);
   passport.authenticate('local', (err, user, info) => {
     if (err) {
@@ -71,16 +69,39 @@ router.get('/:id', async (req, res, next) => {
 
 });
 
-router.post('/:id/follow', async (req, res, next) => {
-
+router.post('/:id/follow', isLoggedIn, async (req, res, next) => {
+  try {
+    const me = await db.User.findOne({
+      where: { id: req.user.id },
+    });
+    await me.addFollowing(req.params.id);
+    res.send(req.params.id);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
 });
 
-router.delete('/:id/follow', async (req, res, next) => {
-
+router.delete('/:id/follow', isLoggedIn, async (req, res, next) => {
+  try {
+    const me = await db.User.findOne({
+      where: { id: req.user.id },
+    });
+    await me.removeFollowing(req.params.id);
+    res.send(req.params.id);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
 });
 
 router.get('/:id/posts', async (req, res, next) => {
+  try {
 
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
 });
 
 module.exports = router;

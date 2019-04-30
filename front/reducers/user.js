@@ -14,6 +14,16 @@ export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
 export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
 
+export const FOLLOW_USER_REQUEST = 'FOLLOW_USER_REQUEST';
+export const FOLLOW_USER_SUCCESS = 'FOLLOW_USER_SUCCESS';
+export const FOLLOW_USER_FAILURE = 'FOLLOW_USER_FAILURE';
+
+export const UNFOLLOW_USER_REQUEST = 'UNFOLLOW_USER_REQUEST';
+export const UNFOLLOW_USER_SUCCESS = 'UNFOLLOW_USER_SUCCESS';
+export const UNFOLLOW_USER_FAILURE = 'UNFOLLOW_USER_FAILURE';
+
+export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+
 export const initialState = {
   isLoggedIn: false,
   isLoggingOut: false,
@@ -22,7 +32,7 @@ export const initialState = {
   signedUp: false,
   isSigningUp: false,
   signUpErrorReason: '',
-  user: null,
+  me: null,
 };
 
 export default (state = initialState, action) => {
@@ -58,7 +68,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         isLoggingOut: false,
-        user: null,
+        me: null,
         isLoggedIn: false,
       }
     }
@@ -76,7 +86,8 @@ export default (state = initialState, action) => {
     case LOAD_USER_SUCCESS: {
       return {
         ...state,
-        user: action.data,
+        isLoggedIn: true,
+        me: action.data,
       };
     }
     case LOAD_USER_FAILURE: {
@@ -106,6 +117,33 @@ export default (state = initialState, action) => {
         signedUp: false,
         isSigningUp: false,
         signUpErrorReason: action.reason,
+      };
+    }
+    case FOLLOW_USER_SUCCESS: {
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Followings: [...state.me.Followings, { id: action.data }],
+        }
+      }
+    }
+    case UNFOLLOW_USER_SUCCESS: {
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Followings: state.me.Followings.filter((v) => v.id !== action.data),
+        }
+      }
+    }
+    case ADD_POST_TO_ME: {
+      return {
+        ...state,
+        me: {
+          ...state.me,
+          Post: [...state.me.Post, { id: action.data }],
+        },
       };
     }
     default:

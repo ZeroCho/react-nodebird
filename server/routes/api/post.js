@@ -13,23 +13,34 @@ const upload = multer({
       cb(null, 'uploads')
     },
     filename(req, file, cb) {
+      console.log(file);
       const ext = path.extname(file.originalname);
       cb(null, path.basename(file.originalname, ext) + new Date().valueOf() + ext);
     },
   }),
   limits: { fileSize: 20 * 1024 * 1024 },
 });
-router.post('/', isLoggedIn, upload.array('image'), async (req, res, next) => {
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   console.log(req.body);
-  console.log(req.files);
   console.log(req.user);
   try {
-    // 컨텐츠 # 파싱
+    // 나중에 @아이디도 파싱할 지 결정
+    const hashtags = req.body.content.match(/#[^\s]*/g);
     const newPost = await db.Post.create({
       content: req.body.content,
-      userId: req.user.id,
+      UserId: req.user.id,
     });
-    // await newPost.addImages(req.files.map((f) => f.pathname));
+    if (hashtags) {
+      const result = await Promise.all(hashtags.map(tag => db.Hashtag.findOrCreate({
+        where: { name: tag.slice(1).toLowerCase() },
+      })));
+      await newPost.addHashtags(result.map(r => r[0]));
+    }
+    if (req.body.images) {
+      await newPost.addImages(req.body.images.map((v) => ({
+        src: v,
+      })));
+    }
     const post = await db.Post.findOne({
       where: { id: newPost.id },
       include: [{
@@ -44,6 +55,11 @@ router.post('/', isLoggedIn, upload.array('image'), async (req, res, next) => {
     console.error(e);
     next(e);
   }
+});
+
+router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => {
+  console.log(req.files, req.body);
+  res.json(req.files.map((v) => v.filename));
 });
 
 router.delete('/:id', async (req, res, next) => {
