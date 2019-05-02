@@ -26,7 +26,7 @@ const AppLayout = ({ children }) => {
   };
 
   return <div>
-    <Menu onclick={handleMenuClick} mode="horizontal">
+    <Menu onClick={handleMenuClick} mode="horizontal">
       <Menu.Item key="home"><Link href="/"><a>노드버드</a></Link></Menu.Item>
       <Menu.Item key="profile"><Link href="/profile"><a>프로필</a></Link></Menu.Item>
       <Menu.Item key="mail" disabled>

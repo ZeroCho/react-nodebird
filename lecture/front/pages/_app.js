@@ -2,6 +2,7 @@ import Head from 'next/head';
 import { applyMiddleware, compose, createStore } from 'redux';
 import withRedux from 'next-redux-wrapper';
 import { Provider } from 'react-redux';
+import React from 'react';
 
 import AppLayout from '../containers/AppLayout';
 import sagaMiddleware from '../sagas/middleware';

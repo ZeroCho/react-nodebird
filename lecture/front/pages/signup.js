@@ -14,9 +14,9 @@ const SignUp = () => {
 
   const useInput = (initValue = null) => {
     const [value, setter] = useState(initValue);
-    const handler = (e) => {
+    const handler = useCallback((e) => {
       setter(e.target.value);
-    };
+    }, []);
     return [value, handler];
   };
 
@@ -35,7 +35,7 @@ const SignUp = () => {
     });
   }, [id, nick, password]);
 
-  const onSubmit = (e) => {
+  const onSubmit = useCallback((e) => {
     e.preventDefault();
     console.log('submit');
     if (password !== passwordCheck) {
@@ -45,40 +45,40 @@ const SignUp = () => {
       return setTermError(true);
     }
     signUpAttempt();
-  };
+  }, [password, passwordCheck, term]);
 
-  const onChangePasswordCheck = (e) => {
+  const onChangePasswordCheck = useCallback((e) => {
     setPasswordCheck(e.target.value);
     setPasswordError(e.target.value !== password);
-  };
+  }, [password]);
 
-  const onChangeTerm = (e) => {
+  const onChangeTerm = useCallback((e) => {
     setTerm(e.target.checked);
     setTermError(false);
-  };
+  }, []);
 
   return (
     <Form style={{ padding: 10 }} onSubmit={onSubmit}>
       <div>
         <label htmlFor="user-id">아이디</label>
         <br />
-        <Input name="user-id" required value={id} onChange={onChangeId} />
+        <Input name="user-id" required onChange={onChangeId} />
         {idDuplicated && <div>아이디가 중복되었습니다.</div>}
       </div>
       <div>
         <label htmlFor="user-nick">닉네임</label>
         <br />
-        <Input name="user-nick" required value={nick} onChange={onChangeNick} />
+        <Input name="user-nick" required onChange={onChangeNick} />
       </div>
       <div>
-        <label htmlFor="user-pass">비밀번호</label>
+        <label htmlFor="user-password">비밀번호</label>
         <br />
-        <Input name="user-pass" type="password" value={password} onChange={onChangePassword} required />
+        <Input name="user-password" type="password" onChange={onChangePassword} required />
       </div>
       <div>
-        <label htmlFor="user-pass-chk">비밀번호 확인</label>
+        <label htmlFor="user-password-check">비밀번호 확인</label>
         <br />
-        <Input name="user-pass-chk" type="password" value={passwordCheck} onChange={onChangePasswordCheck} required />
+        <Input name="user-password-check" type="password" value={passwordCheck} onChange={onChangePasswordCheck} required />
         {passwordError && <div>비밀번호 확인이 일치하지 않습니다.</div>}
       </div>
       <div>
