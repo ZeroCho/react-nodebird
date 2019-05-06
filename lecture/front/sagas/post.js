@@ -1,14 +1,15 @@
 import { all, fork, takeEvery, call, put } from 'redux-saga/effects';
 import axios from 'axios';
 import {
-  ADD_COMMENT_REQUEST,
+  ADD_COMMENT_FAILURE,
+  ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS,
   ADD_POST_FAILURE,
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,
   LIKE_POST_FAILURE,
   LIKE_POST_REQUEST,
-  LIKE_POST_SUCCESS,
-  LOAD_COMMENTS_REQUEST,
+  LIKE_POST_SUCCESS, LOAD_COMMENTS_FAILURE,
+  LOAD_COMMENTS_REQUEST, LOAD_COMMENTS_SUCCESS,
   LOAD_MAIN_POSTS_FAILURE,
   LOAD_MAIN_POSTS_REQUEST,
   LOAD_MAIN_POSTS_SUCCESS, REMOVE_POST_FAILURE,
@@ -171,16 +172,56 @@ function* watchRetweet() {
   yield takeEvery(RETWEET_REQUEST, retweet);
 }
 
-function* loadComments(action) {
+function loadCommentsAPI(postId) {
+  return axios.get(`/post/${postId}/comments`);
+}
 
+function* loadComments(action) {
+  try {
+    const result = yield call(loadCommentsAPI, action.data);
+    yield put({
+      type: LOAD_COMMENTS_SUCCESS,
+      data: {
+        comments: result.data,
+        postId: action.data,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({
+      type: LOAD_COMMENTS_FAILURE,
+      error,
+    });
+  }
 }
 
 function* watchLoadComments() {
   yield takeEvery(LOAD_COMMENTS_REQUEST, loadComments);
 }
 
-function* addComment(action) {
+function addCommentAPI(data) {
+  return axios.post(`/post/${data.postId}/comment`, { content: data.content }, {
+    withCredentials: true,
+  });
+}
 
+function* addComment(action) {
+  try {
+    const result = yield call(addCommentAPI, action.data);
+    yield put({
+      type: ADD_COMMENT_SUCCESS,
+      data: {
+        comment: result.data,
+        postId: action.data.postId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({
+      type: ADD_COMMENT_FAILURE,
+      error,
+    });
+  }
 }
 
 function* watchAddComment() {

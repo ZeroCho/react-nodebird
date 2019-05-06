@@ -149,7 +149,26 @@ router.delete('/:id/like', isLoggedIn, async (req, res, next) => {
 });
 
 router.get('/:id/comments', async (req, res, next) => {
-
+  try {
+    const post = await db.Post.findOne({ where: { id: req.params.id } });
+    if (!post) {
+      return res.status(404).send('no such post');
+    }
+    const comments = await db.Comment.findAll({
+      where: {
+        PostId: req.params.id,
+      },
+      order: [['createdAt', 'ASC']],
+      include: [{
+        model: db.User,
+        attributes: ['id', 'nickname']
+      }],
+    });
+    res.json(comments);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
 });
 
 router.post('/:id/comment', isLoggedIn, async (req, res, next) => {
@@ -158,12 +177,21 @@ router.post('/:id/comment', isLoggedIn, async (req, res, next) => {
     if (!post) {
       return res.status(404).send('no such post');
     }
-    const comment = await db.Comment.create({
+    const newComment = await db.Comment.create({
       PostId: post.id,
       UserId: req.user.id,
       content: req.body.content,
     });
-    await post.addComment(comment.id);
+    await post.addComment(newComment.id);
+    const comment = await db.Comment.findOne({
+      where: {
+        id: newComment.id,
+      },
+      include: [{
+        model: db.User,
+        attributes: ['id', 'nickname']
+      }],
+    });
     res.json(comment);
   } catch (e) {
     console.error(e);

@@ -1,14 +1,7 @@
-import { Card, Icon, Avatar, Input, Button, Form } from 'antd';
-import React, { useState, useEffect, useRef } from 'react';
+import { Button, Form, Input } from 'antd';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  ADD_POST_REQUEST,
-  LIKE_POST_REQUEST,
-  LOAD_MAIN_POSTS_REQUEST,
-  REMOVE_IMAGE, UNLIKE_POST_REQUEST,
-  UPLOAD_IMAGES_REQUEST
-} from '../reducers/post';
-import { FOLLOW_USER_REQUEST, UNFOLLOW_USER_REQUEST } from '../reducers/user';
+import { ADD_POST_REQUEST, LOAD_MAIN_POSTS_REQUEST, REMOVE_IMAGE, UPLOAD_IMAGES_REQUEST } from '../reducers/post';
 import PostCard from '../containers/PostCard';
 
 const Home = () => {

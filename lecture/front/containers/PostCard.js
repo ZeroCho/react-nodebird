@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { Avatar, Button, Card, Form, Icon, Input, Popover } from 'antd';
+import { Avatar, Button, Card, Comment, Form, Icon, Input, List, Popover } from 'antd';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import { FOLLOW_USER_REQUEST, UNFOLLOW_USER_REQUEST } from '../reducers/user';
-import { LIKE_POST_REQUEST, REMOVE_POST_REQUEST, UNLIKE_POST_REQUEST } from '../reducers/post';
+import {
+  ADD_COMMENT_REQUEST,
+  LIKE_POST_REQUEST,
+  LOAD_COMMENTS_REQUEST,
+  REMOVE_POST_REQUEST,
+  UNLIKE_POST_REQUEST
+} from '../reducers/post';
 
 const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
+  const [commentText, setCommentText] = useState('');
   const { me } = useSelector(state => state.user);
   const liked = me && post.Likers && post.Likers.find((v) => v.id === me.id);
   const dispatch = useDispatch();
@@ -43,8 +51,12 @@ const PostCard = ({ post }) => {
   };
 
   const onToggleComment = () => {
-    if (me) {
-      setCommentFormOpened((prev) => !prev);
+    setCommentFormOpened((prev) => !prev);
+    if (!commentFormOpened) {
+      dispatch({
+        type: LOAD_COMMENTS_REQUEST,
+        data: post.id,
+      });
     }
   };
 
@@ -55,12 +67,36 @@ const PostCard = ({ post }) => {
     })
   };
 
+  const onRetweet = () => {
+    if (!me) {
+      return alert('로그인이 필요합니다.');
+    }
+  };
+
+  const onSubmitComment = (e) => {
+    e.preventDefault();
+    if (!me) {
+      return alert('로그인이 필요합니다.');
+    }
+    dispatch({
+      type: ADD_COMMENT_REQUEST,
+      data: {
+        postId: post.id,
+        content: commentText,
+      }
+    });
+  };
+
+  const onChangeCommentText = (e) => {
+    setCommentText(e.target.value);
+  };
+
   return (
     <div style={{ marginBottom: '20px' }}>
       <Card
         cover={post.img && <img alt="example" src={post.img} />}
         actions={[
-          <Icon type="retweet" key="retweet" />,
+          <Icon type="retweet" key="retweet" onClick={onRetweet} />,
           <Icon type="heart" theme={liked ? 'twoTone' : 'outlined'} twoToneColor="#eb2f96" key="heart"
                 onClick={onToggleLike} />,
           <Icon type="message" key="message" onClick={onToggleComment} />,
@@ -98,9 +134,31 @@ const PostCard = ({ post }) => {
           description={post.content}
         />
       </Card>
-      {commentFormOpened && <Form.Item>
-        <Input.TextArea rows={4} />
-      </Form.Item>}
+      {commentFormOpened && (
+        <>
+          <Form onSubmit={onSubmitComment}>
+            <Form.Item>
+              <Input.TextArea rows={4} value={commentText} onChange={onChangeCommentText} />
+            </Form.Item>
+            <Button type="primary" htmlType="submit">삐약</Button>
+          </Form>
+          <List
+            header={`${post.Comments ? post.Comments.length : 0} replies`}
+            itemLayout="horizontal"
+            dataSource={post.Comments || []}
+            renderItem={(item => (
+              <li>
+                <Comment
+                  author={item.User.nickname}
+                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  content={item.content}
+                  datetime={moment(item.createdAt).subtract(1, 'days').fromNow()}
+                />
+              </li>
+            ))}
+          />
+        </>
+      )}
     </div>
   );
 };
