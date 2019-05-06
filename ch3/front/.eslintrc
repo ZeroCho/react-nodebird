@@ -17,8 +17,5 @@
   "plugins": [
     "import",
     "react-hooks"
-  ],
-  "rules": {
-    "no-console": ["warn", { "allow": ["error"] }]
-  }
+  ]
 }

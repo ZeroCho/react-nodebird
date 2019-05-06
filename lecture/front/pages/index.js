@@ -1,12 +1,19 @@
 import { Card, Icon, Avatar, Input, Button, Form } from 'antd';
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ADD_POST_REQUEST, LOAD_MAIN_POSTS_REQUEST, REMOVE_IMAGE, UPLOAD_IMAGES_REQUEST } from '../reducers/post';
+import {
+  ADD_POST_REQUEST,
+  LIKE_POST_REQUEST,
+  LOAD_MAIN_POSTS_REQUEST,
+  REMOVE_IMAGE, UNLIKE_POST_REQUEST,
+  UPLOAD_IMAGES_REQUEST
+} from '../reducers/post';
 import { FOLLOW_USER_REQUEST, UNFOLLOW_USER_REQUEST } from '../reducers/user';
+import PostCard from '../containers/PostCard';
 
 const Home = () => {
   const { mainPosts, imagePaths } = useSelector(state => state.post);
-  const { isLoggedIn, me } = useSelector(state => state.user);
+  const { isLoggedIn } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const [text, setText] = useState('');
   const imageInput = useRef();
@@ -57,20 +64,6 @@ const Home = () => {
     });
   };
 
-  const onFollow = (userId) => () => {
-    dispatch({
-      type: FOLLOW_USER_REQUEST,
-      data: userId,
-    });
-  };
-
-  const onUnfollow = (userId) => () => {
-    dispatch({
-      type: UNFOLLOW_USER_REQUEST,
-      data: userId,
-    });
-  };
-
   return (
     <div>
       {isLoggedIn && <Form style={{ marginBottom: 20 }} encType="multipart/form-data" onSubmit={onSubmitPost}>
@@ -95,30 +88,7 @@ const Home = () => {
       </Form>}
       {mainPosts.map((c) => {
         return (
-          <Card
-            key={+c.createdAt}
-            cover={c.img && <img alt="example" src={c.img} />}
-            actions={[
-              <Icon type="retweet" key="retweet" />,
-              <Icon type="heart" key="heart" />,
-              <Icon type="message" key="message" />,
-              <Icon type="ellipsis" key="ellipsis" />,
-            ]}
-            extra={
-              !me || c.User.id === me.id
-                ? null
-                : me.Followings && me.Followings.find((v) => v.id === c.User.id)
-                  ? <Button onClick={onUnfollow(c.User.id)}>언팔로우</Button>
-                  : <Button onClick={onFollow(c.User.id)}>팔로우</Button>
-            }
-            style={{ marginBottom: 20 }}
-          >
-            <Card.Meta
-              avatar={<Avatar>{c.User.nickname[0]}</Avatar>}
-              title={c.User.nickname}
-              description={c.content}
-            />
-          </Card>
+          <PostCard key={+c.createdAt} post={c} />
         );
       })}
     </div>

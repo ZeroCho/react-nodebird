@@ -9,6 +9,11 @@ router.get('/', async (req, res, next) => {
       include: [{
         model: db.User,
       }, {
+        model: db.User,
+        through: 'Like',
+        as: 'Likers',
+        attributes: ['id'],
+      }, {
         model: db.Image,
       }],
       limit: 20,

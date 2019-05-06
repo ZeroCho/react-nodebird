@@ -20,13 +20,21 @@ export const UNLIKE_POST_REQUEST = 'UNLIKE_POST_REQUEST';
 export const UNLIKE_POST_SUCCESS = 'UNLIKE_POST_SUCCESS';
 export const UNLIKE_POST_FAILURE = 'UNLIKE_POST_FAILURE';
 
-export const COMMENT_POST_REQUEST = 'COMMENT_POST_REQUEST';
-export const COMMENT_POST_SUCCESS = 'COMMENT_POST_SUCCESS';
-export const COMMENT_POST_FAILURE = 'COMMENT_POST_FAILURE';
+export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST';
+export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS';
+export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE';
+
+export const LOAD_COMMENTS_REQUEST = 'LOAD_COMMENTS_REQUEST';
+export const LOAD_COMMENTS_SUCCESS = 'LOAD_COMMENTS_SUCCESS';
+export const LOAD_COMMENTS_FAILURE = 'LOAD_COMMENTS_FAILURE';
 
 export const RETWEET_REQUEST = 'RETWEET_REQUEST';
 export const RETWEET_SUCCESS = 'RETWEET_SUCCESS';
 export const RETWEET_FAILURE = 'RETWEET_FAILURE';
+
+export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
+export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
+export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 
 const initialState = {
   mainPosts: [],
@@ -98,6 +106,34 @@ export default (state = initialState, action) => {
         ...state,
         imagePaths,
       };
+    }
+    case LIKE_POST_SUCCESS: {
+      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
+      const post = state.mainPosts[postIndex];
+      const Likers = [{ id: action.data.userId }, ...post.Likers];
+      const mainPosts = [ ...state.mainPosts ];
+      mainPosts[postIndex] = { ...post, Likers };
+      return {
+        ...state,
+        mainPosts,
+      }
+    }
+    case UNLIKE_POST_SUCCESS: {
+      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
+      const post = state.mainPosts[postIndex];
+      const Likers = [...post.Likers].filter((v) => v.id !== action.data.userId);
+      const mainPosts = [ ...state.mainPosts ];
+      mainPosts[postIndex] = { ...post, Likers };
+      return {
+        ...state,
+        mainPosts,
+      }
+    }
+    case REMOVE_POST_SUCCESS: {
+      return {
+        ...state,
+        mainPosts: state.mainPosts.filter((v) => v.id !== action.data),
+      }
     }
     default:
       return {
