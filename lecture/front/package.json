@@ -29,7 +29,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-helmet": "^5.2.0",
-    "react-redux": "^7.1.0-alpha.0",
+    "react-redux": "^7.1.0-alpha.4",
     "redux": "^4.0.1",
     "redux-saga": "^1.0.2",
     "sequelize": "^5.2.12",

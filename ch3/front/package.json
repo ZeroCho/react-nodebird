@@ -11,11 +11,14 @@
   "author": "ZeroCho",
   "license": "MIT",
   "dependencies": {
-    "antd": "^3.16.6",
+    "antd": "^3.17.0",
     "next": "^8.1.0",
+    "next-redux-wrapper": "^3.0.0-alpha.2",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0-alpha.4",
+    "redux": "^4.0.1"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
