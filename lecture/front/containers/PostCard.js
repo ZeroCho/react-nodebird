@@ -10,24 +10,24 @@ import {
   LIKE_POST_REQUEST,
   LOAD_COMMENTS_REQUEST,
   REMOVE_POST_REQUEST, RETWEET_REQUEST,
-  UNLIKE_POST_REQUEST
+  UNLIKE_POST_REQUEST,
 } from '../reducers/post';
 
 const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const [commentText, setCommentText] = useState('');
   const { me } = useSelector(state => state.user);
-  const liked = me && post.Likers && post.Likers.find((v) => v.id === me.id);
+  const liked = me && post.Likers && post.Likers.find(v => v.id === me.id);
   const dispatch = useDispatch();
 
-  const onFollow = (userId) => () => {
+  const onFollow = userId => () => {
     dispatch({
       type: FOLLOW_USER_REQUEST,
       data: userId,
     });
   };
 
-  const onUnfollow = (userId) => () => {
+  const onUnfollow = userId => () => {
     dispatch({
       type: UNFOLLOW_USER_REQUEST,
       data: userId,
@@ -38,21 +38,20 @@ const PostCard = ({ post }) => {
     if (!me) {
       return alert('로그인이 필요합니다.');
     }
-    if (post.Likers && post.Likers.find((v) => v.id === me.id)) {
-      dispatch({
+    if (post.Likers && post.Likers.find(v => v.id === me.id)) {
+      return dispatch({
         type: UNLIKE_POST_REQUEST,
         data: post.id,
       });
-    } else {
-      dispatch({
-        type: LIKE_POST_REQUEST,
-        data: post.id,
-      });
     }
+    return dispatch({
+      type: LIKE_POST_REQUEST,
+      data: post.id,
+    });
   };
 
   const onToggleComment = () => {
-    setCommentFormOpened((prev) => !prev);
+    setCommentFormOpened(prev => !prev);
     if (!commentFormOpened) {
       dispatch({
         type: LOAD_COMMENTS_REQUEST,
@@ -65,14 +64,14 @@ const PostCard = ({ post }) => {
     dispatch({
       type: REMOVE_POST_REQUEST,
       data: post.id,
-    })
+    });
   };
 
   const onRetweet = () => {
     if (!me) {
       return alert('로그인이 필요합니다.');
     }
-    dispatch({
+    return dispatch({
       type: RETWEET_REQUEST,
       data: post.id,
     });
@@ -83,12 +82,12 @@ const PostCard = ({ post }) => {
     if (!me) {
       return alert('로그인이 필요합니다.');
     }
-    dispatch({
+    return dispatch({
       type: ADD_COMMENT_REQUEST,
       data: {
         postId: post.id,
         content: commentText,
-      }
+      },
     });
   };
 
@@ -99,20 +98,27 @@ const PostCard = ({ post }) => {
   return (
     <div style={{ marginBottom: '20px' }}>
       <Card
-        cover={post.Images[0] && <img alt="example" src={'http://localhost:3065/' + post.Images[0].src} />}
+        cover={post.Images[0] && <img alt="example" src={`http://localhost:3065/${post.Images[0].src}`} />}
         actions={[
           <Icon type="retweet" key="retweet" onClick={onRetweet} />,
-          <Icon type="heart" theme={liked ? 'twoTone' : 'outlined'} twoToneColor="#eb2f96" key="heart"
-                onClick={onToggleLike} />,
+          <Icon
+            type="heart"
+            theme={liked ? 'twoTone' : 'outlined'}
+            twoToneColor="#eb2f96"
+            key="heart"
+            onClick={onToggleLike}
+          />,
           <Icon type="message" key="message" onClick={onToggleComment} />,
           <Popover
             key="ellipsis"
-            content={
+            content={(
               <Button.Group>
                 {me && post.UserId === me.id
-                  ? (<><Button>
-                      수정
-                    </Button>
+                  ? (
+                    <>
+                      <Button>
+                        수정
+                      </Button>
                       <Button type="danger" onClick={onRemovePost}>
                         삭제
                       </Button>
@@ -120,50 +126,63 @@ const PostCard = ({ post }) => {
                   )
                   : <Button>신고</Button>}
               </Button.Group>
-            }
+            )}
           >
             <Icon type="ellipsis" />
           </Popover>,
         ]}
         title={post.RetweetId ? `${post.User.nickname}님이 리트윗하셨습니다.` : null}
-        extra={
-          !me || post.User.id === me.id
-            ? null
-            : me.Followings && me.Followings.find((v) => v.id === post.User.id)
+        extra={!me || post.User.id === me.id
+          ? null
+          : me.Followings && me.Followings.find(v => v.id === post.User.id)
             ? <Button onClick={onUnfollow(post.User.id)}>언팔로우</Button>
-            : <Button onClick={onFollow(post.User.id)}>팔로우</Button>
-        }
+            : <Button onClick={onFollow(post.User.id)}>팔로우</Button>}
       >
-        {post.RetweetId && post.Retweet ? <Card>
-          <Card.Meta
-            cover={post.Retweet.Images[0] && <img alt="example" src={'http://localhost:3065/' + post.Retweet.Images[0].src} />}
-            avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
-            title={post.Retweet.User.nickname}
-            description={
-              <div>
-                {post.Retweet.content.split(/(#[^\s]+)/g).map((v) => {
-                  if (v.match(/#[^\s]+/)) {
-                    return <Link href={{ pathname: '/hashtag', query: { tag: v.slice(1) } }}><a>{v}</a></Link>
-                  }
-                  return v;
-                })}
-              </div>
-            }
-          />
-        </Card> : <Card.Meta
-          avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-          title={post.User.nickname}
-          description={
-            <div>
-              {post.content.split(/(#[^\s]+)/g).map((v) => {
-                if (v.match(/#[^\s]+/)) {
-                  return <Link href={{ pathname: '/hashtag', query: { tag: v.slice(1) } }}><a>{v}</a></Link>
-                }
-                return v;
-              })}
-            </div>
-          }
-        />}
+        {post.RetweetId && post.Retweet
+          ? (
+            <Card>
+              <Card.Meta
+                cover={post.Retweet.Images[0]
+                && <img alt="example" src={`http://localhost:3065/${post.Retweet.Images[0].src}`} />}
+                avatar={(
+                  <Link href={{ pathname: '/user', query: { id: post.Retweet.User.id } }} as={`/user/${post.Retweet.User.id}`}>
+                    <a><Avatar>{post.Retweet.User.nickname[0]}</Avatar></a>
+                  </Link>
+                )}
+                title={post.Retweet.User.nickname}
+                description={(
+                  <div>
+                    {post.Retweet.content.split(/(#[^\s]+)/g).map((v) => {
+                      if (v.match(/#[^\s]+/)) {
+                        return <Link href={{ pathname: '/hashtag', query: { tag: v.slice(1) } }} as={`/hashtag/${v.slice(1)}`}><a>{v}</a></Link>;
+                      }
+                      return v;
+                    })}
+                  </div>
+                )}
+              />
+            </Card>
+          )
+          : (
+            <Card.Meta
+              avatar={(
+                <Link href={{ pathname: '/user', query: { id: post.User.id } }} as={`/user/${post.User.id}`}>
+                  <a><Avatar>{post.User.nickname[0]}</Avatar></a>
+                </Link>
+              )}
+              title={post.User.nickname}
+              description={(
+                <div>
+                  {post.content.split(/(#[^\s]+)/g).map((v) => {
+                    if (v.match(/#[^\s]+/)) {
+                      return <Link href={{ pathname: '/hashtag', query: { tag: v.slice(1) } }} as={`/hashtag/${v.slice(1)}`}><a>{v}</a></Link>;
+                    }
+                    return v;
+                  })}
+                </div>
+              )}
+            />
+          )}
       </Card>
       {commentFormOpened && (
         <>
@@ -200,7 +219,7 @@ PostCard.propTypes = {
     content: PropTypes.string,
     img: PropTypes.string,
     createdAt: PropTypes.object,
-  }),
+  }).isRequired,
 };
 
 export default PostCard;

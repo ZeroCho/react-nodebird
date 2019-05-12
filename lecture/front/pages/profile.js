@@ -1,20 +1,16 @@
 import { Button, Card, Form, Input, List, Icon } from 'antd';
 import React, { useEffect, useCallback } from 'react';
-import { LOAD_FOLLOW_REQUEST, UNFOLLOW_USER_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
 import { useDispatch, useSelector } from 'react-redux';
+
+import { LOAD_FOLLOW_REQUEST, UNFOLLOW_USER_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
 import { LOAD_USER_POSTS_REQUEST } from '../reducers/post';
 import PostCard from '../containers/PostCard';
 // TODO: 절대로 다른 pages import하면 안 됨 알리기
-
-const dummyUser = {
-  name: '제로초',
-};
 
 const Profile = () => {
   const dispatch = useDispatch();
   const { me, followingList, followerList } = useSelector(state => state.user);
   const { mainPosts } = useSelector(state => state.post);
-
   useEffect(() => {
     if (me && me.id) {
       dispatch({
@@ -28,19 +24,19 @@ const Profile = () => {
     if (me && me.id) {
       dispatch({
         type: LOAD_USER_POSTS_REQUEST,
-        data: me.id
+        data: me.id,
       });
     }
   }, []);
 
-  const onRemoveFollower = useCallback((id) => () => {
+  const onRemoveFollower = useCallback(id => () => {
     dispatch({
       type: REMOVE_FOLLOWER_REQUEST,
       data: id,
     });
   }, []);
 
-  const onUnfollow = useCallback((id) => () => {
+  const onUnfollow = useCallback(id => () => {
     dispatch({
       type: UNFOLLOW_USER_REQUEST,
       data: id,
@@ -50,7 +46,7 @@ const Profile = () => {
   return (
     <div>
       <Form style={{ marginBottom: 20, border: '1px solid #d9d9d9', padding: 20 }}>
-        <Input value={dummyUser.name} addonBefore="닉네임" />
+        <Input value={me.name} addonBefore="닉네임" />
         <Button type="primary">수정</Button>
       </Form>
       <List
@@ -86,11 +82,9 @@ const Profile = () => {
         )}
       />
       <div>
-        {mainPosts.map((c) => {
-          return (
-            <PostCard key={+c.createdAt} post={c} />
-          );
-        })}
+        {mainPosts.map(c => (
+          <PostCard key={+new Date(c.createdAt)} post={c} />
+        ))}
       </div>
     </div>
   );

@@ -12,6 +12,35 @@ router.get('/', isLoggedIn, (req, res) => {
   res.json(req.user);
 });
 
+router.get('/:id', async (req, res, next) => {
+  try {
+    const user = await db.User.findOne({
+      where: { id: req.params.id },
+      include: [{
+        model: db.Post,
+        as: 'Post',
+        attributes: ['id'],
+      }, {
+        model: db.User,
+        as: 'Followers',
+        attributes: ['id'],
+      }, {
+        model: db.User,
+        as: 'Followings',
+        attributes: ['id'],
+      }],
+    });
+    const jsonUser = user.toJSON();
+    jsonUser.Post = jsonUser.Post ? jsonUser.Post.length : 0;
+    jsonUser.Followers = jsonUser.Followers ? jsonUser.Followers.length : 0;
+    jsonUser.Followings = jsonUser.Followings ? jsonUser.Followings.length : 0;
+    res.json(jsonUser);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 router.post('/logout', isLoggedIn, (req, res) => {
   req.session.destroy();
   req.logout();
@@ -36,10 +65,10 @@ router.post('/signup', isNotLoggedIn, async (req, res, next) => {
       password: hashedPassword,
     });
     console.log(newUser);
-    res.json(newUser);
+    return res.json(newUser);
   } catch (e) {
     console.error(e);
-    next(e);
+    return next(e);
   }
 });
 
@@ -53,14 +82,15 @@ router.post('/login', isNotLoggedIn, async (req, res, next) => {
     if (info) {
       return res.status(401).json(info);
     }
-    req.login(user, (loginErr) => {
+    return req.login(user, (loginErr) => {
       if (loginErr) {
         console.error(loginErr);
         return next(loginErr);
       }
-      delete user.password;
+      const filteredUser = Object.assign({}, user);
+      delete filteredUser.password;
       console.log(user);
-      res.json(user);
+      return res.json(user);
     });
   })(req, res, next);
 });

@@ -43,6 +43,7 @@ export const initialState = {
   me: null,
   followingList: [],
   followerList: [],
+  userInfo: null,
 };
 
 export default (state = initialState, action) => {
@@ -91,13 +92,22 @@ export default (state = initialState, action) => {
     case LOAD_USER_REQUEST: {
       return {
         ...state,
+        userInfo: null,
+        me: null,
       };
     }
     case LOAD_USER_SUCCESS: {
+      if (action.me) {
+        return {
+          ...state,
+          isLoggedIn: true,
+          me: action.data,
+        };
+      }
       return {
         ...state,
         isLoggedIn: true,
-        me: action.data,
+        userInfo: action.data,
       };
     }
     case LOAD_USER_FAILURE: {

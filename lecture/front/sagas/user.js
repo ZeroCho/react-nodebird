@@ -1,4 +1,6 @@
-import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
+import {
+  all, call, fork, put, takeLatest, takeEvery,
+} from 'redux-saga/effects';
 import axios from 'axios';
 import {
   FOLLOW_USER_FAILURE,
@@ -24,17 +26,18 @@ import {
   LOAD_FOLLOW_SUCCESS, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_REQUEST,
 } from '../reducers/user';
 
-function loadUserAPI() {
-  return axios.get(`/user`, {
+function loadUserAPI(userId) {
+  return axios.get(userId ? `/user/${userId}` : '/user', {
     withCredentials: true,
   });
 }
 
-function* loadUser() {
+function* loadUser(action) {
   try {
-    const result = yield call(loadUserAPI);
+    const result = yield call(loadUserAPI, action.data);
     yield put({
       type: LOAD_USER_SUCCESS,
+      me: !action.data,
       data: result.data,
     });
   } catch (error) {
@@ -44,7 +47,7 @@ function* loadUser() {
 }
 
 function* watchLoadUser() {
-  yield takeLatest(LOAD_USER_REQUEST, loadUser);
+  yield takeEvery(LOAD_USER_REQUEST, loadUser);
 }
 
 function loadFollowAPI(userId) {
@@ -71,7 +74,7 @@ function* watchLoadFollow() {
 }
 
 function signUpAPI(data) {
-  return axios.post(`/user/signup`, data, {
+  return axios.post('/user/signup', data, {
     withCredentials: true,
   });
 }
@@ -94,7 +97,7 @@ function* watchSignUp() {
 }
 
 function logInAPI(data) {
-  return axios.post(`/user/login`, data, {
+  return axios.post('/user/login', data, {
     withCredentials: true,
   });
 }
@@ -119,7 +122,7 @@ function* watchLogIn() {
 }
 
 function logOutAPI() {
-  return axios.post(`/user/logout`, {}, {
+  return axios.post('/user/logout', {}, {
     withCredentials: true,
   });
 }

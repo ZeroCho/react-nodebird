@@ -1,4 +1,6 @@
-import { all, fork, takeEvery, call, put } from 'redux-saga/effects';
+import {
+  all, fork, takeEvery, call, put,
+} from 'redux-saga/effects';
 import axios from 'axios';
 import {
   ADD_COMMENT_FAILURE,
@@ -33,7 +35,7 @@ import {
   RETWEET_FAILURE,
   LOAD_USER_POSTS_SUCCESS,
   LOAD_USER_POSTS_FAILURE,
-  LOAD_USER_POSTS_REQUEST
+  LOAD_USER_POSTS_REQUEST,
 } from '../reducers/post';
 import { ADD_POST_TO_ME } from '../reducers/user';
 
@@ -47,15 +49,14 @@ function* loadMainPosts() {
     yield put({
       type: LOAD_MAIN_POSTS_SUCCESS,
       data: result.data,
-    })
+    });
   } catch (error) {
     console.error(error);
     yield put({
       type: LOAD_MAIN_POSTS_FAILURE,
       error,
-    })
+    });
   }
-
 }
 
 function* watchLoadMainPosts() {
@@ -72,15 +73,14 @@ function* loadUserPosts(action) {
     yield put({
       type: LOAD_USER_POSTS_SUCCESS,
       data: result.data,
-    })
+    });
   } catch (error) {
     console.error(error);
     yield put({
       type: LOAD_USER_POSTS_FAILURE,
       error,
-    })
+    });
   }
-
 }
 
 function* watchLoadUserPosts() {
@@ -97,15 +97,14 @@ function* loadHashtagPosts(action) {
     yield put({
       type: LOAD_HASHTAG_POSTS_SUCCESS,
       data: result.data,
-    })
+    });
   } catch (error) {
     console.error(error);
     yield put({
       type: LOAD_HASHTAG_POSTS_FAILURE,
       error,
-    })
+    });
   }
-
 }
 
 function* watchLoadHashtagPosts() {
@@ -134,9 +133,8 @@ function* addPost(action) {
     yield put({
       type: ADD_POST_FAILURE,
       error,
-    })
+    });
   }
-
 }
 
 function* watchAddPost() {
@@ -230,7 +228,7 @@ function* watchUnlikePost() {
 function retweetAPI(postId) {
   return axios.post(`/post/${postId}/retweet`, {}, {
     withCredentials: true,
-  })
+  });
 }
 
 function* retweet(action) {
