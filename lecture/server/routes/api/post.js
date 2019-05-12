@@ -36,10 +36,17 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
       })));
       await newPost.addHashtags(result.map(r => r[0]));
     }
+
     if (req.body.images) {
-      await newPost.addImages(req.body.images.map((v) => ({
-        src: v,
-      })));
+      if (Array.isArray(req.body.images)) {
+        const images = await Promise.all(req.body.images.map((v) => {
+          return db.Image.create({ src: v });
+        }));
+        await newPost.addImages(images);
+      } else {
+        const image = await db.Image.create({ src: req.body.images });
+        await newPost.addImage(image);
+      }
     }
     const post = await db.Post.findOne({
       where: { id: newPost.id },
@@ -142,7 +149,7 @@ router.post('/:id/retweet', isLoggedIn, async (req, res, next) => {
       }, {
         model: db.User,
       }]
-    })
+    });
     res.json(retweetWithPrevPost);
   } catch (e) {
     console.error(e);

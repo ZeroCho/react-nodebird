@@ -52,27 +52,27 @@ export default (state = initialState, action) => {
         ...state,
         isLoggingIn: true,
         logInErrorReason: '',
-      }
+      };
     }
     case LOG_IN_SUCCESS: {
       return {
         ...state,
         isLoggingIn: false,
         logInErrorReason: '',
-      }
+      };
     }
     case LOG_IN_FAILURE: {
       return {
         ...state,
         isLoggingIn: false,
         logInErrorReason: action.reason,
-      }
+      };
     }
     case LOG_OUT_REQUEST: {
       return {
         ...state,
         isLoggingOut: true,
-      }
+      };
     }
     case LOG_OUT_SUCCESS: {
       return {
@@ -80,13 +80,13 @@ export default (state = initialState, action) => {
         isLoggingOut: false,
         me: null,
         isLoggedIn: false,
-      }
+      };
     }
     case LOG_OUT_FAILURE: {
       return {
         ...state,
         isLoggingOut: false,
-      }
+      };
     }
     case LOAD_USER_REQUEST: {
       return {
@@ -103,7 +103,7 @@ export default (state = initialState, action) => {
     case LOAD_USER_FAILURE: {
       return {
         ...state,
-      }
+      };
     }
     case SIGN_UP_REQUEST: {
       return {
@@ -119,7 +119,7 @@ export default (state = initialState, action) => {
         signedUp: true,
         isSigningUp: false,
         signUpErrorReason: '',
-      }
+      };
     }
     case SIGN_UP_FAILURE: {
       return {
@@ -135,26 +135,26 @@ export default (state = initialState, action) => {
         me: {
           ...state.me,
           Followings: [...state.me.Followings, { id: action.data }],
-        }
-      }
+        },
+      };
     }
     case UNFOLLOW_USER_SUCCESS: {
       return {
         ...state,
         me: {
           ...state.me,
-          Followings: state.me.Followings.filter((v) => v.id !== action.data),
-        }
-      }
+          Followings: state.me.Followings.filter(v => v.id !== action.data),
+        },
+      };
     }
     case REMOVE_FOLLOWER_SUCCESS: {
       return {
         ...state,
         me: {
           ...state.me,
-          Followers: state.me.Followers.filter((v) => v.id !== action.data),
-        }
-      }
+          Followers: state.me.Followers.filter(v => v.id !== action.data),
+        },
+      };
     }
     case ADD_POST_TO_ME: {
       return {

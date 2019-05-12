@@ -2,8 +2,9 @@ import { Button, Card, Form, Input, List, Icon } from 'antd';
 import React, { useEffect, useCallback } from 'react';
 import { LOAD_FOLLOW_REQUEST, UNFOLLOW_USER_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
 import { useDispatch, useSelector } from 'react-redux';
-import PostCard from './hashtag';
 import { LOAD_USER_POSTS_REQUEST } from '../reducers/post';
+import PostCard from '../containers/PostCard';
+// TODO: 절대로 다른 pages import하면 안 됨 알리기
 
 const dummyUser = {
   name: '제로초',
@@ -21,16 +22,16 @@ const Profile = () => {
         data: me.id,
       });
     }
-  }, [me]);
+  }, [me.id]);
 
-  // useEffect(() => {
-  //   if (me && me.id) {
-  //     dispatch({
-  //       type: LOAD_USER_POSTS_REQUEST,
-  //       data: me.id
-  //     });
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (me && me.id) {
+      dispatch({
+        type: LOAD_USER_POSTS_REQUEST,
+        data: me.id
+      });
+    }
+  }, []);
 
   const onRemoveFollower = useCallback((id) => () => {
     dispatch({

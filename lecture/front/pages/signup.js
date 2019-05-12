@@ -38,7 +38,7 @@ const SignUp = () => {
         id,
         nick,
         password,
-      }
+      },
     });
   }, [id, nick, password]);
 

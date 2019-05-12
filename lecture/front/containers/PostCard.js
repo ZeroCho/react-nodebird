@@ -99,7 +99,7 @@ const PostCard = ({ post }) => {
   return (
     <div style={{ marginBottom: '20px' }}>
       <Card
-        cover={post.Images[0] && <img alt="example" src={post.Images[0].src} />}
+        cover={post.Images[0] && <img alt="example" src={'http://localhost:3065/' + post.Images[0].src} />}
         actions={[
           <Icon type="retweet" key="retweet" onClick={onRetweet} />,
           <Icon type="heart" theme={liked ? 'twoTone' : 'outlined'} twoToneColor="#eb2f96" key="heart"
@@ -136,14 +136,14 @@ const PostCard = ({ post }) => {
       >
         {post.RetweetId && post.Retweet ? <Card>
           <Card.Meta
-            cover={post.Retweet.Images[0] && <img alt="example" src={post.Retweet.Images[0].src} />}
+            cover={post.Retweet.Images[0] && <img alt="example" src={'http://localhost:3065/' + post.Retweet.Images[0].src} />}
             avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
             title={post.Retweet.User.nickname}
             description={
               <div>
                 {post.Retweet.content.split(/(#[^\s]+)/g).map((v) => {
                   if (v.match(/#[^\s]+/)) {
-                    return <Link href={`/hashtag/${v.slice(1)}`}><a>{v}</a></Link>
+                    return <Link href={{ pathname: '/hashtag', query: { tag: v.slice(1) } }}><a>{v}</a></Link>
                   }
                   return v;
                 })}
@@ -157,7 +157,7 @@ const PostCard = ({ post }) => {
             <div>
               {post.content.split(/(#[^\s]+)/g).map((v) => {
                 if (v.match(/#[^\s]+/)) {
-                  return <Link href={`/hashtag/${v.slice(1)}`}><a>{v}</a></Link>
+                  return <Link href={{ pathname: '/hashtag', query: { tag: v.slice(1) } }}><a>{v}</a></Link>
                 }
                 return v;
               })}
