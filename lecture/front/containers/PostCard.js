@@ -99,7 +99,7 @@ const PostCard = ({ post }) => {
   return (
     <div style={{ marginBottom: '20px' }}>
       <Card
-        cover={post.img && <img alt="example" src={post.img} />}
+        cover={post.Images[0] && <img alt="example" src={post.Images[0].src} />}
         actions={[
           <Icon type="retweet" key="retweet" onClick={onRetweet} />,
           <Icon type="heart" theme={liked ? 'twoTone' : 'outlined'} twoToneColor="#eb2f96" key="heart"
@@ -134,8 +134,9 @@ const PostCard = ({ post }) => {
             : <Button onClick={onFollow(post.User.id)}>팔로우</Button>
         }
       >
-        {post.RetweetId ? <Card>
+        {post.RetweetId && post.Retweet ? <Card>
           <Card.Meta
+            cover={post.Retweet.Images[0] && <img alt="example" src={post.Retweet.Images[0].src} />}
             avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
             title={post.Retweet.User.nickname}
             description={

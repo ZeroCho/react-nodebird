@@ -5,6 +5,7 @@ import withRedux from 'next-redux-wrapper';
 import { Provider } from 'react-redux';
 import React from 'react';
 import PropTypes from 'prop-types';
+import withReduxSaga from 'next-redux-saga';
 
 import AppLayout from '../containers/AppLayout';
 import sagaMiddleware from '../sagas/middleware';
@@ -28,6 +29,7 @@ class NodeBird extends App {
 
   render() {
     const { store, pageProps, Component } = this.props;
+    console.log(Component);
     return (
       <Container>
         <Provider store={store}>
@@ -61,5 +63,5 @@ export default withRedux((initialState, options) => {
   };
   store.runSagaTask();
   return store;
-})(NodeBird);
+})(withReduxSaga(NodeBird));
 

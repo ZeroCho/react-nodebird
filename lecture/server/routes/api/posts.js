@@ -20,7 +20,9 @@ router.get('/', async (req, res, next) => {
         as: 'Retweet',
         include: [{
           model: db.User,
-        }]
+        }, {
+          model: db.Image,
+        }],
       }],
       limit: 20,
       order: [['createdAt', 'DESC']],

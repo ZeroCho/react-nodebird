@@ -114,22 +114,36 @@ router.post('/:id/retweet', isLoggedIn, async (req, res, next) => {
     if (req.user.id === post.UserId) { // TODO: 내 포스트를 리트윗한 것을 내가 다시 리트윗할 때
       return res.status(403).send('Retweeting your own post is not allowed');
     }
+    const retweetTargetId = post.RetweetId || post.id;
     const exPost = await db.Post.findOne({
       where: {
         UserId: req.user.id,
-        RetweetId: retweetId,
+        RetweetId: retweetTargetId,
       },
     });
     if (exPost) {
       return res.status(403).send('already retweeted');
     }
-    const retweetId = post.RetweetId || post.id;
     const retweet = await db.Post.create({
       UserId: req.user.id,
-      RetweetId: retweetId,
+      RetweetId: retweetTargetId,
       content: 'retweet',
     });
-    res.json(retweet);
+    const retweetWithPrevPost = await db.Post.findOne({
+      where: { id: retweet.id },
+      include: [{
+        model: db.Post,
+        as: 'Retweet',
+        include: [{
+          model: db.User,
+        }, {
+          model: db.Image,
+        }]
+      }, {
+        model: db.User,
+      }]
+    })
+    res.json(retweetWithPrevPost);
   } catch (e) {
     console.error(e);
     next(e);

@@ -2,6 +2,8 @@ import { Button, Card, Form, Input, List, Icon } from 'antd';
 import React, { useEffect, useCallback } from 'react';
 import { LOAD_FOLLOW_REQUEST, UNFOLLOW_USER_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
 import { useDispatch, useSelector } from 'react-redux';
+import PostCard from './hashtag';
+import { LOAD_USER_POSTS_REQUEST } from '../reducers/post';
 
 const dummyUser = {
   name: '제로초',
@@ -10,6 +12,7 @@ const dummyUser = {
 const Profile = () => {
   const dispatch = useDispatch();
   const { me, followingList, followerList } = useSelector(state => state.user);
+  const { mainPosts } = useSelector(state => state.post);
 
   useEffect(() => {
     if (me && me.id) {
@@ -19,6 +22,15 @@ const Profile = () => {
       });
     }
   }, [me]);
+
+  // useEffect(() => {
+  //   if (me && me.id) {
+  //     dispatch({
+  //       type: LOAD_USER_POSTS_REQUEST,
+  //       data: me.id
+  //     });
+  //   }
+  // }, []);
 
   const onRemoveFollower = useCallback((id) => () => {
     dispatch({
@@ -72,6 +84,13 @@ const Profile = () => {
           </List.Item>
         )}
       />
+      <div>
+        {mainPosts.map((c) => {
+          return (
+            <PostCard key={+c.createdAt} post={c} />
+          );
+        })}
+      </div>
     </div>
   );
 };

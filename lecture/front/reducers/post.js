@@ -6,6 +6,10 @@ export const LOAD_HASHTAG_POSTS_REQUEST = 'LOAD_HASHTAG_POSTS_REQUEST';
 export const LOAD_HASHTAG_POSTS_SUCCESS = 'LOAD_HASHTAG_POSTS_SUCCESS';
 export const LOAD_HASHTAG_POSTS_FAILURE = 'LOAD_HASHTAG_POSTS_FAILURE';
 
+export const LOAD_USER_POSTS_REQUEST = 'LOAD_USER_POSTS_REQUEST';
+export const LOAD_USER_POSTS_SUCCESS = 'LOAD_USER_POSTS_SUCCESS';
+export const LOAD_USER_POSTS_FAILURE = 'LOAD_USER_POSTS_FAILURE';
+
 export const ADD_POST_REQUEST = 'ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'ADD_POST_FAILURE';
@@ -71,12 +75,15 @@ export default (state = initialState, action) => {
         addPostError: action.error,
       }
     }
+    case LOAD_USER_POSTS_REQUEST:
     case LOAD_HASHTAG_POSTS_REQUEST:
     case LOAD_MAIN_POSTS_REQUEST: {
       return {
         ...state,
+        mainPosts: [],
       }
     }
+    case LOAD_USER_POSTS_SUCCESS:
     case LOAD_HASHTAG_POSTS_SUCCESS:
     case LOAD_MAIN_POSTS_SUCCESS: {
       return {
@@ -84,6 +91,7 @@ export default (state = initialState, action) => {
         mainPosts: action.data,
       }
     }
+    case LOAD_USER_POSTS_FAILURE:
     case LOAD_HASHTAG_POSTS_FAILURE:
     case LOAD_MAIN_POSTS_FAILURE: {
       return {

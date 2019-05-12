@@ -128,9 +128,14 @@ router.delete('/:id/follower', isLoggedIn, async (req, res, next) => {
 router.get('/:id/posts', async (req, res, next) => {
   try {
     const posts = await db.Post.findAll({
-      where: { UserId: req.params.id },
+      where: {
+        UserId: req.params.id,
+        RetweetId: null,
+      },
       include: [{
         model: db.User,
+      }, {
+        model: db.Image,
       }],
     });
     res.json(posts);

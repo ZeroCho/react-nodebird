@@ -11,6 +11,8 @@ router.get('/:name', async (req, res, next) => {
         where: { name: decodeURIComponent(req.params.name) },
       }, {
         model: db.User,
+      }, {
+        model: db.Image,
       }],
     });
     res.json(posts);

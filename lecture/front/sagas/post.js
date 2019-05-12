@@ -28,7 +28,12 @@ import {
   UPLOAD_IMAGES_SUCCESS,
   LOAD_HASHTAG_POSTS_SUCCESS,
   LOAD_HASHTAG_POSTS_REQUEST,
-  LOAD_HASHTAG_POSTS_FAILURE, RETWEET_SUCCESS, RETWEET_FAILURE
+  LOAD_HASHTAG_POSTS_FAILURE,
+  RETWEET_SUCCESS,
+  RETWEET_FAILURE,
+  LOAD_USER_POSTS_SUCCESS,
+  LOAD_USER_POSTS_FAILURE,
+  LOAD_USER_POSTS_REQUEST
 } from '../reducers/post';
 import { ADD_POST_TO_ME } from '../reducers/user';
 
@@ -55,6 +60,31 @@ function* loadMainPosts() {
 
 function* watchLoadMainPosts() {
   yield takeEvery(LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
+}
+
+function loadUserPostsAPI(userId) {
+  return axios.get(`/user/${userId}/posts`);
+}
+
+function* loadUserPosts(action) {
+  try {
+    const result = yield call(loadUserPostsAPI, action.data);
+    yield put({
+      type: LOAD_USER_POSTS_SUCCESS,
+      data: result.data,
+    })
+  } catch (error) {
+    console.error(error);
+    yield put({
+      type: LOAD_USER_POSTS_FAILURE,
+      error,
+    })
+  }
+
+}
+
+function* watchLoadUserPosts() {
+  yield takeEvery(LOAD_USER_POSTS_REQUEST, loadUserPosts);
 }
 
 function loadHashtagPostsAPI(tagName) {
@@ -312,6 +342,7 @@ export default function* postSaga() {
   yield all([
     fork(watchLoadMainPosts),
     fork(watchLoadHashtagPosts),
+    fork(watchLoadUserPosts),
     fork(watchAddPost),
     fork(watchUploadImages),
     fork(watchLikePost),
