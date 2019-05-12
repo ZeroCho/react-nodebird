@@ -236,10 +236,7 @@ function* retweet(action) {
     const result = yield call(retweetAPI, action.data);
     yield put({
       type: RETWEET_SUCCESS,
-      data: {
-        postId: action.data,
-        userId: result.data.userId,
-      },
+      data: result.data,
     });
   } catch (error) {
     console.error(error);

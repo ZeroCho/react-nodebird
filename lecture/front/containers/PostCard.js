@@ -9,9 +9,12 @@ import {
   ADD_COMMENT_REQUEST,
   LIKE_POST_REQUEST,
   LOAD_COMMENTS_REQUEST,
-  REMOVE_POST_REQUEST, RETWEET_REQUEST,
+  REMOVE_POST_REQUEST,
+  RETWEET_REQUEST,
   UNLIKE_POST_REQUEST,
 } from '../reducers/post';
+import PostCardContent from '../components/PostCardContent';
+import PostImages from '../components/PostImages';
 
 const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -98,7 +101,7 @@ const PostCard = ({ post }) => {
   return (
     <div style={{ marginBottom: '20px' }}>
       <Card
-        cover={post.Images[0] && <img alt="example" src={`http://localhost:3065/${post.Images[0].src}`} />}
+        cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           <Icon type="retweet" key="retweet" onClick={onRetweet} />,
           <Icon
@@ -142,24 +145,17 @@ const PostCard = ({ post }) => {
           ? (
             <Card>
               <Card.Meta
-                cover={post.Retweet.Images[0]
-                && <img alt="example" src={`http://localhost:3065/${post.Retweet.Images[0].src}`} />}
+                cover={post.Images[0] && <PostImages images={post.Retweet.Images} />}
                 avatar={(
-                  <Link href={{ pathname: '/user', query: { id: post.Retweet.User.id } }} as={`/user/${post.Retweet.User.id}`}>
+                  <Link
+                    href={{ pathname: '/user', query: { id: post.Retweet.User.id } }}
+                    as={`/user/${post.Retweet.User.id}`}
+                  >
                     <a><Avatar>{post.Retweet.User.nickname[0]}</Avatar></a>
                   </Link>
                 )}
                 title={post.Retweet.User.nickname}
-                description={(
-                  <div>
-                    {post.Retweet.content.split(/(#[^\s]+)/g).map((v) => {
-                      if (v.match(/#[^\s]+/)) {
-                        return <Link href={{ pathname: '/hashtag', query: { tag: v.slice(1) } }} as={`/hashtag/${v.slice(1)}`}><a>{v}</a></Link>;
-                      }
-                      return v;
-                    })}
-                  </div>
-                )}
+                description={<PostCardContent postData={post.Retweet.content} />}
               />
             </Card>
           )
@@ -171,16 +167,7 @@ const PostCard = ({ post }) => {
                 </Link>
               )}
               title={post.User.nickname}
-              description={(
-                <div>
-                  {post.content.split(/(#[^\s]+)/g).map((v) => {
-                    if (v.match(/#[^\s]+/)) {
-                      return <Link href={{ pathname: '/hashtag', query: { tag: v.slice(1) } }} as={`/hashtag/${v.slice(1)}`}><a>{v}</a></Link>;
-                    }
-                    return v;
-                  })}
-                </div>
-              )}
+              description={<PostCardContent postData={post.content} />}
             />
           )}
       </Card>
@@ -218,7 +205,7 @@ PostCard.propTypes = {
     User: PropTypes.object,
     content: PropTypes.string,
     img: PropTypes.string,
-    createdAt: PropTypes.object,
+    createdAt: PropTypes.string,
   }).isRequired,
 };
 

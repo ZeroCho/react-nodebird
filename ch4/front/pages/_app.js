@@ -29,6 +29,11 @@ NodeBird.propTypes = {
   store: PropTypes.object,
 };
 
+const middleware = (store) => (next) => (action) => {
+  console.log(action); // 다른 작업들을 여기에
+  next(action);
+};
+
 export default withRedux((initialState, options) => {
   const middlewares = [sagaMiddleware];
   const enhancer = process.env.NODE_ENV === 'production'
