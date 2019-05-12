@@ -1,34 +1,49 @@
 import Head from 'next/head';
+import App, { Container } from 'next/app';
 import { applyMiddleware, compose, createStore } from 'redux';
 import withRedux from 'next-redux-wrapper';
 import { Provider } from 'react-redux';
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import AppLayout from '../containers/AppLayout';
 import sagaMiddleware from '../sagas/middleware';
 import reducer from '../reducers';
 import rootSaga from '../sagas';
 
-const NodeBird = ({ Component, pageProps, store }) => {
-  return <Provider store={store}>
-    <Head>
-      <title>NodeBird</title>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.css" />
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.js" />
-    </Head>
-    <AppLayout>
-      <Component {...pageProps} />
-    </AppLayout>
-  </Provider>;
-};
+class NodeBird extends App {
+  static propTypes = {
+    Component: PropTypes.elementType.isRequired,
+    store: PropTypes.object,
+    pageProps: PropTypes.object,
+  };
 
-NodeBird.getInitialProps = async (context) => {
-  let pageProps = {};
-  if (context.Component.getInitialProps) {
-    pageProps = await context.Component.getInitialProps(context.ctx);
+  static getInitialProps = async (context) => {
+    let pageProps = {};
+    if (context.Component.getInitialProps) {
+      pageProps = await context.Component.getInitialProps(context.ctx);
+    }
+    return { pageProps };
+  };
+
+  render() {
+    const { store, pageProps, Component } = this.props;
+    return (
+      <Container>
+        <Provider store={store}>
+          <Head>
+            <title>NodeBird</title>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.css" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.js" />
+          </Head>
+          <AppLayout>
+            <Component {...pageProps} />
+          </AppLayout>
+        </Provider>
+      </Container>
+    );
   }
-  return { pageProps };
-};
+}
 
 export default withRedux((initialState, options) => {
   const middlewares = [sagaMiddleware];

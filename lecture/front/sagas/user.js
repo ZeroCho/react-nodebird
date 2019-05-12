@@ -1,17 +1,27 @@
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 import {
-  FOLLOW_USER_FAILURE, FOLLOW_USER_REQUEST,
+  FOLLOW_USER_FAILURE,
+  FOLLOW_USER_REQUEST,
   FOLLOW_USER_SUCCESS,
   LOAD_USER_FAILURE,
   LOAD_USER_REQUEST,
   LOAD_USER_SUCCESS,
   LOG_IN_FAILURE,
   LOG_IN_REQUEST,
-  LOG_IN_SUCCESS, LOG_OUT_FAILURE, LOG_OUT_REQUEST, LOG_OUT_SUCCESS,
+  LOG_IN_SUCCESS,
+  LOG_OUT_FAILURE,
+  LOG_OUT_REQUEST,
+  LOG_OUT_SUCCESS,
   SIGN_UP_FAILURE,
   SIGN_UP_REQUEST,
-  SIGN_UP_SUCCESS, UNFOLLOW_USER_FAILURE, UNFOLLOW_USER_REQUEST, UNFOLLOW_USER_SUCCESS,
+  SIGN_UP_SUCCESS,
+  UNFOLLOW_USER_FAILURE,
+  UNFOLLOW_USER_REQUEST,
+  UNFOLLOW_USER_SUCCESS,
+  LOAD_FOLLOW_REQUEST,
+  LOAD_FOLLOW_FAILURE,
+  LOAD_FOLLOW_SUCCESS, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_REQUEST,
 } from '../reducers/user';
 
 function loadUserAPI() {
@@ -35,6 +45,29 @@ function* loadUser() {
 
 function* watchLoadUser() {
   yield takeLatest(LOAD_USER_REQUEST, loadUser);
+}
+
+function loadFollowAPI(userId) {
+  return axios.get(`/user/${userId}/follow`, {
+    withCredentials: true,
+  });
+}
+
+function* loadFollow() {
+  try {
+    const result = yield call(loadFollowAPI);
+    yield put({
+      type: LOAD_FOLLOW_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({ error, type: LOAD_FOLLOW_FAILURE });
+  }
+}
+
+function* watchLoadFollow() {
+  yield takeLatest(LOAD_FOLLOW_REQUEST, loadFollow);
 }
 
 function signUpAPI(data) {
@@ -85,15 +118,15 @@ function* watchLogIn() {
   yield takeLatest(LOG_IN_REQUEST, logIn);
 }
 
-function logOutAPI(data) {
-  return axios.post(`/user/logout`, data, {
+function logOutAPI() {
+  return axios.post(`/user/logout`, {}, {
     withCredentials: true,
   });
 }
 
-function* logOut(action) {
+function* logOut() {
   try {
-    yield call(logOutAPI, action.data);
+    yield call(logOutAPI);
     yield put({
       type: LOG_OUT_SUCCESS,
     });
@@ -108,8 +141,8 @@ function* watchLogOut() {
 }
 
 
-function followAPI(data) {
-  return axios.post(`/user/${data}/follow`, {}, {
+function followAPI(userId) {
+  return axios.post(`/user/${userId}/follow`, {}, {
     withCredentials: true,
   });
 }
@@ -132,8 +165,8 @@ function* watchFollow() {
 }
 
 
-function unfollowAPI(data) {
-  return axios.delete(`/user/${data}/follow`, {
+function unfollowAPI(userId) {
+  return axios.delete(`/user/${userId}/follow`, {
     withCredentials: true,
   });
 }
@@ -155,13 +188,38 @@ function* watchUnfollow() {
   yield takeLatest(UNFOLLOW_USER_REQUEST, unfollow);
 }
 
+function removeFollowerAPI(userId) {
+  return axios.delete(`/user/${userId}/follower`, {
+    withCredentials: true,
+  });
+}
+
+function* removeFollower(action) {
+  try {
+    const result = yield call(removeFollowerAPI, action.data);
+    yield put({
+      type: REMOVE_FOLLOWER_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({ error, type: REMOVE_FOLLOWER_FAILURE, reason: error.response && error.response.data.reason || '서버 에러' });
+  }
+}
+
+function* watchRemoveFollower() {
+  yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLoadUser),
+    fork(watchLoadFollow),
     fork(watchLogIn),
     fork(watchLogOut),
     fork(watchSignUp),
     fork(watchFollow),
     fork(watchUnfollow),
+    fork(watchRemoveFollower),
   ]);
 }

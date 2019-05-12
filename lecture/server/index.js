@@ -13,6 +13,7 @@ const db = require('./models');
 const userAPIRouter = require('./routes/api/user');
 const postAPIRouter = require('./routes/api/post');
 const postsAPIRouter = require('./routes/api/posts');
+const hashtagAPIRouter = require('./routes/api/hashtag');
 
 const app = express();
 
@@ -53,6 +54,7 @@ app.use(passport.session());
 app.use('/api/user', userAPIRouter);
 app.use('/api/post', postAPIRouter);
 app.use('/api/posts', postsAPIRouter);
+app.use('/api/hashtag', hashtagAPIRouter);
 
 app.listen(app.get('port'), () => {
   console.log(`listening on port ${app.get('port')}`);

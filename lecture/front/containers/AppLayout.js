@@ -3,6 +3,7 @@ import { Avatar, Card, Col, Input, Menu, Row, Button } from 'antd';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import LoginForm from './LoginForm';
 import { LOAD_USER_REQUEST, LOG_OUT_REQUEST } from '../reducers/user';
 
@@ -64,6 +65,10 @@ const AppLayout = ({ children }) => {
       <Col xs={24} md={6}> </Col>
     </Row>
   </div>
+};
+
+AppLayout.propTypes = {
+  children: PropTypes.node,
 };
 
 export default AppLayout;

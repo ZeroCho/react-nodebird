@@ -12,6 +12,13 @@ const Home = () => {
   const imageInput = useRef();
   const formData = useRef(typeof FormData !== 'undefined' && new FormData());
 
+  console.log('index');
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MAIN_POSTS_REQUEST,
+    });
+  }, []);
+
   const onChangeText = (e) => {
     setText(e.target.value);
   };
@@ -27,12 +34,6 @@ const Home = () => {
       data: formData.current,
     });
   };
-
-  useEffect(() => {
-    dispatch({
-      type: LOAD_MAIN_POSTS_REQUEST,
-    });
-  }, []);
 
   const onClickImageUpload = () => {
     imageInput.current.click();
@@ -81,7 +82,7 @@ const Home = () => {
       </Form>}
       {mainPosts.map((c) => {
         return (
-          <PostCard key={+c.createdAt} post={c} />
+          <PostCard key={+new Date(c.createdAt)} post={c} />
         );
       })}
     </div>

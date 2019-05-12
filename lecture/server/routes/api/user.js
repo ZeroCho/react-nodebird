@@ -65,8 +65,25 @@ router.post('/login', isNotLoggedIn, async (req, res, next) => {
   })(req, res, next);
 });
 
-router.get('/:id', async (req, res, next) => {
-
+router.get('/:id/follow', async (req, res, next) => {
+  try {
+    const user = await db.User.findOne({
+      where: { id: req.user.id },
+      include: [{
+        model: db.User,
+        as: 'Followers',
+        attributes: ['id', 'nickname'],
+      }, {
+        model: db.User,
+        as: 'Followings',
+        attributes: ['id', 'nickname'],
+      }],
+    });
+    res.json(user);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
 });
 
 router.post('/:id/follow', isLoggedIn, async (req, res, next) => {
@@ -95,9 +112,28 @@ router.delete('/:id/follow', isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.delete('/:id/follower', isLoggedIn, async (req, res, next) => {
+  try {
+    const me = await db.User.findOne({
+      where: { id: req.user.id },
+    });
+    await me.removeFollower(req.params.id);
+    res.send(req.params.id);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 router.get('/:id/posts', async (req, res, next) => {
   try {
-
+    const posts = await db.Post.findAll({
+      where: { UserId: req.params.id },
+      include: [{
+        model: db.User,
+      }],
+    });
+    res.json(posts);
   } catch (e) {
     console.error(e);
     next(e);

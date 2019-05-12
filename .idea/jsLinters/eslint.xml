@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EslintConfiguration">
-    <custom-configuration-file used="true" path="C:\Users\speak\WebstormProjects\react-nodebird\ch1\front\.eslintrc" />
+    <custom-configuration-file used="true" path="$PROJECT_DIR$/lecture/front/.eslintrc" />
   </component>
 </project>

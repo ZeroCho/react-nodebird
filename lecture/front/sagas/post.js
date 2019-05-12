@@ -2,25 +2,33 @@ import { all, fork, takeEvery, call, put } from 'redux-saga/effects';
 import axios from 'axios';
 import {
   ADD_COMMENT_FAILURE,
-  ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS,
+  ADD_COMMENT_REQUEST,
+  ADD_COMMENT_SUCCESS,
   ADD_POST_FAILURE,
   ADD_POST_REQUEST,
   ADD_POST_SUCCESS,
   LIKE_POST_FAILURE,
   LIKE_POST_REQUEST,
-  LIKE_POST_SUCCESS, LOAD_COMMENTS_FAILURE,
-  LOAD_COMMENTS_REQUEST, LOAD_COMMENTS_SUCCESS,
+  LIKE_POST_SUCCESS,
+  LOAD_COMMENTS_FAILURE,
+  LOAD_COMMENTS_REQUEST,
+  LOAD_COMMENTS_SUCCESS,
   LOAD_MAIN_POSTS_FAILURE,
   LOAD_MAIN_POSTS_REQUEST,
-  LOAD_MAIN_POSTS_SUCCESS, REMOVE_POST_FAILURE,
-  REMOVE_POST_REQUEST, REMOVE_POST_SUCCESS,
+  LOAD_MAIN_POSTS_SUCCESS,
+  REMOVE_POST_FAILURE,
+  REMOVE_POST_REQUEST,
+  REMOVE_POST_SUCCESS,
   RETWEET_REQUEST,
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
   UPLOAD_IMAGES_FAILURE,
   UPLOAD_IMAGES_REQUEST,
-  UPLOAD_IMAGES_SUCCESS
+  UPLOAD_IMAGES_SUCCESS,
+  LOAD_HASHTAG_POSTS_SUCCESS,
+  LOAD_HASHTAG_POSTS_REQUEST,
+  LOAD_HASHTAG_POSTS_FAILURE, RETWEET_SUCCESS, RETWEET_FAILURE
 } from '../reducers/post';
 import { ADD_POST_TO_ME } from '../reducers/user';
 
@@ -47,6 +55,31 @@ function* loadMainPosts() {
 
 function* watchLoadMainPosts() {
   yield takeEvery(LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
+}
+
+function loadHashtagPostsAPI(tagName) {
+  return axios.get(`/hashtag/${tagName}`);
+}
+
+function* loadHashtagPosts(action) {
+  try {
+    const result = yield call(loadHashtagPostsAPI, action.data);
+    yield put({
+      type: LOAD_HASHTAG_POSTS_SUCCESS,
+      data: result.data,
+    })
+  } catch (error) {
+    console.error(error);
+    yield put({
+      type: LOAD_HASHTAG_POSTS_FAILURE,
+      error,
+    })
+  }
+
+}
+
+function* watchLoadHashtagPosts() {
+  yield takeEvery(LOAD_HASHTAG_POSTS_REQUEST, loadHashtagPosts);
 }
 
 function addPostAPI(data) {
@@ -164,8 +197,29 @@ function* watchUnlikePost() {
   yield takeEvery(UNLIKE_POST_REQUEST, unlikePost);
 }
 
-function* retweet() {
+function retweetAPI(postId) {
+  return axios.post(`/post/${postId}/retweet`, {}, {
+    withCredentials: true,
+  })
+}
 
+function* retweet(action) {
+  try {
+    const result = yield call(retweetAPI, action.data);
+    yield put({
+      type: RETWEET_SUCCESS,
+      data: {
+        postId: action.data,
+        userId: result.data.userId,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({
+      type: RETWEET_FAILURE,
+      error,
+    });
+  }
 }
 
 function* watchRetweet() {
@@ -257,6 +311,7 @@ function* watchRemovePost() {
 export default function* postSaga() {
   yield all([
     fork(watchLoadMainPosts),
+    fork(watchLoadHashtagPosts),
     fork(watchAddPost),
     fork(watchUploadImages),
     fork(watchLikePost),

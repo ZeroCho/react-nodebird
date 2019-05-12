@@ -25,7 +25,7 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   console.log(req.user);
   try {
     // 나중에 @아이디도 파싱할 지 결정
-    const hashtags = req.body.content.match(/#[^\s]*/g);
+    const hashtags = req.body.content.match(/#[^\s]+/g);
     const newPost = await db.Post.create({
       content: req.body.content,
       UserId: req.user.id,
@@ -57,7 +57,7 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   }
 });
 
-router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => {
+router.post('/images', isLoggedIn, upload.array('image'), (req, res) => {
   console.log(req.files, req.body);
   res.json(req.files.map((v) => v.filename));
 });
@@ -98,7 +98,6 @@ router.patch('/:id', isLoggedIn, async (req, res, next) => {
       })));
       await post.setHashtags(result.map(r => r[0]));
     }
-    console.log(post);
     res.json(post);
   } catch (e) {
     console.error(e);
@@ -112,8 +111,25 @@ router.post('/:id/retweet', isLoggedIn, async (req, res, next) => {
     if (!post) {
       return res.status(404).send('no such post');
     }
-    await post.addRetweeter(req.user.id);
-    res.json(post);
+    if (req.user.id === post.UserId) { // TODO: 내 포스트를 리트윗한 것을 내가 다시 리트윗할 때
+      return res.status(403).send('Retweeting your own post is not allowed');
+    }
+    const exPost = await db.Post.findOne({
+      where: {
+        UserId: req.user.id,
+        RetweetId: retweetId,
+      },
+    });
+    if (exPost) {
+      return res.status(403).send('already retweeted');
+    }
+    const retweetId = post.RetweetId || post.id;
+    const retweet = await db.Post.create({
+      UserId: req.user.id,
+      RetweetId: retweetId,
+      content: 'retweet',
+    });
+    res.json(retweet);
   } catch (e) {
     console.error(e);
     next(e);

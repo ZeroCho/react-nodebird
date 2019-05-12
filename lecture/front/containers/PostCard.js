@@ -3,12 +3,13 @@ import { Avatar, Button, Card, Comment, Form, Icon, Input, List, Popover } from 
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
+import Link from 'next/link';
 import { FOLLOW_USER_REQUEST, UNFOLLOW_USER_REQUEST } from '../reducers/user';
 import {
   ADD_COMMENT_REQUEST,
   LIKE_POST_REQUEST,
   LOAD_COMMENTS_REQUEST,
-  REMOVE_POST_REQUEST,
+  REMOVE_POST_REQUEST, RETWEET_REQUEST,
   UNLIKE_POST_REQUEST
 } from '../reducers/post';
 
@@ -71,6 +72,10 @@ const PostCard = ({ post }) => {
     if (!me) {
       return alert('로그인이 필요합니다.');
     }
+    dispatch({
+      type: RETWEET_REQUEST,
+      data: post.id,
+    });
   };
 
   const onSubmitComment = (e) => {
@@ -120,6 +125,7 @@ const PostCard = ({ post }) => {
             <Icon type="ellipsis" />
           </Popover>,
         ]}
+        title={post.RetweetId ? `${post.User.nickname}님이 리트윗하셨습니다.` : null}
         extra={
           !me || post.User.id === me.id
             ? null
@@ -128,11 +134,35 @@ const PostCard = ({ post }) => {
             : <Button onClick={onFollow(post.User.id)}>팔로우</Button>
         }
       >
-        <Card.Meta
+        {post.RetweetId ? <Card>
+          <Card.Meta
+            avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+            title={post.Retweet.User.nickname}
+            description={
+              <div>
+                {post.Retweet.content.split(/(#[^\s]+)/g).map((v) => {
+                  if (v.match(/#[^\s]+/)) {
+                    return <Link href={`/hashtag/${v.slice(1)}`}><a>{v}</a></Link>
+                  }
+                  return v;
+                })}
+              </div>
+            }
+          />
+        </Card> : <Card.Meta
           avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
           title={post.User.nickname}
-          description={post.content}
-        />
+          description={
+            <div>
+              {post.content.split(/(#[^\s]+)/g).map((v) => {
+                if (v.match(/#[^\s]+/)) {
+                  return <Link href={`/hashtag/${v.slice(1)}`}><a>{v}</a></Link>
+                }
+                return v;
+              })}
+            </div>
+          }
+        />}
       </Card>
       {commentFormOpened && (
         <>
