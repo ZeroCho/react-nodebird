@@ -1,0 +1,36 @@
+{
+  "name": "react-nodebird-front",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "ZeroCho",
+  "license": "MIT",
+  "dependencies": {
+    "antd": "^3.17.0",
+    "axios": "^0.18.0",
+    "next": "^8.1.0",
+    "next-redux-wrapper": "^3.0.0-alpha.2",
+    "prop-types": "^15.7.2",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "react-redux": "^7.1.0-alpha.4",
+    "redux": "^4.0.1",
+    "redux-saga": "^1.0.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^1.6.0",
+    "nodemon": "^1.19.0",
+    "webpack": "^4.30.0"
+  }
+}
