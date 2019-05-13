@@ -34,6 +34,7 @@ function loadUserAPI(userId) {
 
 function* loadUser(action) {
   try {
+    console.log('saga::loadUser');
     const result = yield call(loadUserAPI, action.data);
     yield put({
       type: LOAD_USER_SUCCESS,
@@ -215,14 +216,14 @@ function* watchRemoveFollower() {
 }
 
 export default function* userSaga() {
-  yield all([
-    fork(watchLoadUser),
-    fork(watchLoadFollow),
-    fork(watchLogIn),
-    fork(watchLogOut),
-    fork(watchSignUp),
-    fork(watchFollow),
-    fork(watchUnfollow),
-    fork(watchRemoveFollower),
-  ]);
+  console.log('userSaga');
+  yield takeEvery(LOAD_USER_REQUEST, loadUser)
+    // watchLoadFollow(),
+    // watchLogIn(),
+    // watchLogOut(),
+    // watchSignUp(),
+    // watchFollow(),
+    // watchUnfollow(),
+    // watchRemoveFollower(),
+  ;
 }

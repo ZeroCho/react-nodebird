@@ -334,17 +334,17 @@ function* watchRemovePost() {
 }
 
 export default function* postSaga() {
-  yield all([
-    fork(watchLoadMainPosts),
-    fork(watchLoadHashtagPosts),
-    fork(watchLoadUserPosts),
-    fork(watchAddPost),
-    fork(watchUploadImages),
-    fork(watchLikePost),
-    fork(watchUnlikePost),
-    fork(watchRetweet),
-    fork(watchLoadComments),
-    fork(watchAddComment),
-    fork(watchRemovePost),
-  ]);
+  console.log('postSaga');
+  yield takeEvery(LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
+    // watchLoadMainPosts(),
+    // watchLoadHashtagPosts(),
+    // watchLoadUserPosts(),
+    // watchAddPost(),
+    // watchUploadImages(),
+    // watchLikePost(),
+    // watchUnlikePost(),
+    // watchRetweet(),
+    // watchLoadComments(),
+    // watchAddComment(),
+    // watchRemovePost(),
 }

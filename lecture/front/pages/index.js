@@ -12,13 +12,6 @@ const Home = () => {
   const imageInput = useRef();
   const formData = useRef(typeof FormData !== 'undefined' && new FormData());
 
-  console.log('index');
-  useEffect(() => {
-    dispatch({
-      type: LOAD_MAIN_POSTS_REQUEST,
-    });
-  }, []);
-
   const onChangeText = (e) => {
     setText(e.target.value);
   };
@@ -51,7 +44,7 @@ const Home = () => {
     });
   };
 
-  const onRemoveImage = (i) => () => {
+  const onRemoveImage = i => () => {
     dispatch({
       type: REMOVE_IMAGE,
       index: i,
@@ -60,33 +53,38 @@ const Home = () => {
 
   return (
     <div>
-      {isLoggedIn && <Form style={{ marginBottom: 20 }} encType="multipart/form-data" onSubmit={onSubmitPost}>
-        <Input.TextArea maxLength={140} placeholder="어떤 신기한 일이 있었나요?" value={text} onChange={onChangeText} />
-        <div>
-          <input type="file" ref={imageInput} onChange={onChangeImages} multiple hidden />
-          <Button onClick={onClickImageUpload}>이미지 업로드</Button>
-          <Button type="primary" style={{ float: 'right' }} htmlType="submit">짹짹</Button>
-        </div>
-        <div>
-          {imagePaths.map((v, i) => {
-            return (
+      {isLoggedIn && (
+        <Form style={{ marginBottom: 20 }} encType="multipart/form-data" onSubmit={onSubmitPost}>
+          <Input.TextArea maxLength={140} placeholder="어떤 신기한 일이 있었나요?" value={text} onChange={onChangeText} />
+          <div>
+            <input type="file" ref={imageInput} onChange={onChangeImages} multiple hidden />
+            <Button onClick={onClickImageUpload}>이미지 업로드</Button>
+            <Button type="primary" style={{ float: 'right' }} htmlType="submit">짹짹</Button>
+          </div>
+          <div>
+            {imagePaths.map((v, i) => (
               <div key={v} style={{ display: 'inline-block' }}>
-                <img src={'http://localhost:3065/' + v} style={{ width: '200px' }} alt={v} />
+                <img src={`http://localhost:3065/${v}`} style={{ width: '200px' }} alt={v} />
                 <div>
                   <Button onClick={onRemoveImage(i)}>제거</Button>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </Form>}
-      {mainPosts.map((c) => {
-        return (
-          <PostCard key={+new Date(c.createdAt)} post={c} />
-        );
-      })}
+            ))}
+          </div>
+        </Form>
+      )}
+      {mainPosts.map(c => (
+        <PostCard key={+new Date(c.createdAt)} post={c} />
+      ))}
     </div>
   );
+};
+
+Home.getInitialProps = async (context) => {
+  console.log('home getInitialProps', Object.keys(context));
+  context.store.dispatch({
+    type: LOAD_MAIN_POSTS_REQUEST,
+  });
 };
 
 export default Home;
