@@ -21,6 +21,7 @@
   ],
   "rules": {
     "no-underscore-dangle": "off",
-    "react/forbid-prop-types": 0
+    "react/forbid-prop-types": 0,
+    "object-curly-newline": 0
   }
 }

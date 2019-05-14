@@ -1,14 +1,13 @@
-import React, { useState, useCallback } from 'react';
-import { Form, Input, Checkbox, Button } from 'antd';
+import React, { useCallback, useState, useEffect } from 'react';
+import { Button, Checkbox, Form, Input } from 'antd';
 import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { signUpAction } from '../reducers/user';
+import { useDispatch, useSelector } from 'react-redux';
+import Router from 'next/router';
+import { SIGN_UP_REQUEST } from '../reducers/user';
 
-const TextInput = ({ value }) => {
-  return (
-    <div>{value}</div>
-  )
-};
+const TextInput = ({ value }) => (
+  <div>{value}</div>
+);
 
 TextInput.propTypes = {
   value: PropTypes.string,
@@ -32,6 +31,14 @@ const Signup = () => {
   const [nick, onChangeNick] = useInput('');
   const [password, onChangePassword] = useInput('');
   const dispatch = useDispatch();
+  const { isSigningUp, me } = useSelector(state => state.user);
+
+  useEffect(() => {
+    if (me) {
+      alert('로그인했으니 메인페이지로 이동합니다.');
+      Router.push('/');
+    }
+  }, [me && me.id]);
 
   const onSubmit = useCallback((e) => {
     e.preventDefault();
@@ -41,11 +48,14 @@ const Signup = () => {
     if (!term) {
       return setTermError(true);
     }
-    dispatch(signUpAction({
-      id,
-      password,
-      nick,
-    }));
+    return dispatch({
+      type: SIGN_UP_REQUEST,
+      data: {
+        id,
+        password,
+        nick,
+      },
+    });
   }, [password, passwordCheck, term]);
 
   const onChangePasswordCheck = useCallback((e) => {
@@ -80,7 +90,10 @@ const Signup = () => {
         <div>
           <label htmlFor="user-password-check">비밀번호체크</label>
           <br />
-          <Input name="user-password-check" type="password" value={passwordCheck} required onChange={onChangePasswordCheck} />
+          <Input
+            name="user-password-check" type="password" value={passwordCheck} required
+            onChange={onChangePasswordCheck}
+          />
           {passwordError && <div style={{ color: 'red' }}>비밀번호가 일치하지 않습니다.</div>}
         </div>
         <div>
@@ -88,7 +101,7 @@ const Signup = () => {
           {termError && <div style={{ color: 'red' }}>약관에 동의하셔야 합니다.</div>}
         </div>
         <div style={{ marginTop: 10 }}>
-          <Button type="primary" htmlType="submit">가입하기</Button>
+          <Button type="primary" htmlType="submit" loading={isSigningUp}>가입하기</Button>
         </div>
       </Form>
     </>
