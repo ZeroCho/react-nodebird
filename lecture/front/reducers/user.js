@@ -10,9 +10,13 @@ export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
 export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
 export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
 
-export const LOAD_FOLLOW_REQUEST = 'LOAD_FOLLOW_REQUEST';
-export const LOAD_FOLLOW_SUCCESS = 'LOAD_FOLLOW_SUCCESS';
-export const LOAD_FOLLOW_FAILURE = 'LOAD_FOLLOW_FAILURE';
+export const LOAD_FOLLOWER_REQUEST = 'LOAD_FOLLOWER_REQUEST';
+export const LOAD_FOLLOWER_SUCCESS = 'LOAD_FOLLOWER_SUCCESS';
+export const LOAD_FOLLOWER_FAILURE = 'LOAD_FOLLOWER_FAILURE';
+
+export const LOAD_FOLLOWING_REQUEST = 'LOAD_FOLLOWING_REQUEST';
+export const LOAD_FOLLOWING_SUCCESS = 'LOAD_FOLLOWING_SUCCESS';
+export const LOAD_FOLLOWING_FAILURE = 'LOAD_FOLLOWING_FAILURE';
 
 export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
 export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
@@ -33,7 +37,6 @@ export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
 
 export const initialState = {
-  isLoggedIn: false,
   isLoggingOut: false,
   isLoggingIn: false,
   logInErrorReason: '',
@@ -43,6 +46,8 @@ export const initialState = {
   me: null,
   followingList: [],
   followerList: [],
+  hasMoreFollower: true,
+  hasMoreFollowing: true,
   userInfo: null,
 };
 
@@ -60,6 +65,7 @@ export default (state = initialState, action) => {
         ...state,
         isLoggingIn: false,
         logInErrorReason: '',
+        me: action.data,
       };
     }
     case LOG_IN_FAILURE: {
@@ -80,7 +86,6 @@ export default (state = initialState, action) => {
         ...state,
         isLoggingOut: false,
         me: null,
-        isLoggedIn: false,
       };
     }
     case LOG_OUT_FAILURE: {
@@ -100,13 +105,11 @@ export default (state = initialState, action) => {
       if (action.me) {
         return {
           ...state,
-          isLoggedIn: true,
           me: action.data,
         };
       }
       return {
         ...state,
-        isLoggedIn: true,
         userInfo: action.data,
       };
     }
@@ -175,11 +178,30 @@ export default (state = initialState, action) => {
         },
       };
     }
-    case LOAD_FOLLOW_SUCCESS: {
+    case LOAD_FOLLOWER_REQUEST: {
       return {
         ...state,
-        followerList: action.data.Followers,
-        followingList: action.data.Followings,
+        hasMoreFollower: action.offset ? state.hasMoreFollower : true,
+      };
+    }
+    case LOAD_FOLLOWER_SUCCESS: {
+      return {
+        ...state,
+        hasMoreFollower: action.data.length === 3,
+        followerList: state.followerList.concat(action.data),
+      };
+    }
+    case LOAD_FOLLOWING_REQUEST: {
+      return {
+        ...state,
+        hasMoreFollowing: action.offset ? state.hasMoreFollowing : true,
+      };
+    }
+    case LOAD_FOLLOWING_SUCCESS: {
+      return {
+        ...state,
+        hasMoreFollowing: action.data.length === 3,
+        followingList: state.followingList.concat(action.data),
       };
     }
     default:

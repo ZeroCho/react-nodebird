@@ -35,6 +35,7 @@ app.prepare().then(() => {
       httpOnly: true,
       secure: prod,
     },
+    name: 'rnbck',
   }));
 
   server.get('/hashtag/:tag', (req, res) => {

@@ -1,12 +1,12 @@
 import { Button, Form, Input } from 'antd';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ADD_POST_REQUEST, LOAD_MAIN_POSTS_REQUEST, REMOVE_IMAGE, UPLOAD_IMAGES_REQUEST } from '../reducers/post';
 import PostCard from '../containers/PostCard';
 
 const Home = () => {
   const { mainPosts, imagePaths } = useSelector(state => state.post);
-  const { isLoggedIn } = useSelector(state => state.user);
+  const { me } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const [text, setText] = useState('');
   const imageInput = useRef();
@@ -53,7 +53,7 @@ const Home = () => {
 
   return (
     <div>
-      {isLoggedIn && (
+      {me && (
         <Form style={{ marginBottom: 20 }} encType="multipart/form-data" onSubmit={onSubmitPost}>
           <Input.TextArea maxLength={140} placeholder="어떤 신기한 일이 있었나요?" value={text} onChange={onChangeText} />
           <div>

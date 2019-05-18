@@ -1,11 +1,15 @@
-import {
-  all, call, fork, put, takeLatest, takeEvery,
-} from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 import {
   FOLLOW_USER_FAILURE,
   FOLLOW_USER_REQUEST,
   FOLLOW_USER_SUCCESS,
+  LOAD_FOLLOWER_FAILURE,
+  LOAD_FOLLOWER_REQUEST,
+  LOAD_FOLLOWER_SUCCESS,
+  LOAD_FOLLOWING_FAILURE,
+  LOAD_FOLLOWING_REQUEST,
+  LOAD_FOLLOWING_SUCCESS,
   LOAD_USER_FAILURE,
   LOAD_USER_REQUEST,
   LOAD_USER_SUCCESS,
@@ -15,15 +19,15 @@ import {
   LOG_OUT_FAILURE,
   LOG_OUT_REQUEST,
   LOG_OUT_SUCCESS,
+  REMOVE_FOLLOWER_FAILURE,
+  REMOVE_FOLLOWER_REQUEST,
+  REMOVE_FOLLOWER_SUCCESS,
   SIGN_UP_FAILURE,
   SIGN_UP_REQUEST,
   SIGN_UP_SUCCESS,
   UNFOLLOW_USER_FAILURE,
   UNFOLLOW_USER_REQUEST,
   UNFOLLOW_USER_SUCCESS,
-  LOAD_FOLLOW_REQUEST,
-  LOAD_FOLLOW_FAILURE,
-  LOAD_FOLLOW_SUCCESS, REMOVE_FOLLOWER_SUCCESS, REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_REQUEST,
 } from '../reducers/user';
 
 function loadUserAPI(userId) {
@@ -42,7 +46,7 @@ function* loadUser(action) {
       data: result.data,
     });
   } catch (error) {
-    console.error(error);
+    console.error('loadUserFailure');
     yield put({ error, type: LOAD_USER_FAILURE });
   }
 }
@@ -51,33 +55,56 @@ function* watchLoadUser() {
   yield takeEvery(LOAD_USER_REQUEST, loadUser);
 }
 
-function loadFollowAPI(userId) {
-  return axios.get(`/user/${userId}/follow`, {
+function loadFollowerAPI(userId = 0, offset = 0) {
+  return axios.get(`/user/${userId}/followers?offset=${offset}`, {
     withCredentials: true,
   });
 }
 
-function* loadFollow() {
+function* loadFollower(action) {
   try {
-    const result = yield call(loadFollowAPI);
+    const result = yield call(loadFollowerAPI, action.data, action.offset);
     yield put({
-      type: LOAD_FOLLOW_SUCCESS,
+      type: LOAD_FOLLOWER_SUCCESS,
       data: result.data,
     });
   } catch (error) {
     console.error(error);
-    yield put({ error, type: LOAD_FOLLOW_FAILURE });
+    yield put({ error, type: LOAD_FOLLOWER_FAILURE });
   }
 }
 
-function* watchLoadFollow() {
-  yield takeLatest(LOAD_FOLLOW_REQUEST, loadFollow);
+function* watchLoadFollower() {
+  yield takeLatest(LOAD_FOLLOWER_REQUEST, loadFollower);
 }
 
 function signUpAPI(data) {
   return axios.post('/user/signup', data, {
     withCredentials: true,
   });
+}
+
+function loadFollowingAPI(userId = 0, offset = 0) {
+  return axios.get(`/user/${userId}/followings?offset=${offset}`, {
+    withCredentials: true,
+  });
+}
+
+function* loadFollowing(action) {
+  try {
+    const result = yield call(loadFollowingAPI, action.data, action.offset);
+    yield put({
+      type: LOAD_FOLLOWING_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({ error, type: LOAD_FOLLOWING_FAILURE });
+  }
+}
+
+function* watchLoadFollowing() {
+  yield takeLatest(LOAD_FOLLOWING_REQUEST, loadFollowing);
 }
 
 function* signUp(action) {
@@ -105,12 +132,10 @@ function logInAPI(data) {
 
 function* logIn(action) {
   try {
-    yield call(logInAPI, action.data);
+    const result = yield call(logInAPI, action.data);
     yield put({
       type: LOG_IN_SUCCESS,
-    });
-    yield put({
-      type: LOAD_USER_REQUEST,
+      data: result.data,
     });
   } catch (error) {
     console.error(error);
@@ -144,7 +169,6 @@ function* watchLogOut() {
   yield takeLatest(LOG_OUT_REQUEST, logOut);
 }
 
-
 function followAPI(userId) {
   return axios.post(`/user/${userId}/follow`, {}, {
     withCredentials: true,
@@ -167,7 +191,6 @@ function* follow(action) {
 function* watchFollow() {
   yield takeLatest(FOLLOW_USER_REQUEST, follow);
 }
-
 
 function unfollowAPI(userId) {
   return axios.delete(`/user/${userId}/follow`, {
@@ -207,7 +230,11 @@ function* removeFollower(action) {
     });
   } catch (error) {
     console.error(error);
-    yield put({ error, type: REMOVE_FOLLOWER_FAILURE, reason: error.response && error.response.data.reason || '서버 에러' });
+    yield put({
+      error,
+      type: REMOVE_FOLLOWER_FAILURE,
+      reason: error.response && error.response.data.reason || '서버 에러',
+    });
   }
 }
 
@@ -217,13 +244,15 @@ function* watchRemoveFollower() {
 
 export default function* userSaga() {
   console.log('userSaga');
-  yield takeEvery(LOAD_USER_REQUEST, loadUser)
-    // watchLoadFollow(),
-    // watchLogIn(),
-    // watchLogOut(),
-    // watchSignUp(),
-    // watchFollow(),
-    // watchUnfollow(),
-    // watchRemoveFollower(),
-  ;
+  yield all([
+    fork(watchLoadUser),
+    fork(watchLoadFollower),
+    fork(watchLoadFollowing),
+    fork(watchLogIn),
+    fork(watchLogOut),
+    fork(watchSignUp),
+    fork(watchFollow),
+    fork(watchUnfollow),
+    fork(watchRemoveFollower),
+  ]);
 }

@@ -43,7 +43,7 @@ app.use(session({
   saveUninitialized: false,
   resave: false,
   secret: process.env.COOKIE_SECRET,
-  name: 'nbck',
+  name: 'rnbck',
   cookie: {
     httpOnly: true,
   },

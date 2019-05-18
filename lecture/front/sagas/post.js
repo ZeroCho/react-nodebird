@@ -1,6 +1,4 @@
-import {
-  all, fork, takeEvery, call, put,
-} from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
 import axios from 'axios';
 import {
   ADD_COMMENT_FAILURE,
@@ -15,27 +13,27 @@ import {
   LOAD_COMMENTS_FAILURE,
   LOAD_COMMENTS_REQUEST,
   LOAD_COMMENTS_SUCCESS,
+  LOAD_HASHTAG_POSTS_FAILURE,
+  LOAD_HASHTAG_POSTS_REQUEST,
+  LOAD_HASHTAG_POSTS_SUCCESS,
   LOAD_MAIN_POSTS_FAILURE,
   LOAD_MAIN_POSTS_REQUEST,
   LOAD_MAIN_POSTS_SUCCESS,
+  LOAD_USER_POSTS_FAILURE,
+  LOAD_USER_POSTS_REQUEST,
+  LOAD_USER_POSTS_SUCCESS,
   REMOVE_POST_FAILURE,
   REMOVE_POST_REQUEST,
   REMOVE_POST_SUCCESS,
+  RETWEET_FAILURE,
   RETWEET_REQUEST,
+  RETWEET_SUCCESS,
   UNLIKE_POST_FAILURE,
   UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
   UPLOAD_IMAGES_FAILURE,
   UPLOAD_IMAGES_REQUEST,
   UPLOAD_IMAGES_SUCCESS,
-  LOAD_HASHTAG_POSTS_SUCCESS,
-  LOAD_HASHTAG_POSTS_REQUEST,
-  LOAD_HASHTAG_POSTS_FAILURE,
-  RETWEET_SUCCESS,
-  RETWEET_FAILURE,
-  LOAD_USER_POSTS_SUCCESS,
-  LOAD_USER_POSTS_FAILURE,
-  LOAD_USER_POSTS_REQUEST,
 } from '../reducers/post';
 import { ADD_POST_TO_ME } from '../reducers/user';
 
@@ -63,8 +61,10 @@ function* watchLoadMainPosts() {
   yield takeEvery(LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
 }
 
-function loadUserPostsAPI(userId) {
-  return axios.get(`/user/${userId}/posts`);
+function loadUserPostsAPI(userId = 0) {
+  return axios.get(`/user/${userId}/posts`, {
+    withCredentials: true,
+  });
 }
 
 function* loadUserPosts(action) {
@@ -334,17 +334,17 @@ function* watchRemovePost() {
 }
 
 export default function* postSaga() {
-  console.log('postSaga');
-  yield takeEvery(LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
-    // watchLoadMainPosts(),
-    // watchLoadHashtagPosts(),
-    // watchLoadUserPosts(),
-    // watchAddPost(),
-    // watchUploadImages(),
-    // watchLikePost(),
-    // watchUnlikePost(),
-    // watchRetweet(),
-    // watchLoadComments(),
-    // watchAddComment(),
-    // watchRemovePost(),
+  yield all([
+    fork(watchLoadMainPosts),
+    fork(watchLoadHashtagPosts),
+    fork(watchLoadUserPosts),
+    fork(watchAddPost),
+    fork(watchUploadImages),
+    fork(watchLikePost),
+    fork(watchUnlikePost),
+    fork(watchRetweet),
+    fork(watchLoadComments),
+    fork(watchAddComment),
+    fork(watchRemovePost),
+  ]);
 }

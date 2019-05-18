@@ -1,31 +1,22 @@
 import { Button, Card, Form, Input, List, Icon } from 'antd';
-import React, { useEffect, useCallback } from 'react';
+import Router from 'next/router';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { LOAD_FOLLOW_REQUEST, UNFOLLOW_USER_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
+import { LOAD_FOLLOWER_REQUEST, LOAD_FOLLOWING_REQUEST, UNFOLLOW_USER_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
 import { LOAD_USER_POSTS_REQUEST } from '../reducers/post';
 import PostCard from '../containers/PostCard';
 // TODO: 절대로 다른 pages import하면 안 됨 알리기
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { me, followingList, followerList } = useSelector(state => state.user);
+  const { me, followingList, followerList, hasMoreFollower, hasMoreFollowing } = useSelector(state => state.user);
   const { mainPosts } = useSelector(state => state.post);
-  useEffect(() => {
-    if (me && me.id) {
-      dispatch({
-        type: LOAD_FOLLOW_REQUEST,
-        data: me.id,
-      });
-    }
-  }, [me.id]);
 
   useEffect(() => {
-    if (me && me.id) {
-      dispatch({
-        type: LOAD_USER_POSTS_REQUEST,
-        data: me.id,
-      });
+    if (!me) {
+      alert('로그인이 필요합니다.');
+      Router.push('/');
     }
   }, []);
 
@@ -43,6 +34,24 @@ const Profile = () => {
     });
   }, []);
 
+  const loadMoreFollowers = useCallback(() => {
+    dispatch({
+      type: LOAD_FOLLOWER_REQUEST,
+      offset: followerList.length,
+    });
+  }, [followerList.length]);
+
+  const loadMoreFollowings = useCallback(() => {
+    dispatch({
+      type: LOAD_FOLLOWING_REQUEST,
+      offset: followingList.length,
+    });
+  }, [followingList.length]);
+
+  if (!me) {
+    return null;
+  }
+
   return (
     <div>
       <Form style={{ marginBottom: 20, border: '1px solid #d9d9d9', padding: 20 }}>
@@ -54,7 +63,7 @@ const Profile = () => {
         grid={{ gutter: 4, xs: 2, md: 3 }}
         size="small"
         header={<div>팔로잉 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
+        loadMore={hasMoreFollowing && <Button style={{ width: '100%' }} onClick={loadMoreFollowings}>더 보기</Button>}
         bordered
         dataSource={followingList}
         renderItem={item => (
@@ -70,7 +79,7 @@ const Profile = () => {
         grid={{ gutter: 4, xs: 2, md: 3 }}
         size="small"
         header={<div>팔로워 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
+        loadMore={hasMoreFollower && <Button style={{ width: '100%' }} onClick={loadMoreFollowers}>더 보기</Button>}
         bordered
         dataSource={followerList}
         renderItem={item => (
@@ -88,6 +97,24 @@ const Profile = () => {
       </div>
     </div>
   );
+};
+
+Profile.getInitialProps = async (context) => {
+  console.log('profile getInitialProps', Object.keys(context));
+  console.log('profile has user?', context.req && context.req.user);
+  const state = context.store.getState();
+  context.store.dispatch({
+    type: LOAD_USER_POSTS_REQUEST,
+    data: state.user.me && state.user.me.id,
+  });
+  context.store.dispatch({
+    type: LOAD_FOLLOWER_REQUEST,
+    data: state.user.me && state.user.me.id,
+  });
+  context.store.dispatch({
+    type: LOAD_FOLLOWING_REQUEST,
+    data: state.user.me && state.user.me.id,
+  });
 };
 
 export default Profile;

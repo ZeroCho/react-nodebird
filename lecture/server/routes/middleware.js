@@ -1,4 +1,5 @@
 exports.isLoggedIn = (req, res, next) => {
+  console.log(req.cookie);
   if (req.isAuthenticated()) {
     return next();
   }
