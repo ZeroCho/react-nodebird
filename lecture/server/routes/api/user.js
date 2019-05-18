@@ -203,4 +203,18 @@ router.get('/:id/posts', async (req, res, next) => {
   }
 });
 
+router.patch('/:id/nickname', isLoggedIn, async (req, res, next) => {
+  try {
+    await db.User.update({
+      nickname: req.body.nickname,
+    }, {
+      where: { id: parseInt(req.params.id, 10) || (req.user && req.user.id) || 0 },
+    });
+    res.send(req.body.nickname);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 module.exports = router;

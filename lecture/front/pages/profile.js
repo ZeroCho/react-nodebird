@@ -3,14 +3,19 @@ import Router from 'next/router';
 import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { LOAD_FOLLOWER_REQUEST, LOAD_FOLLOWING_REQUEST, UNFOLLOW_USER_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
+import {
+  LOAD_FOLLOWER_REQUEST, LOAD_FOLLOWING_REQUEST, UNFOLLOW_USER_REQUEST, REMOVE_FOLLOWER_REQUEST, EDIT_NICKNAME_REQUEST,
+} from '../reducers/user';
 import { LOAD_USER_POSTS_REQUEST } from '../reducers/post';
 import PostCard from '../containers/PostCard';
 // TODO: 절대로 다른 pages import하면 안 됨 알리기
 
 const Profile = () => {
+  const [editedName, setEditedName] = useState();
   const dispatch = useDispatch();
-  const { me, followingList, followerList, hasMoreFollower, hasMoreFollowing } = useSelector(state => state.user);
+  const {
+    isEditingNickname, me, followingList, followerList, hasMoreFollower, hasMoreFollowing,
+  } = useSelector(state => state.user);
   const { mainPosts } = useSelector(state => state.post);
 
   useEffect(() => {
@@ -48,15 +53,27 @@ const Profile = () => {
     });
   }, [followingList.length]);
 
+  const onChangeEditedName = useCallback((e) => {
+    setEditedName(e.target.value);
+  }, []);
+
+  const onEditNickname = useCallback((e) => {
+    e.preventDefault();
+    dispatch({
+      type: EDIT_NICKNAME_REQUEST,
+      data: editedName,
+    });
+  }, [editedName]);
+
   if (!me) {
     return null;
   }
 
   return (
     <div>
-      <Form style={{ marginBottom: 20, border: '1px solid #d9d9d9', padding: 20 }}>
-        <Input value={me.name} addonBefore="닉네임" />
-        <Button type="primary">수정</Button>
+      <Form style={{ marginBottom: 20, border: '1px solid #d9d9d9', padding: 20 }} onSubmit={onEditNickname}>
+        <Input value={editedName || me.nickname} addonBefore="닉네임" onChange={onChangeEditedName} />
+        <Button type="primary" loading={isEditingNickname} htmlType="submit">수정</Button>
       </Form>
       <List
         style={{ marginBottom: 20 }}

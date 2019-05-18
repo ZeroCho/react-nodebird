@@ -1,6 +1,8 @@
 import { all, call, fork, put, takeEvery, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 import {
+  EDIT_NICKNAME_FAILURE, EDIT_NICKNAME_REQUEST,
+  EDIT_NICKNAME_SUCCESS,
   FOLLOW_USER_FAILURE,
   FOLLOW_USER_REQUEST,
   FOLLOW_USER_SUCCESS,
@@ -242,8 +244,34 @@ function* watchRemoveFollower() {
   yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollower);
 }
 
+function editNicknameAPI(nickname) {
+  return axios.patch('/user/0/nickname', { nickname }, {
+    withCredentials: true,
+  });
+}
+
+function* editNickname(action) {
+  try {
+    const result = yield call(editNicknameAPI, action.data);
+    yield put({
+      type: EDIT_NICKNAME_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({
+      error,
+      type: EDIT_NICKNAME_FAILURE,
+      reason: error.response && error.response.data.reason || '서버 에러',
+    });
+  }
+}
+
+function* watchEditNickname() {
+  yield takeLatest(EDIT_NICKNAME_REQUEST, editNickname);
+}
+
 export default function* userSaga() {
-  console.log('userSaga');
   yield all([
     fork(watchLoadUser),
     fork(watchLoadFollower),
@@ -254,5 +282,6 @@ export default function* userSaga() {
     fork(watchFollow),
     fork(watchUnfollow),
     fork(watchRemoveFollower),
+    fork(watchEditNickname),
   ]);
 }

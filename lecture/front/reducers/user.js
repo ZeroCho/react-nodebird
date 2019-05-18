@@ -18,6 +18,10 @@ export const LOAD_FOLLOWING_REQUEST = 'LOAD_FOLLOWING_REQUEST';
 export const LOAD_FOLLOWING_SUCCESS = 'LOAD_FOLLOWING_SUCCESS';
 export const LOAD_FOLLOWING_FAILURE = 'LOAD_FOLLOWING_FAILURE';
 
+export const EDIT_NICKNAME_REQUEST = 'EDIT_NICKNAME_REQUEST';
+export const EDIT_NICKNAME_SUCCESS = 'EDIT_NICKNAME_SUCCESS';
+export const EDIT_NICKNAME_FAILURE = 'EDIT_NICKNAME_FAILURE';
+
 export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
 export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
 export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
@@ -43,6 +47,8 @@ export const initialState = {
   signedUp: false,
   isSigningUp: false,
   signUpErrorReason: '',
+  isEditingNickname: false,
+  editNicknameErrorReason: false,
   me: null,
   followingList: [],
   followerList: [],
@@ -202,6 +208,30 @@ export default (state = initialState, action) => {
         ...state,
         hasMoreFollowing: action.data.length === 3,
         followingList: state.followingList.concat(action.data),
+      };
+    }
+    case EDIT_NICKNAME_REQUEST: {
+      return {
+        ...state,
+        isEditingNickname: true,
+        editNicknameErrorReason: '',
+      };
+    }
+    case EDIT_NICKNAME_SUCCESS: {
+      return {
+        ...state,
+        isEditingNickname: false,
+        me: {
+          ...state.me,
+          nickname: action.data,
+        },
+      };
+    }
+    case EDIT_NICKNAME_FAILURE: {
+      return {
+        ...state,
+        isEditingNickname: false,
+        editNicknameErrorReason: action.error,
       };
     }
     default:
