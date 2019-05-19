@@ -195,6 +195,7 @@ router.get('/:id/posts', async (req, res, next) => {
       }, {
         model: db.Image,
       }],
+      limit: 10,
     });
     res.json(posts);
   } catch (e) {

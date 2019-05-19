@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeEvery } from 'redux-saga/effects';
+import { all, call, fork, put, takeEvery, throttle } from 'redux-saga/effects';
 import axios from 'axios';
 import {
   ADD_COMMENT_FAILURE,
@@ -37,13 +37,13 @@ import {
 } from '../reducers/post';
 import { ADD_POST_TO_ME } from '../reducers/user';
 
-function loadMainPostsAPI() {
-  return axios.get('/posts');
+function loadMainPostsAPI(lastId = 0) {
+  return axios.get(`/posts?lastId=${lastId}`);
 }
 
-function* loadMainPosts() {
+function* loadMainPosts(action) {
   try {
-    const result = yield call(loadMainPostsAPI);
+    const result = yield call(loadMainPostsAPI, action.lastId);
     yield put({
       type: LOAD_MAIN_POSTS_SUCCESS,
       data: result.data,
@@ -58,18 +58,18 @@ function* loadMainPosts() {
 }
 
 function* watchLoadMainPosts() {
-  yield takeEvery(LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
+  yield throttle(2000, LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
 }
 
-function loadUserPostsAPI(userId = 0) {
-  return axios.get(`/user/${userId}/posts`, {
+function loadUserPostsAPI(userId = 0, lastId = 0) {
+  return axios.get(`/user/${userId}/posts?lastId=${lastId}`, {
     withCredentials: true,
   });
 }
 
 function* loadUserPosts(action) {
   try {
-    const result = yield call(loadUserPostsAPI, action.data);
+    const result = yield call(loadUserPostsAPI, action.data, action.lastId);
     yield put({
       type: LOAD_USER_POSTS_SUCCESS,
       data: result.data,
@@ -87,13 +87,13 @@ function* watchLoadUserPosts() {
   yield takeEvery(LOAD_USER_POSTS_REQUEST, loadUserPosts);
 }
 
-function loadHashtagPostsAPI(tagName) {
-  return axios.get(`/hashtag/${tagName}`);
+function loadHashtagPostsAPI(tagName, lastId = 0) {
+  return axios.get(`/hashtag/${tagName}?lastId=${lastId}`);
 }
 
 function* loadHashtagPosts(action) {
   try {
-    const result = yield call(loadHashtagPostsAPI, action.data);
+    const result = yield call(loadHashtagPostsAPI, action.data, action.lastId);
     yield put({
       type: LOAD_HASHTAG_POSTS_SUCCESS,
       data: result.data,

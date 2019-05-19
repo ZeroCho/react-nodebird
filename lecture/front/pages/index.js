@@ -1,11 +1,11 @@
 import { Button, Form, Input } from 'antd';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ADD_POST_REQUEST, LOAD_MAIN_POSTS_REQUEST, REMOVE_IMAGE, UPLOAD_IMAGES_REQUEST } from '../reducers/post';
 import PostCard from '../containers/PostCard';
 
 const Home = () => {
-  const { mainPosts, imagePaths } = useSelector(state => state.post);
+  const { mainPosts, imagePaths, hasMorePost } = useSelector(state => state.post);
   const { me } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const [text, setText] = useState('');
@@ -50,6 +50,26 @@ const Home = () => {
       index: i,
     });
   };
+
+  const onScroll = useCallback(() => {
+    console.log(window.scrollY, document.documentElement.clientHeight, window.scrollY + document.documentElement.clientHeight, document.documentElement.scrollHeight);
+    if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+      console.log(mainPosts, mainPosts[mainPosts.length - 1]);
+      if (hasMorePost) {
+        dispatch({
+          type: LOAD_MAIN_POSTS_REQUEST,
+          lastId: mainPosts[mainPosts.length - 1].id,
+        });
+      }
+    }
+  }, [mainPosts.length, hasMorePost]);
+
+  useEffect(() => {
+    window.addEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [mainPosts.length]);
 
   return (
     <div>

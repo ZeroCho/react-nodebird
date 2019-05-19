@@ -6,6 +6,7 @@ const router = express.Router();
 router.get('/:name', async (req, res, next) => {
   try {
     const posts = await db.Post.findAll({
+      where: {},
       include: [{
         model: db.Hashtag,
         where: { name: decodeURIComponent(req.params.name) },
@@ -14,6 +15,7 @@ router.get('/:name', async (req, res, next) => {
       }, {
         model: db.Image,
       }],
+      limit: 10,
     });
     res.json(posts);
   } catch (e) {

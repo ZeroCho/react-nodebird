@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Avatar, Card } from 'antd';
@@ -10,22 +10,29 @@ import { LOAD_USER_REQUEST } from '../reducers/user';
 
 const User = ({ userId }) => {
   const dispatch = useDispatch();
-  const { mainPosts } = useSelector(state => state.post);
+  const { mainPosts, hasMorePost } = useSelector(state => state.post);
   const { userInfo } = useSelector(state => state.user);
 
-  useEffect(() => {
-    dispatch({
-      type: LOAD_USER_REQUEST,
-      data: userId,
-    });
-  }, []);
+  const onScroll = useCallback(() => {
+    console.log(window.scrollY, document.documentElement.clientHeight, window.scrollY + document.documentElement.clientHeight, document.documentElement.scrollHeight);
+    if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+      console.log(mainPosts, mainPosts[mainPosts.length - 1]);
+      if (hasMorePost) {
+        dispatch({
+          type: LOAD_USER_POSTS_REQUEST,
+          data: userId,
+          lastId: mainPosts[mainPosts.length - 1].id,
+        });
+      }
+    }
+  }, [mainPosts.length, hasMorePost]);
 
   useEffect(() => {
-    dispatch({
-      type: LOAD_USER_POSTS_REQUEST,
-      data: userId,
-    });
-  }, []);
+    window.addEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [mainPosts.length]);
 
   return (
     <div>
@@ -67,7 +74,19 @@ const User = ({ userId }) => {
 };
 
 User.getInitialProps = async (context) => {
-  return { userId: parseInt(context.query.id, 10) };
+  const userId = parseInt(context.query.id, 10);
+  context.store.dispatch({
+    type: LOAD_USER_REQUEST,
+    data: userId,
+  });
+
+  context.store.dispatch({
+    type: LOAD_USER_POSTS_REQUEST,
+    data: userId,
+  });
+  return {
+    userId,
+  };
 };
 
 User.propTypes = {

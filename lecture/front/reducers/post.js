@@ -49,6 +49,7 @@ const initialState = {
   isAddingPost: false,
   addPostError: null,
   imagePaths: [],
+  hasMorePost: true,
 };
 
 export default (state = initialState, action) => {
@@ -80,7 +81,8 @@ export default (state = initialState, action) => {
     case LOAD_MAIN_POSTS_REQUEST: {
       return {
         ...state,
-        mainPosts: [],
+        mainPosts: action.lastId === 0 ? [] : state.mainPosts,
+        hasMorePost: action.lastId ? state.hasMorePost : true,
       };
     }
     case LOAD_USER_POSTS_SUCCESS:
@@ -88,8 +90,9 @@ export default (state = initialState, action) => {
     case LOAD_MAIN_POSTS_SUCCESS: {
       return {
         ...state,
-        mainPosts: action.data,
+        mainPosts: state.mainPosts.concat(action.data),
         imagePaths: [],
+        hasMorePost: action.data.length === 10,
       };
     }
     case LOAD_USER_POSTS_FAILURE:

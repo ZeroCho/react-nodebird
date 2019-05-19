@@ -10,7 +10,7 @@ const router = express.Router();
 const upload = multer({
   storage: multer.diskStorage({
     destination(req, file, cb) {
-      cb(null, 'uploads')
+      cb(null, 'uploads');
     },
     filename(req, file, cb) {
       console.log(file);
@@ -56,7 +56,6 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
         model: db.User,
       }],
     });
-    console.log(post);
     res.json(post);
   } catch (e) {
     console.error(e);
@@ -65,14 +64,13 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
 });
 
 router.post('/images', isLoggedIn, upload.array('image'), (req, res) => {
-  console.log(req.files, req.body);
-  res.json(req.files.map((v) => v.filename));
+  res.json(req.files.map(v => v.filename));
 });
 
 router.delete('/:id', isLoggedIn, async (req, res, next) => {
   try {
     await db.Post.destroy({ where: { id: req.params.id } });
-    res.json({ postId: parseInt(req.params.id) });
+    res.json({ postId: parseInt(req.params.id, 10) });
   } catch (e) {
     console.error(e);
     next(e);
@@ -145,10 +143,10 @@ router.post('/:id/retweet', isLoggedIn, async (req, res, next) => {
           model: db.User,
         }, {
           model: db.Image,
-        }]
+        }],
       }, {
         model: db.User,
-      }]
+      }],
     });
     res.json(retweetWithPrevPost);
   } catch (e) {
@@ -198,7 +196,7 @@ router.get('/:id/comments', async (req, res, next) => {
       order: [['createdAt', 'ASC']],
       include: [{
         model: db.User,
-        attributes: ['id', 'nickname']
+        attributes: ['id', 'nickname'],
       }],
     });
     res.json(comments);
@@ -226,7 +224,7 @@ router.post('/:id/comment', isLoggedIn, async (req, res, next) => {
       },
       include: [{
         model: db.User,
-        attributes: ['id', 'nickname']
+        attributes: ['id', 'nickname'],
       }],
     });
     res.json(comment);
