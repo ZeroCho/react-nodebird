@@ -119,9 +119,15 @@ export default (state = initialState, action) => {
       };
     }
     case LOAD_USER_SUCCESS: {
+      if (action.me) {
+        return {
+          ...state,
+          me: action.data,
+        };
+      }
       return {
         ...state,
-        me: action.data,
+        userInfo: action.data,
       };
     }
     case LOAD_USER_FAILURE: {
