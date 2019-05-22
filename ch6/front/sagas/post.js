@@ -19,13 +19,14 @@ import {
   LOAD_MAIN_POSTS_SUCCESS,
   LOAD_USER_POSTS_FAILURE,
   LOAD_USER_POSTS_REQUEST,
-  LOAD_USER_POSTS_SUCCESS,
+  LOAD_USER_POSTS_SUCCESS, RETWEET_FAILURE, RETWEET_REQUEST, RETWEET_SUCCESS,
   UNLIKE_POST_FAILURE, UNLIKE_POST_REQUEST,
   UNLIKE_POST_SUCCESS,
   UPLOAD_IMAGES_FAILURE,
   UPLOAD_IMAGES_REQUEST,
   UPLOAD_IMAGES_SUCCESS,
 } from '../reducers/post';
+import { ADD_POST_TO_ME } from '../reducers/user';
 
 function addPostAPI(postData) {
   return axios.post('/post', postData, {
@@ -36,9 +37,13 @@ function addPostAPI(postData) {
 function* addPost(action) {
   try {
     const result = yield call(addPostAPI, action.data);
-    yield put({
+    yield put({ // post reducer의 데이터를 수정
       type: ADD_POST_SUCCESS,
       data: result.data,
+    });
+    yield put({ // user reducer의 데이터를 수정
+      type: ADD_POST_TO_ME,
+      data: result.data.id,
     });
   } catch (e) {
     yield put({
@@ -261,6 +266,33 @@ function* watchUnlikePost() {
   yield takeLatest(UNLIKE_POST_REQUEST, unlikePost);
 }
 
+function retweetAPI(postId) {
+  return axios.post(`/post/${postId}/retweet`, {}, {
+    withCredentials: true,
+  });
+}
+
+function* retweet(action) {
+  try {
+    const result = yield call(retweetAPI, action.data);
+    yield put({
+      type: RETWEET_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: RETWEET_FAILURE,
+      error: e,
+    });
+    alert(e.response && e.response.data);
+  }
+}
+
+function* watchRetweet() {
+  yield takeLatest(RETWEET_REQUEST, retweet);
+}
+
 export default function* postSaga() {
   yield all([
     fork(watchLoadMainPosts),
@@ -272,5 +304,6 @@ export default function* postSaga() {
     fork(watchUploadImages),
     fork(watchLikePost),
     fork(watchUnlikePost),
+    fork(watchRetweet),
   ]);
 }
