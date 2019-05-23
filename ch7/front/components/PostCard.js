@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   ADD_COMMENT_REQUEST,
   LIKE_POST_REQUEST,
-  LOAD_COMMENTS_REQUEST,
+  LOAD_COMMENTS_REQUEST, REMOVE_POST_REQUEST,
   RETWEET_REQUEST,
   UNLIKE_POST_REQUEST,
 } from '../reducers/post';
@@ -97,6 +97,13 @@ const PostCard = ({ post }) => {
     });
   }, []);
 
+  const onRemovePost = useCallback(userId => () => {
+    dispatch({
+      type: REMOVE_POST_REQUEST,
+      data: userId,
+    });
+  });
+
   return (
     <div>
       <Card
@@ -120,7 +127,7 @@ const PostCard = ({ post }) => {
                   ? (
                     <>
                       <Button>수정</Button>
-                      <Button type="danger">삭제</Button>
+                      <Button type="danger" onClick={onRemovePost(post.id)}>삭제</Button>
                     </>
                   )
                   : <Button>신고</Button>}
