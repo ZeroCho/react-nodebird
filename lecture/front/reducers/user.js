@@ -1,44 +1,47 @@
-export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
-export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
-export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
+import produce from 'immer';
 
-export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
-export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
-export const LOG_OUT_FAILURE = 'LOG_OUT_FAILURE';
+export const LOG_IN_REQUEST = 'USER/LOG_IN_REQUEST';
+export const LOG_IN_SUCCESS = 'USER/LOG_IN_SUCCESS';
+export const LOG_IN_FAILURE = 'USER/LOG_IN_FAILURE';
 
-export const LOAD_USER_REQUEST = 'LOAD_USER_REQUEST';
-export const LOAD_USER_SUCCESS = 'LOAD_USER_SUCCESS';
-export const LOAD_USER_FAILURE = 'LOAD_USER_FAILURE';
+export const LOG_OUT_REQUEST = 'USER/LOG_OUT_REQUEST';
+export const LOG_OUT_SUCCESS = 'USER/LOG_OUT_SUCCESS';
+export const LOG_OUT_FAILURE = 'USER/LOG_OUT_FAILURE';
 
-export const LOAD_FOLLOWER_REQUEST = 'LOAD_FOLLOWER_REQUEST';
-export const LOAD_FOLLOWER_SUCCESS = 'LOAD_FOLLOWER_SUCCESS';
-export const LOAD_FOLLOWER_FAILURE = 'LOAD_FOLLOWER_FAILURE';
+export const LOAD_USER_REQUEST = 'USER/LOAD_USER_REQUEST';
+export const LOAD_USER_SUCCESS = 'USER/LOAD_USER_SUCCESS';
+export const LOAD_USER_FAILURE = 'USER/LOAD_USER_FAILURE';
 
-export const LOAD_FOLLOWING_REQUEST = 'LOAD_FOLLOWING_REQUEST';
-export const LOAD_FOLLOWING_SUCCESS = 'LOAD_FOLLOWING_SUCCESS';
-export const LOAD_FOLLOWING_FAILURE = 'LOAD_FOLLOWING_FAILURE';
+export const LOAD_FOLLOWER_REQUEST = 'USER/LOAD_FOLLOWER_REQUEST';
+export const LOAD_FOLLOWER_SUCCESS = 'USER/LOAD_FOLLOWER_SUCCESS';
+export const LOAD_FOLLOWER_FAILURE = 'USER/LOAD_FOLLOWER_FAILURE';
 
-export const EDIT_NICKNAME_REQUEST = 'EDIT_NICKNAME_REQUEST';
-export const EDIT_NICKNAME_SUCCESS = 'EDIT_NICKNAME_SUCCESS';
-export const EDIT_NICKNAME_FAILURE = 'EDIT_NICKNAME_FAILURE';
+export const LOAD_FOLLOWING_REQUEST = 'USER/LOAD_FOLLOWING_REQUEST';
+export const LOAD_FOLLOWING_SUCCESS = 'USER/LOAD_FOLLOWING_SUCCESS';
+export const LOAD_FOLLOWING_FAILURE = 'USER/LOAD_FOLLOWING_FAILURE';
 
-export const SIGN_UP_REQUEST = 'SIGN_UP_REQUEST';
-export const SIGN_UP_SUCCESS = 'SIGN_UP_SUCCESS';
-export const SIGN_UP_FAILURE = 'SIGN_UP_FAILURE';
+export const EDIT_NICKNAME_REQUEST = 'USER/EDIT_NICKNAME_REQUEST';
+export const EDIT_NICKNAME_SUCCESS = 'USER/EDIT_NICKNAME_SUCCESS';
+export const EDIT_NICKNAME_FAILURE = 'USER/EDIT_NICKNAME_FAILURE';
 
-export const FOLLOW_USER_REQUEST = 'FOLLOW_USER_REQUEST';
-export const FOLLOW_USER_SUCCESS = 'FOLLOW_USER_SUCCESS';
-export const FOLLOW_USER_FAILURE = 'FOLLOW_USER_FAILURE';
+export const SIGN_UP_REQUEST = 'USER/SIGN_UP_REQUEST';
+export const SIGN_UP_SUCCESS = 'USER/SIGN_UP_SUCCESS';
+export const SIGN_UP_FAILURE = 'USER/SIGN_UP_FAILURE';
 
-export const UNFOLLOW_USER_REQUEST = 'UNFOLLOW_USER_REQUEST';
-export const UNFOLLOW_USER_SUCCESS = 'UNFOLLOW_USER_SUCCESS';
-export const UNFOLLOW_USER_FAILURE = 'UNFOLLOW_USER_FAILURE';
+export const FOLLOW_USER_REQUEST = 'USER/FOLLOW_USER_REQUEST';
+export const FOLLOW_USER_SUCCESS = 'USER/FOLLOW_USER_SUCCESS';
+export const FOLLOW_USER_FAILURE = 'USER/FOLLOW_USER_FAILURE';
 
-export const REMOVE_FOLLOWER_REQUEST = 'REMOVE_FOLLOWER_REQUEST';
-export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
-export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
+export const UNFOLLOW_USER_REQUEST = 'USER/UNFOLLOW_USER_REQUEST';
+export const UNFOLLOW_USER_SUCCESS = 'USER/UNFOLLOW_USER_SUCCESS';
+export const UNFOLLOW_USER_FAILURE = 'USER/UNFOLLOW_USER_FAILURE';
 
-export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const REMOVE_FOLLOWER_REQUEST = 'USER/REMOVE_FOLLOWER_REQUEST';
+export const REMOVE_FOLLOWER_SUCCESS = 'USER/REMOVE_FOLLOWER_SUCCESS';
+export const REMOVE_FOLLOWER_FAILURE = 'USER/REMOVE_FOLLOWER_FAILURE';
+
+export const ADD_POST_TO_ME = 'USER/ADD_POST_TO_ME';
+export const REMOVE_POST_OF_ME = 'USER/REMOVE_POST_OF_ME';
 
 export const initialState = {
   isLoggingOut: false,
@@ -58,185 +61,128 @@ export const initialState = {
 };
 
 export default (state = initialState, action) => {
-  switch (action.type) {
-    case LOG_IN_REQUEST: {
-      return {
-        ...state,
-        isLoggingIn: true,
-        logInErrorReason: '',
-      };
-    }
-    case LOG_IN_SUCCESS: {
-      return {
-        ...state,
-        isLoggingIn: false,
-        logInErrorReason: '',
-        me: action.data,
-      };
-    }
-    case LOG_IN_FAILURE: {
-      return {
-        ...state,
-        isLoggingIn: false,
-        logInErrorReason: action.reason,
-      };
-    }
-    case LOG_OUT_REQUEST: {
-      return {
-        ...state,
-        isLoggingOut: true,
-      };
-    }
-    case LOG_OUT_SUCCESS: {
-      return {
-        ...state,
-        isLoggingOut: false,
-        me: null,
-      };
-    }
-    case LOG_OUT_FAILURE: {
-      return {
-        ...state,
-        isLoggingOut: false,
-      };
-    }
-    case LOAD_USER_REQUEST: {
-      return {
-        ...state,
-        userInfo: null,
-        me: null,
-      };
-    }
-    case LOAD_USER_SUCCESS: {
-      if (action.me) {
-        return {
-          ...state,
-          me: action.data,
-        };
+  return produce(state, (draft) => {
+    switch (action.type) {
+      case LOG_IN_REQUEST: {
+        draft.isLoggedIn = true;
+        draft.logInErrorReason = '';
+        break;
       }
-      return {
-        ...state,
-        userInfo: action.data,
-      };
+      case LOG_IN_SUCCESS: {
+        draft.isLoggedIn = true;
+        draft.logInErrorReason = '';
+        draft.me = action.data;
+        break;
+      }
+      case LOG_IN_FAILURE: {
+        draft.isLoggedIn = false;
+        draft.logInErrorReason = action.reason;
+        break;
+      }
+      case LOG_OUT_REQUEST: {
+        draft.isLoggingOut = true;
+        break;
+      }
+      case LOG_OUT_SUCCESS: {
+        draft.isLoggingOut = false;
+        draft.me = null;
+        break;
+      }
+      case LOG_OUT_FAILURE: {
+        draft.isLoggingOut = false;
+        break;
+      }
+      case LOAD_USER_REQUEST: {
+        draft.userInfo = null;
+        draft.me = null;
+        break;
+      }
+      case LOAD_USER_SUCCESS: {
+        if (action.me) {
+          draft.me = action.data;
+        }
+        draft.userInfo = action.data;
+        break;
+      }
+      case LOAD_USER_FAILURE: {
+        break;
+      }
+      case SIGN_UP_REQUEST: {
+        draft.signedUp = false;
+        draft.isSigningUp = true;
+        draft.signUpErrorReason = '';
+        break;
+      }
+      case SIGN_UP_SUCCESS: {
+        draft.signedUp = true;
+        draft.isSigningUp = false;
+        draft.signUpErrorReason = '';
+        break;
+      }
+      case SIGN_UP_FAILURE: {
+        draft.signedUp = false;
+        draft.isSigningUp = false;
+        draft.signUpErrorReason = action.reason;
+        break;
+      }
+      case FOLLOW_USER_SUCCESS: {
+        draft.me.Followings.push({ id: action.data });
+        break;
+      }
+      case UNFOLLOW_USER_SUCCESS: {
+        const index = draft.me.Followings.findIndex(v => v.id === action.data);
+        draft.me.Followings.splice(index, 1);
+        break;
+      }
+      case REMOVE_FOLLOWER_SUCCESS: {
+        const index = draft.me.Followers.findIndex(v => v.id === action.data);
+        draft.me.Followers.splice(index, 1);
+        break;
+      }
+      case ADD_POST_TO_ME: {
+        draft.me.Post.push({ id: action.data });
+        break;
+      }
+      case REMOVE_POST_OF_ME: {
+        const index = draft.me.Post.findIndex(v => v.id === action.data);
+        draft.me.Post.splice(index, 1);
+        break;
+      }
+      case LOAD_FOLLOWER_REQUEST: {
+        draft.hasMoreFollower = action.offset ? state.hasMoreFollower : true;
+        break;
+      }
+      case LOAD_FOLLOWER_SUCCESS: {
+        draft.hasMoreFollower = action.data.length === 3;
+        draft.followerList.push(action.data);
+        break;
+      }
+      case LOAD_FOLLOWING_REQUEST: {
+        draft.hasMoreFollowing = action.offset ? state.hasMoreFollowing : true;
+        break;
+      }
+      case LOAD_FOLLOWING_SUCCESS: {
+        draft.hasMoreFollowing = action.data.length === 3;
+        draft.followingList.push(action.data);
+        break;
+      }
+      case EDIT_NICKNAME_REQUEST: {
+        draft.isEditingNickname = true;
+        draft.editNicknameErrorReason = '';
+        break;
+      }
+      case EDIT_NICKNAME_SUCCESS: {
+        draft.isEditingNickname = false;
+        draft.me.nickname = action.data;
+        break;
+      }
+      case EDIT_NICKNAME_FAILURE: {
+        draft.isEditingNickname = false;
+        draft.editNicknameErrorReason = action.error;
+        break;
+      }
+      default:
+        break;
     }
-    case LOAD_USER_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case SIGN_UP_REQUEST: {
-      return {
-        ...state,
-        signedUp: false,
-        isSigningUp: true,
-        signUpErrorReason: '',
-      };
-    }
-    case SIGN_UP_SUCCESS: {
-      return {
-        ...state,
-        signedUp: true,
-        isSigningUp: false,
-        signUpErrorReason: '',
-      };
-    }
-    case SIGN_UP_FAILURE: {
-      return {
-        ...state,
-        signedUp: false,
-        isSigningUp: false,
-        signUpErrorReason: action.reason,
-      };
-    }
-    case FOLLOW_USER_SUCCESS: {
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          Followings: [...state.me.Followings, { id: action.data }],
-        },
-      };
-    }
-    case UNFOLLOW_USER_SUCCESS: {
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          Followings: state.me.Followings.filter(v => v.id !== action.data),
-        },
-      };
-    }
-    case REMOVE_FOLLOWER_SUCCESS: {
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          Followers: state.me.Followers.filter(v => v.id !== action.data),
-        },
-      };
-    }
-    case ADD_POST_TO_ME: {
-      return {
-        ...state,
-        me: {
-          ...state.me,
-          Post: [...state.me.Post, { id: action.data }],
-        },
-      };
-    }
-    case LOAD_FOLLOWER_REQUEST: {
-      return {
-        ...state,
-        hasMoreFollower: action.offset ? state.hasMoreFollower : true,
-      };
-    }
-    case LOAD_FOLLOWER_SUCCESS: {
-      return {
-        ...state,
-        hasMoreFollower: action.data.length === 3,
-        followerList: state.followerList.concat(action.data),
-      };
-    }
-    case LOAD_FOLLOWING_REQUEST: {
-      return {
-        ...state,
-        hasMoreFollowing: action.offset ? state.hasMoreFollowing : true,
-      };
-    }
-    case LOAD_FOLLOWING_SUCCESS: {
-      return {
-        ...state,
-        hasMoreFollowing: action.data.length === 3,
-        followingList: state.followingList.concat(action.data),
-      };
-    }
-    case EDIT_NICKNAME_REQUEST: {
-      return {
-        ...state,
-        isEditingNickname: true,
-        editNicknameErrorReason: '',
-      };
-    }
-    case EDIT_NICKNAME_SUCCESS: {
-      return {
-        ...state,
-        isEditingNickname: false,
-        me: {
-          ...state.me,
-          nickname: action.data,
-        },
-      };
-    }
-    case EDIT_NICKNAME_FAILURE: {
-      return {
-        ...state,
-        isEditingNickname: false,
-        editNicknameErrorReason: action.error,
-      };
-    }
-    default:
-      return {
-        ...state,
-      };
-  }
+  });
 };

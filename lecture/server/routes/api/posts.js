@@ -36,6 +36,7 @@ router.get('/', async (req, res, next) => {
       limit: 10,
       order: [['createdAt', 'DESC']],
     });
+    console.log(posts);
     res.json(posts);
   } catch (e) {
     console.error(e);

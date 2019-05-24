@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Avatar, Button, Card, Comment, Form, Icon, Input, List, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -16,7 +16,7 @@ import {
 import PostCardContent from '../components/PostCardContent';
 import PostImages from '../components/PostImages';
 
-const PostCard = ({ post }) => {
+const PostCard = memo(({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
   const [commentText, setCommentText] = useState('');
   const { me } = useSelector(state => state.user);
@@ -98,6 +98,8 @@ const PostCard = ({ post }) => {
     setCommentText(e.target.value);
   };
 
+  console.log(post);
+
   return (
     <div style={{ marginBottom: '20px' }}>
       <Card
@@ -145,7 +147,7 @@ const PostCard = ({ post }) => {
           ? (
             <Card>
               <Card.Meta
-                cover={post.Images[0] && <PostImages images={post.Retweet.Images} />}
+                cover={post.Retweet.Images[0] && <PostImages images={post.Retweet.Images} />}
                 avatar={(
                   <Link
                     href={{ pathname: '/user', query: { id: post.Retweet.User.id } }}
@@ -198,7 +200,7 @@ const PostCard = ({ post }) => {
       )}
     </div>
   );
-};
+});
 
 PostCard.propTypes = {
   post: PropTypes.shape({
