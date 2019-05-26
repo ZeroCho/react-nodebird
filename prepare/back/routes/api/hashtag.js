@@ -16,6 +16,7 @@ router.get('/:name', async (req, res, next) => {
         model: db.Image,
       }],
       limit: 10,
+      order: [['createdAt', 'DESC']],
     });
     res.json(posts);
   } catch (e) {

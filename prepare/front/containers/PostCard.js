@@ -1,12 +1,12 @@
 import React, { memo, useState } from 'react';
-import { Avatar, Button, Card, Comment, Form, Icon, Input, List, Popover } from 'antd';
+import { Avatar, Button, Card, Comment, Icon, List, Popover } from 'antd';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
+import styled from 'styled-components';
 import { FOLLOW_USER_REQUEST, UNFOLLOW_USER_REQUEST } from '../reducers/user';
 import {
-  ADD_COMMENT_REQUEST,
   LIKE_POST_REQUEST,
   LOAD_COMMENTS_REQUEST,
   REMOVE_POST_REQUEST,
@@ -15,10 +15,14 @@ import {
 } from '../reducers/post';
 import PostCardContent from '../components/PostCardContent';
 import PostImages from '../components/PostImages';
+import CommentForm from './CommentForm';
+
+const PostCardWrapper = styled.div`
+  margin-bottom: 20px;
+`;
 
 const PostCard = memo(({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
-  const [commentText, setCommentText] = useState('');
   const { me } = useSelector(state => state.user);
   const liked = me && post.Likers && post.Likers.find(v => v.id === me.id);
   const dispatch = useDispatch();
@@ -80,28 +84,8 @@ const PostCard = memo(({ post }) => {
     });
   };
 
-  const onSubmitComment = (e) => {
-    e.preventDefault();
-    if (!me) {
-      return alert('로그인이 필요합니다.');
-    }
-    return dispatch({
-      type: ADD_COMMENT_REQUEST,
-      data: {
-        postId: post.id,
-        content: commentText,
-      },
-    });
-  };
-
-  const onChangeCommentText = (e) => {
-    setCommentText(e.target.value);
-  };
-
-  console.log(post);
-
   return (
-    <div style={{ marginBottom: '20px' }}>
+    <PostCardWrapper>
       <Card
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
@@ -175,12 +159,7 @@ const PostCard = memo(({ post }) => {
       </Card>
       {commentFormOpened && (
         <>
-          <Form onSubmit={onSubmitComment}>
-            <Form.Item>
-              <Input.TextArea rows={4} value={commentText} onChange={onChangeCommentText} />
-            </Form.Item>
-            <Button type="primary" htmlType="submit">삐약</Button>
-          </Form>
+          <CommentForm post={post} />
           <List
             header={`${post.Comments ? post.Comments.length : 0} replies`}
             itemLayout="horizontal"
@@ -198,7 +177,7 @@ const PostCard = memo(({ post }) => {
           />
         </>
       )}
-    </div>
+    </PostCardWrapper>
   );
 });
 

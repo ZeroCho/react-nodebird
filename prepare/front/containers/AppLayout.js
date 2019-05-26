@@ -4,6 +4,7 @@ import { Avatar, Button, Card, Col, Input, Menu, Row } from 'antd';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
+import Router from 'next/router';
 import LoginForm from './LoginForm';
 import { LOG_OUT_REQUEST } from '../reducers/user';
 
@@ -20,15 +21,19 @@ const AppLayout = ({ children }) => {
     dispatch({ type: LOG_OUT_REQUEST });
   };
 
+  const onSearch = (value) => {
+    Router.push({ pathname: '/hashtag', query: { tag: value } }, `/hashtag/${value}`);
+  };
+
   return (
     <div>
-      <Menu onClick={handleMenuClick} mode="horizontal">
-        <Menu.Item key="home"><Link href="/"><a>노드버드</a></Link></Menu.Item>
-        <Menu.Item key="profile"><Link href="/profile"><a>프로필</a></Link></Menu.Item>
+      <Menu onClick={handleMenuClick} selectedKeys={[Router.router && Router.router.route]} mode="horizontal">
+        <Menu.Item key="/"><Link href="/"><a>노드버드</a></Link></Menu.Item>
+        <Menu.Item key="/profile"><Link href="/profile"><a>프로필</a></Link></Menu.Item>
         <Menu.Item key="mail" disabled>
           <Input.Search
             style={{ verticalAlign: 'middle' }}
-            onSearch={value => console.log(value)}
+            onSearch={onSearch}
             enterButton
           />
         </Menu.Item>

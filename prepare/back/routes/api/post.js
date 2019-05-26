@@ -37,14 +37,14 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
       await newPost.addHashtags(result.map(r => r[0]));
     }
 
-    if (req.body.images) {
-      if (Array.isArray(req.body.images)) {
-        const images = await Promise.all(req.body.images.map((v) => {
+    if (req.body.image) {
+      if (Array.isArray(req.body.image)) {
+        const images = await Promise.all(req.body.image.map((v) => {
           return db.Image.create({ src: v });
         }));
         await newPost.addImages(images);
       } else {
-        const image = await db.Image.create({ src: req.body.images });
+        const image = await db.Image.create({ src: req.body.image });
         await newPost.addImage(image);
       }
     }
@@ -54,6 +54,9 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
         model: db.Image,
       }, {
         model: db.User,
+      }, {
+        model: db.User,
+        as: 'Likers',
       }],
     });
     res.json(post);
@@ -65,6 +68,33 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
 
 router.post('/images', isLoggedIn, upload.array('image'), (req, res) => {
   res.json(req.files.map(v => v.filename));
+});
+
+router.get('/:id', async (req, res, next) => {
+  try {
+    const post = await db.Post.findOne({
+      where: { id: req.params.id },
+      include: [{
+        model: db.User,
+        attributes: ['id', 'nickname'],
+      }, {
+        model: db.Image,
+      }, {
+        model: db.Post,
+        as: 'Retweet',
+        include: [{
+          model: db.User,
+          attributes: ['id', 'nickname'],
+        }, {
+          model: db.Image,
+        }],
+      }],
+    });
+    res.json(post);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
 });
 
 router.delete('/:id', isLoggedIn, async (req, res, next) => {

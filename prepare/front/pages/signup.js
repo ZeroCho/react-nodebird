@@ -2,10 +2,20 @@ import { Button, Checkbox, Form, Input } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
 import React, { useCallback, useState, useEffect } from 'react';
+import styled from 'styled-components';
+
 import { SIGN_UP_REQUEST } from '../reducers/user';
 
+const ButtonZone = styled.div`
+  margin-top: 10px;
+`;
+
+const SignUpForm = styled(Form)`
+  padding: 10px;
+`;
+
 const SignUp = () => {
-  const [idDuplicated, setIdDuplicated] = useState(false);
+  const [idDuplicated] = useState(false);
   const [term, setTerm] = useState(false);
   const [termError, setTermError] = useState(false);
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -65,7 +75,7 @@ const SignUp = () => {
   }, []);
 
   return (
-    <Form style={{ padding: 10 }} onSubmit={onSubmit}>
+    <SignUpForm onSubmit={onSubmit}>
       <div>
         <label htmlFor="user-id">아이디</label>
         <br />
@@ -93,11 +103,11 @@ const SignUp = () => {
         {termError && <div>약관에 동의해주세요.</div>}
       </div>
       {signUpErrorReason && <div>{signUpErrorReason}</div>}
-      <div style={{ marginTop: 10 }}>
+      <ButtonZone>
         <Button type="primary" htmlType="submit" loading={isSigningUp}>가입하기</Button>
         {signedUp && <div>가입에 성공했습니다. 로그인해주세요.</div>}
-      </div>
-    </Form>
+      </ButtonZone>
+    </SignUpForm>
   );
 };
 

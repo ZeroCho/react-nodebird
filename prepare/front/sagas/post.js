@@ -18,7 +18,7 @@ import {
   LOAD_HASHTAG_POSTS_SUCCESS,
   LOAD_MAIN_POSTS_FAILURE,
   LOAD_MAIN_POSTS_REQUEST,
-  LOAD_MAIN_POSTS_SUCCESS,
+  LOAD_MAIN_POSTS_SUCCESS, LOAD_POST_FAILURE, LOAD_POST_REQUEST, LOAD_POST_SUCCESS,
   LOAD_USER_POSTS_FAILURE,
   LOAD_USER_POSTS_REQUEST,
   LOAD_USER_POSTS_SUCCESS,
@@ -47,6 +47,7 @@ function* loadMainPosts(action) {
     yield put({
       type: LOAD_MAIN_POSTS_SUCCESS,
       data: result.data,
+      count: action.count,
     });
   } catch (error) {
     console.error(error);
@@ -333,6 +334,30 @@ function* watchRemovePost() {
   yield takeEvery(REMOVE_POST_REQUEST, removePost);
 }
 
+function loadPostAPI(postId) {
+  return axios.get(`/post/${postId}`);
+}
+
+function* loadPost(action) {
+  try {
+    const result = yield call(loadPostAPI, action.data);
+    yield put({
+      type: LOAD_POST_SUCCESS,
+      data: result.data,
+    });
+  } catch (error) {
+    console.error(error);
+    yield put({
+      type: LOAD_POST_FAILURE,
+      error,
+    });
+  }
+}
+
+function* watchLoadPost() {
+  yield takeEvery(LOAD_POST_REQUEST, loadPost);
+}
+
 export default function* postSaga() {
   yield all([
     fork(watchLoadMainPosts),
@@ -346,5 +371,6 @@ export default function* postSaga() {
     fork(watchLoadComments),
     fork(watchAddComment),
     fork(watchRemovePost),
+    fork(watchLoadPost),
   ]);
 }

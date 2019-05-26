@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import App, { Container } from 'next/app';
 import { applyMiddleware, compose, createStore } from 'redux';
 import withRedux from 'next-redux-wrapper';
@@ -8,6 +7,7 @@ import PropTypes from 'prop-types';
 import createSagaMiddleware from 'redux-saga';
 import withReduxSaga from 'next-redux-saga';
 import axios from 'axios';
+import Helmet from 'react-helmet';
 
 import AppLayout from '../containers/AppLayout';
 import reducer from '../reducers';
@@ -18,7 +18,12 @@ class NodeBird extends App {
   static propTypes = {
     Component: PropTypes.elementType.isRequired,
     store: PropTypes.object.isRequired,
-    pageProps: PropTypes.object.isRequired,
+    pageProps: PropTypes.object,
+    isServer: PropTypes.bool.isRequired,
+  };
+
+  static defaultProps = {
+    pageProps: {},
   };
 
   static getInitialProps = async (context) => {
@@ -37,22 +42,42 @@ class NodeBird extends App {
     if (context.Component.getInitialProps) {
       pageProps = await context.Component.getInitialProps(ctx);
     }
-    return { pageProps };
+    return { pageProps, isServer: ctx.isServer };
   };
 
   render() {
-    const { store, pageProps, Component } = this.props;
+    const { store, pageProps, Component, isServer } = this.props;
     return (
       <Container>
         <Provider store={store}>
-          <Head>
-            <title>NodeBird</title>
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.css" />
-            <link rel="stylesheet" type="text/css" charSet="UTF-8" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css" />
-            <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css" />
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.js" />
-          </Head>
-          <AppLayout>
+          <Helmet
+            title="NodeBird"
+            htmlAttributes={{ lang: 'ko' }}
+            meta={[{
+              charset: 'UTF-8',
+            }, {
+              name: 'viewport', content: 'width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=yes,viewport-fit=cover',
+            }, {
+              'http-equiv': 'X-UA-Compatible', content: 'IE=edge',
+            }, {
+              name: 'description', content: '제로초의 노드버드 SNS',
+            }, {
+              property: 'og:type', content: 'website',
+            }]}
+            link={[{
+              rel: 'shortcut icon', href: '/favicon.ico',
+            }, {
+              rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.css',
+            }, {
+              rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css',
+            }, {
+              rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css',
+            }]}
+            script={[{
+              src: 'https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.js',
+            }]}
+          />
+          <AppLayout isServer={isServer}>
             <Component {...pageProps} />
           </AppLayout>
         </Provider>
@@ -63,7 +88,10 @@ class NodeBird extends App {
 
 const configureStore = (initialState, options) => {
   const sagaMiddleware = createSagaMiddleware();
-  const middlewares = [sagaMiddleware];
+  const middlewares = [sagaMiddleware, (store) => (next) => (action) => {
+    console.log(action);
+    next(action);
+  }];
   const enhancer = process.env.NODE_ENV === 'development'
     ? compose(
       applyMiddleware(...middlewares),

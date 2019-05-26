@@ -46,12 +46,17 @@ export const REMOVE_POST_REQUEST = 'POST/REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'POST/REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'POST/REMOVE_POST_FAILURE';
 
+export const LOAD_POST_REQUEST = 'POST/LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'POST/LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'POST/LOAD_POST_FAILURE';
+
 const initialState = {
   mainPosts: [],
   isAddingPost: false,
   addPostError: null,
   imagePaths: [],
   hasMorePost: true,
+  post: null,
 };
 
 export default (state = initialState, action) => {
@@ -66,6 +71,7 @@ export default (state = initialState, action) => {
         draft.mainPosts.unshift(action.data);
         draft.isAddingPost = false;
         draft.addPostError = null;
+        draft.imagePaths = [];
         break;
       }
       case ADD_POST_FAILURE: {
@@ -76,14 +82,16 @@ export default (state = initialState, action) => {
       case LOAD_USER_POSTS_REQUEST:
       case LOAD_HASHTAG_POSTS_REQUEST:
       case LOAD_MAIN_POSTS_REQUEST: {
-        draft.mainPosts = action.lastId === 0 ? [] : draft.mainPosts;
+        draft.mainPosts = !action.lastId ? [] : draft.mainPosts;
         draft.hasMorePost = action.lastId ? draft.hasMorePost : true;
         break;
       }
       case LOAD_USER_POSTS_SUCCESS:
       case LOAD_HASHTAG_POSTS_SUCCESS:
       case LOAD_MAIN_POSTS_SUCCESS: {
-        draft.mainPosts = action.data;
+        action.data.forEach((d) => {
+          draft.mainPosts.push(d);
+        });
         draft.imagePaths = [];
         draft.hasMorePost = action.data.length === 10;
         break;
@@ -137,6 +145,10 @@ export default (state = initialState, action) => {
       }
       case RETWEET_SUCCESS: {
         draft.mainPosts.unshift(action.data);
+        break;
+      }
+      case LOAD_POST_SUCCESS: {
+        draft.post = action.data;
         break;
       }
       default:

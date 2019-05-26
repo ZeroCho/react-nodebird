@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LOAD_MAIN_POSTS_REQUEST } from '../reducers/post';
 import PostCard from '../containers/PostCard';
@@ -9,16 +9,20 @@ const Home = () => {
   const hasMorePost = useSelector(state => state.post.hasMorePost);
   const { me } = useSelector(state => state.user);
   const dispatch = useDispatch();
+  const countRef = useRef([]);
 
   const onScroll = useCallback(() => {
-    console.log(window.scrollY, document.documentElement.clientHeight, window.scrollY + document.documentElement.clientHeight, document.documentElement.scrollHeight);
     if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
-      console.log(mainPosts, mainPosts[mainPosts.length - 1]);
       if (hasMorePost) {
-        dispatch({
-          type: LOAD_MAIN_POSTS_REQUEST,
-          lastId: mainPosts[mainPosts.length - 1].id,
-        });
+        const lastId = mainPosts[mainPosts.length - 1].id;
+        if (!countRef.current.includes(lastId)) {
+          dispatch({
+            type: LOAD_MAIN_POSTS_REQUEST,
+            lastId,
+            date: +new Date(),
+          });
+          countRef.current.push(lastId);
+        }
       }
     }
   }, [mainPosts.length, hasMorePost]);
