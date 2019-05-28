@@ -31,19 +31,22 @@ const PostImages = ({ images }) => {
         </div>
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
       </>
-  );
+    );
   }
   return (
     <>
-    <div>
-      <img src={`http://localhost:3065/${images[0].src}`} width="50%" onClick={onZoom} />
-      <div style={{ display: 'inline-block', width: '50%', textAlign: 'center', verticalAlign: 'middle' }} onClick={onZoom}>
-        <Icon type="plus" />
-        <br />
-        {images.length - 1}
-        개의 사진 더보기
+      <div>
+        <img src={`http://localhost:3065/${images[0].src}`} width="50%" onClick={onZoom} />
+        <div
+          style={{ display: 'inline-block', width: '50%', textAlign: 'center', verticalAlign: 'middle' }}
+          onClick={onZoom}
+        >
+          <Icon type="plus" />
+          <br />
+          {images.length - 1}
+          개의 사진 더보기
+        </div>
       </div>
-    </div>
       {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
     </>
   );

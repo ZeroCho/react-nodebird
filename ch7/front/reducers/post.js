@@ -9,6 +9,7 @@ export const initialState = {
   isAddingComment: false,
   addCommentErrorReason: '',
   commentAdded: false,
+  singlePost: null,
 };
 
 export const LOAD_MAIN_POSTS_REQUEST = 'LOAD_MAIN_POSTS_REQUEST';
@@ -56,6 +57,10 @@ export const RETWEET_FAILURE = 'RETWEET_FAILURE';
 export const REMOVE_POST_REQUEST = 'REMOVE_POST_REQUEST';
 export const REMOVE_POST_SUCCESS = 'REMOVE_POST_SUCCESS';
 export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
+
+export const LOAD_POST_REQUEST = 'LOAD_POST_REQUEST';
+export const LOAD_POST_SUCCESS = 'LOAD_POST_SUCCESS';
+export const LOAD_POST_FAILURE = 'LOAD_POST_FAILURE';
 
 export default (state = initialState, action) => {
   return produce(state, (draft) => {
@@ -121,7 +126,7 @@ export default (state = initialState, action) => {
       case LOAD_MAIN_POSTS_REQUEST:
       case LOAD_HASHTAG_POSTS_REQUEST:
       case LOAD_USER_POSTS_REQUEST: {
-        draft.mainPosts = action.lastId === 0 ? [] : draft.mainPosts;
+        draft.mainPosts = !action.lastId ? [] : draft.mainPosts;
         draft.hasMorePost = action.lastId ? draft.hasMorePost : true;
         break;
       }
@@ -181,6 +186,10 @@ export default (state = initialState, action) => {
         break;
       }
       case REMOVE_POST_FAILURE: {
+        break;
+      }
+      case LOAD_POST_SUCCESS: {
+        draft.singlePost = action.data;
         break;
       }
       default: {
