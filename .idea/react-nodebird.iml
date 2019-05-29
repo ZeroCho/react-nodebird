@@ -7,7 +7,10 @@
       <excludeFolder url="file://$MODULE_DIR$/ch5/front/.next" />
       <excludeFolder url="file://$MODULE_DIR$/ch6/front/.next" />
       <excludeFolder url="file://$MODULE_DIR$/ch7/front/.next" />
+      <excludeFolder url="file://$MODULE_DIR$/ch8/front/.next" />
       <excludeFolder url="file://$MODULE_DIR$/lecture/front/build" />
+      <excludeFolder url="file://$MODULE_DIR$/prepare/front/build" />
+      <excludeFolder url="file://$MODULE_DIR$/prepare/front/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>

@@ -1,8 +1,9 @@
 const withBundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const webpack = require('webpack');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = withBundleAnalyzer({
-  distDir: 'build',
+  distDir: '.next',
   analyzeServer: ['server', 'both'].includes(process.env.BUNDLE_ANALYZE),
   analyzeBrowser: ['browser', 'both'].includes(process.env.BUNDLE_ANALYZE),
   bundleAnalyzerConfig: {
@@ -16,18 +17,22 @@ module.exports = withBundleAnalyzer({
     },
   },
   webpack(config) {
-    const { module = {}, plugins = [] } = config;
+    const prod = process.env.NODE_ENV === 'production';
+    const plugins = [
+      ...config.plugins,
+      new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /^\.\/ko$/),
+    ];
+    if (prod) {
+      plugins.push(new CompressionPlugin()); // main.js.gz
+    }
     return {
       ...config,
-      devtool: process.env.NODE_ENV === 'production' ? 'hidden-source-map' : 'eval',
-      output: {
-        ...config.output,
-        publicPath: '/_next/',
-      },
+      mode: prod ? 'production' : 'development',
+      devtool: prod ? 'hidden-source-map' : 'eval',
       module: {
-        ...module,
+        ...config.module,
         rules: [
-          ...(module.rules || []),
+          ...config.module.rules,
           {
             loader: 'webpack-ant-icon-loader',
             enforce: 'pre',
@@ -35,24 +40,9 @@ module.exports = withBundleAnalyzer({
               require.resolve('@ant-design/icons/lib/dist'),
             ],
           },
-          {
-            test: /\.(ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-            loader: 'url-loader',
-            options: {
-              name: '[hash].[ext]',
-              limit: 20000,
-            },
-          },
-          {
-            test: /.*?.css$/,
-            loader: ['style-loader', 'css-loader'],
-          },
         ],
       },
-      plugins: [
-        ...plugins,
-        new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /^\.\/ko$/),
-      ],
+      plugins,
     };
   },
 });
