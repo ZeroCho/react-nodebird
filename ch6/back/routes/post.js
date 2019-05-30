@@ -53,8 +53,13 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => { // POST 
       where: { id: newPost.id },
       include: [{
         model: db.User,
+        attributes: ['id', 'nickname'],
       }, {
         model: db.Image,
+      }, {
+        model: db.User,
+        as: 'Likers',
+        attributes: ['id'],
       }],
     });
     res.json(fullPost);
