@@ -3,8 +3,9 @@ import axios from 'axios';
 
 import user from './user';
 import post from './post';
+import { backAddress } from '../server';
 
-axios.defaults.baseURL = 'http://localhost:3065/api';
+axios.defaults.baseURL = `${backAddress}/api`;
 
 export default function* rootSaga() {
   console.log('rootSaga');

@@ -15,7 +15,7 @@ const PostImages = ({ images }) => {
   if (images.length === 1) {
     return (
       <>
-        <img onClick={onZoom} alt="example" src={`http://localhost:3065/${images[0].src}`} />
+        <img onClick={onZoom} alt="example" src={images[0].src} />
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
       </>
     );
@@ -24,8 +24,8 @@ const PostImages = ({ images }) => {
     return (
       <>
         <div>
-          <img onClick={onZoom} alt="example" src={`http://localhost:3065/${images[0].src}`} width="50%" />
-          <img onClick={onZoom} alt="example" src={`http://localhost:3065/${images[1].src}`} width="50%" />
+          <img onClick={onZoom} alt="example" src={images[0].src} width="50%" />
+          <img onClick={onZoom} alt="example" src={images[1].src} width="50%" />
         </div>
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
       </>
@@ -34,9 +34,11 @@ const PostImages = ({ images }) => {
   return (
     <>
       <div>
-        <img onClick={onZoom} alt="example" src={`http://localhost:3065/${images[0].src}`} width="50%" />
-        <div onClick={onZoom}
-             style={{ display: 'inline-block', width: '50%', textAlign: 'center', verticalAlign: 'middle' }}>
+        <img onClick={onZoom} alt="example" src={images[0].src} width="50%" />
+        <div
+          onClick={onZoom}
+          style={{ display: 'inline-block', width: '50%', textAlign: 'center', verticalAlign: 'middle' }}
+        >
           <Icon type="plus" />
           <br />
           {images.length - 1}
