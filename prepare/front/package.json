@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "nodemon",
     "build": "cross-env BUNDLE_ANALYZE=both next build",
-    "prestart": "npm run build",
     "start": "cross-env NODE_ENV=production pm2 start npm --name 'next' -- start -p 80"
   },
   "author": "ZeroCho",
