@@ -51,6 +51,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.get('/', (req, res) => {
+  res.send('react nodebird sns의 api 서버입니다.');
+});
 app.use('/api/user', userAPIRouter);
 app.use('/api/post', postAPIRouter);
 app.use('/api/posts', postsAPIRouter);
