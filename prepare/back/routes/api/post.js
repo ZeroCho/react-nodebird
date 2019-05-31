@@ -1,28 +1,31 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const AWS = require('aws-sdk');
+const multerS3 = require('multer-s3');
 
 const { isLoggedIn } = require('../middleware');
 const db = require('../../models');
 
 const router = express.Router();
 
+AWS.config.update({
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  region: 'ap-northeast-2',
+});
+
 const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, file, cb) {
-      cb(null, 'uploads');
-    },
-    filename(req, file, cb) {
-      console.log(file);
-      const ext = path.extname(file.originalname);
-      cb(null, path.basename(file.originalname, ext) + new Date().valueOf() + ext);
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: 'react-nodebird',
+    key(req, file, cb) {
+      cb(null, `original/${+new Date()}${path.basename(file.originalname)}`);
     },
   }),
   limits: { fileSize: 20 * 1024 * 1024 },
 });
 router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
-  console.log(req.body);
-  console.log(req.user);
   try {
     // 나중에 @아이디도 파싱할 지 결정
     const hashtags = req.body.content.match(/#[^\s]+/g);
@@ -67,7 +70,7 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
 });
 
 router.post('/images', isLoggedIn, upload.array('image'), (req, res) => {
-  res.json(req.files.map(v => v.filename));
+  res.json(req.files.map(v => v.location));
 });
 
 router.get('/:id', async (req, res, next) => {

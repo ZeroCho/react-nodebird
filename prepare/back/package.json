@@ -11,6 +11,7 @@
   "author": "ZeroCho",
   "license": "MIT",
   "dependencies": {
+    "aws-sdk": "^2.466.0",
     "axios": "^0.18.0",
     "bcrypt": "^3.0.6",
     "cookie-parser": "^1.4.4",
