@@ -13,7 +13,9 @@ const dev = process.env.NODE_ENV !== 'production';
 const prod = process.env.NODE_ENV === 'production';
 const app = next({ dev });
 const handle = app.getRequestHandler();
-export const backAddress = process.env.NODE_ENV === 'production' ? 'http://13.209.223.243' : 'http://localhost:3065';
+const backAddress = process.env.NODE_ENV === 'production' ? 'http://13.209.223.243' : 'http://localhost:3065';
+
+export { backAddress };
 
 app.prepare().then(() => {
   const server = express();
