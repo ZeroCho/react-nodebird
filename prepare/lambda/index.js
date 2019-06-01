@@ -17,7 +17,7 @@ exports.handler = async (event, context, callback) => {
     console.log('original', s3Object.Body.length);
     const resizedImage = await Sharp(s3Object.Body)
       .resize(800, 800, {
-        fit: 'contain',
+        fit: 'inside',
       })
       .toFormat(requiredFormat)
       .toBuffer();
