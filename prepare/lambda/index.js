@@ -6,17 +6,19 @@ const s3 = new AWS.S3();
 exports.handler = (event, context, callback) => {
   const Bucket = event.Records[0].s3.bucket.name;
   const Key = event.Records[0].s3.object.key;
-  console.log('Key', Key);
   const filename = Key.split('/')[Key.split('/').length - 1];
+  const ext = Key.split('.')[Key.split('.').length - 1];
+  console.log('Key', Key, filename, ext);
   s3.getObject({ Bucket, Key }, (err, data) => {
     if (err) {
       console.error(err);
       return callback(err);
     }
-    return sharp(data.Body).resize(800).toBuffer()
+    console.log('getObject', data);
+    sharp(data.Body).resize(800).toBuffer()
       .then((buffer) => {
-        console.log(`thumb/${filename}`, buffer.length);
-        return s3.putObject({
+        console.log('resized', `thumb/${filename}`, buffer.length);
+        s3.putObject({
           Bucket,
           Key: `thumb/${filename}`,
           Body: buffer,
@@ -25,6 +27,7 @@ exports.handler = (event, context, callback) => {
             console.error(err);
             return callback(err);
           }
+          console.log('put done');
           return callback(null, `thumb/${filename}`);
         });
       });
