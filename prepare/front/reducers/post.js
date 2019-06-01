@@ -57,6 +57,8 @@ const initialState = {
   imagePaths: [],
   hasMorePost: true,
   post: null,
+  commentAdded: false,
+  isAddingComment: false,
 };
 
 export default (state = initialState, action) => {
@@ -138,9 +140,20 @@ export default (state = initialState, action) => {
         draft.mainPosts[postIndex].Comments = action.data.comments;
         break;
       }
+      case ADD_COMMENT_REQUEST: {
+        draft.isAddingComment = true;
+        draft.commentAdded = false;
+        break;
+      }
       case ADD_COMMENT_SUCCESS: {
+        draft.isAddingComment = false;
+        draft.commentAdded = true;
         const postIndex = draft.mainPosts.findIndex(v => v.id === action.data.postId);
-        draft.mainPosts[postIndex].Comments.push(action.data.comments);
+        draft.mainPosts[postIndex].Comments.push(action.data.comment);
+        break;
+      }
+      case ADD_COMMENT_FAILURE: {
+        draft.isAddingComment = false;
         break;
       }
       case RETWEET_SUCCESS: {

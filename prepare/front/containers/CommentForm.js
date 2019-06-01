@@ -1,5 +1,5 @@
 import { Button, Form, Input } from 'antd';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import PropTypes from 'prop-types';
 import { ADD_COMMENT_REQUEST } from '../reducers/post';
@@ -8,6 +8,7 @@ const CommentForm = ({ post }) => {
   const { me } = useSelector(state => state.user);
   const [commentText, setCommentText] = useState('');
   const dispatch = useDispatch();
+  const { commentAdded, isAddingComment } = useSelector(state => state.post);
 
   const onSubmitComment = useCallback((e) => {
     e.preventDefault();
@@ -27,12 +28,14 @@ const CommentForm = ({ post }) => {
     setCommentText(e.target.value);
   }, []);
 
+  useEffect(() => {
+    setCommentText('');
+  }, [commentAdded === true]);
+
   return (
     <Form onSubmit={onSubmitComment}>
-      <Form.Item>
-        <Input.TextArea rows={4} value={commentText} onChange={onChangeCommentText} />
-      </Form.Item>
-      <Button type="primary" htmlType="submit">삐약</Button>
+      <Input.TextArea rows={4} value={commentText} onChange={onChangeCommentText} />
+      <Button type="primary" htmlType="submit" loading={isAddingComment}>삐약</Button>
     </Form>
   );
 };

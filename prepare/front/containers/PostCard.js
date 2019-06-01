@@ -17,6 +17,8 @@ import PostCardContent from '../components/PostCardContent';
 import PostImages from '../components/PostImages';
 import CommentForm from './CommentForm';
 
+moment.locale('ko');
+
 const PostCardWrapper = styled.div`
   margin-bottom: 20px;
 `;
@@ -165,12 +167,12 @@ const PostCard = memo(({ post }) => {
             itemLayout="horizontal"
             dataSource={post.Comments || []}
             renderItem={(item => (
-              <li>
+              <li key={item.id}>
                 <Comment
                   author={item.User.nickname}
                   avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
                   content={item.content}
-                  datetime={moment(item.createdAt).subtract(1, 'days').fromNow()}
+                  datetime={moment(item.createdAt).fromNow()}
                 />
               </li>
             ))}
