@@ -7,7 +7,7 @@
     "dev": "nodemon",
     "build": "cross-env BUNDLE_ANALYZE=both next build",
     "prestart": "next build",
-    "start": "cross-env NODE_ENV=production next start -p 80"
+    "start": "cross-env NODE_ENV=production pm2 start server.js"
   },
   "author": "ZeroCho",
   "license": "ISC",
