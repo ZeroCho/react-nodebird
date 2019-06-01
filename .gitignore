@@ -135,3 +135,4 @@ typings/
 # Serverless directories
 .serverless
 /front/build/
+react-nodebird.pem
