@@ -12,20 +12,21 @@ exports.handler = async (event, context, callback) => {
   try {
     const data = await s3.getObject({ Bucket, Key }).promise();
     console.log('getObject', data);
-    gm(data.Body).resize(800, 800, '^').quality(90).toBuffer(ext, async (err, buffer) => {
-      if (err) {
-        console.error(err);
-        return callback(err);
-      }
-      console.log('resized', `thumb/${filename}`, buffer.length);
-      await s3.putObject({
-        Bucket,
-        Key: `thumb/${filename}`,
-        Body: buffer,
-      }).promise();
-      console.log('put done');
-      return callback(null, `thumb/${filename}`);
-    });
+    gm(data.Body).resize(800, 800).quality(90)
+      .toBuffer(ext === 'jpg' ? 'jpeg' : ext, async (err, buffer) => {
+        if (err) {
+          console.error(err);
+          return callback(err);
+        }
+        console.log('resized', `thumb/${filename}`, buffer.length);
+        await s3.putObject({
+          Bucket,
+          Key: `thumb/${filename}`,
+          Body: buffer,
+        }).promise();
+        console.log('put done');
+        return callback(null, `thumb/${filename}`);
+      });
   } catch (err) {
     console.error(err);
     return callback(err);
