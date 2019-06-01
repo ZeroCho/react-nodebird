@@ -11,7 +11,7 @@ exports.handler = (event, context, callback) => {
   console.log('Key', Key, filename, ext);
   s3.getObject({ Bucket, Key }, (err, data) => {
     if (err) {
-      console.error(err);
+      console.log(err);
       return callback(err);
     }
     console.log('getObject', data);
@@ -24,7 +24,7 @@ exports.handler = (event, context, callback) => {
           Body: buffer,
         }, (err) => {
           if (err) {
-            console.error(err);
+            console.log(err);
             return callback(err);
           }
           console.log('put done');
@@ -32,7 +32,8 @@ exports.handler = (event, context, callback) => {
         });
       })
       .catch((err) => {
-        console.error(err);
+        console.log(err);
+        return callback(err);
       });
   });
 };
