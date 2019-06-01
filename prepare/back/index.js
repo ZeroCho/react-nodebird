@@ -4,7 +4,7 @@ const hpp = require('hpp');
 const helmet = require('helmet');
 const session = require('express-session');
 const cookie = require('cookie-parser');
-const passport= require('passport');
+const passport = require('passport');
 const cors = require('cors');
 const path = require('path');
 
@@ -28,6 +28,7 @@ if (prod) {
   app.use(morgan('combined'));
   app.use(cors({
     origin: 'nodebird.com',
+    credentials: true,
   }));
 } else {
   app.use(cors({

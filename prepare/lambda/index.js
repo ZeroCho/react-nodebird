@@ -9,32 +9,31 @@ exports.handler = (event, context, callback) => {
   const filename = Key.split('/')[Key.split('/').length - 1];
   const ext = Key.split('.')[Key.split('.').length - 1];
   console.log('Key', Key, filename, ext);
-  s3.getObject({ Bucket, Key }, (err, data) => {
+  s3.getObject({ Bucket, Key }, async (err, data) => {
     if (err) {
       console.log(err);
       return callback(err);
     }
     console.log('getObject', data);
-    console.log('sharp', sharp, sharp(data.Body));
-    sharp(data.Body).resize(800).toBuffer()
-      .then((buffer) => {
-        console.log('resized', `thumb/${filename}`, buffer.length);
-        s3.putObject({
-          Bucket,
-          Key: `thumb/${filename}`,
-          Body: buffer,
-        }, (err) => {
-          if (err) {
-            console.log(err);
-            return callback(err);
-          }
-          console.log('put done');
-          return callback(null, `thumb/${filename}`);
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        return callback(err);
+    console.log('sharp', sharp(data.Body).resize);
+    try {
+      const buffer = await sharp(data.Body).resize(800).toBuffer();
+      console.log('resized', `thumb/${filename}`, buffer.length);
+      s3.putObject({
+        Bucket,
+        Key: `thumb/${filename}`,
+        Body: buffer,
+      }, (err) => {
+        if (err) {
+          console.log(err);
+          return callback(err);
+        }
+        console.log('put done');
+        return callback(null, `thumb/${filename}`);
       });
+    } catch (err) {
+      console.log(err);
+      return callback(err);
+    }
   });
 };
