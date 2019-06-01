@@ -16,17 +16,17 @@ const Post = ({ id }) => {
         }, {
           property: 'og:description', content: post.content,
         }, {
-          property: 'og:image', content: post.Images[0] && `http://localhost:3065/${post.Images[0].src}`,
+          property: 'og:image', content: post.Images[0] && post.Images[0].src.replace(/original\//, 'thumb/'),
         }, {
           property: 'og:title', content: `${post.User.nickname}님의 게시글`,
         }, {
-          property: 'og:url', content: `http://localhost:3060/post/${id}`,
+          property: 'og:url', content: process.env.NODE_ENV === 'production' ? `http://nodebird.com/post/${id}` : `http://localhost:3060/post/${id}`,
         }]}
       />
       <div>
         {post.content}
         {post.User.nickname}
-        {post.Images[0] && <img src={`http://localhost:3065/${post.Images[0].src}`} />}
+        {post.Images[0] && <img src={post.Images[0].src.replace(/original\//, 'thumb/')} />}
       </div>
     </>
   );
