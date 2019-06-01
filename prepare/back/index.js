@@ -21,7 +21,8 @@ passportConfig();
 db.sequelize.sync({ force: false });
 app.set('port', process.env.PORT || 3065);
 
-if (process.env.NODE_ENV === 'production') {
+const prod = process.env.NODE_ENV === 'production';
+if (prod) {
   app.use(hpp());
   app.use(helmet());
   app.use(morgan('combined'));
@@ -46,6 +47,7 @@ app.use(session({
   name: 'rnbck',
   cookie: {
     httpOnly: true,
+    domain: prod && '.nodebird.com',
   },
 }));
 app.use(passport.initialize());

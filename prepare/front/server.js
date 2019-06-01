@@ -34,6 +34,7 @@ app.prepare().then(() => {
     cookie: {
       httpOnly: true,
       secure: prod,
+      domain: prod && '.nodebird.com',
     },
     name: 'rnbck',
   }));
