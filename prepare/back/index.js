@@ -27,7 +27,7 @@ if (prod) {
   app.use(helmet());
   app.use(morgan('combined'));
   app.use(cors({
-    origin: '배포 주소 여기에 넣기',
+    origin: 'nodebird.com',
   }));
 } else {
   app.use(cors({
