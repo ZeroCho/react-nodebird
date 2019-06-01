@@ -15,6 +15,7 @@ exports.handler = (event, context, callback) => {
       return callback(err);
     }
     console.log('getObject', data);
+    console.log('sharp', sharp, sharp(data.Body));
     sharp(data.Body).resize(800).toBuffer()
       .then((buffer) => {
         console.log('resized', `thumb/${filename}`, buffer.length);
