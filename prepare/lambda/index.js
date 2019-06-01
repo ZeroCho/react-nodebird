@@ -30,6 +30,9 @@ exports.handler = (event, context, callback) => {
           console.log('put done');
           return callback(null, `thumb/${filename}`);
         });
+      })
+      .catch((err) => {
+        console.error(err);
       });
   });
 };
