@@ -12,7 +12,7 @@ exports.handler = async (event, context, callback) => {
   try {
     const s3Object = await S3.getObject({ // S3에서 이미지를 받아 옵니다.
       Bucket,
-      Key: filename,
+      Key,
     }).promise();
     console.log(s3Object.Body.length);
     const resizedImage = await Sharp(s3Object.Body)
