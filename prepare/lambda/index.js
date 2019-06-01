@@ -14,17 +14,17 @@ exports.handler = async (event, context, callback) => {
       Bucket,
       Key,
     }).promise();
-    console.log(s3Object.Body.length);
+    console.log('original', s3Object.Body.length);
     const resizedImage = await Sharp(s3Object.Body)
       .resize(800, 800)
       .toFormat(requiredFormat)
       .toBuffer();
-    console.log(resizedImage);
+    console.log('resize', resizedImage.length);
     await S3.putObject({
       Body: resizedImage,
       Bucket,
       Key: `thumb/${filename}`,
-    });
+    }).promise();
     console.log('put');
     return callback(null, `thumb/${filename}`);
   } catch (error) {
