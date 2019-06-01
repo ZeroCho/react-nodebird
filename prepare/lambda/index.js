@@ -15,6 +15,7 @@ exports.handler = (event, context, callback) => {
     }
     return sharp(data.Body).resize(800).toBuffer()
       .then((buffer) => {
+        console.log(`thumb/${filename}`, buffer.length);
         return s3.putObject({
           Bucket,
           Key: `thumb/${filename}`,
