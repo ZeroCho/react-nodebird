@@ -45,6 +45,8 @@ const NodeBird = ({ Component, store, pageProps }) => {
             name: 'og:description', content: '제로초의 NodeBird SNS',
           }, {
             property: 'og:type', content: 'website',
+          }, {
+            property: 'og:image', content: 'http://localhost:3060/favicon.ico',
           }]}
           link={[{
             rel: 'shortcut icon', href: '/favicon.ico',

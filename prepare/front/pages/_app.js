@@ -63,6 +63,8 @@ class NodeBird extends App {
               name: 'description', content: '제로초의 노드버드 SNS',
             }, {
               property: 'og:type', content: 'website',
+            }, {
+              property: 'og:image', content: 'http://nodebird.com/favicon.ico',
             }]}
             link={[{
               rel: 'shortcut icon', href: '/favicon.ico',
