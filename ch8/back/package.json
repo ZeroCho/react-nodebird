@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon"
+    "dev": "nodemon",
+    "start": "pm2 start index"
   },
   "author": "ZeroCho",
   "license": "MIT",
