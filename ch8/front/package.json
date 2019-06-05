@@ -7,7 +7,7 @@
     "dev": "nodemon",
     "build": "cross-env ANALYZE=true next build",
     "prestart": "npm run build",
-    "start": "cross-env NODE_ENV=production next start"
+    "start": "cross-env NODE_ENV=production PORT=80 pm2 start server"
   },
   "author": "ZeroCho",
   "license": "MIT",
@@ -27,6 +27,7 @@
     "next": "^8.1.0",
     "next-redux-saga": "^4.0.2",
     "next-redux-wrapper": "^3.0.0-alpha.2",
+    "pm2": "^3.5.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
