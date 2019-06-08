@@ -67,10 +67,6 @@ app.use('/api/post', postAPIRouter);
 app.use('/api/posts', postsAPIRouter);
 app.use('/api/hashtag', hashtagAPIRouter);
 
-app.listen(prod ? process.env.PORT : 3065, () => {
-  console.log(`server is running on ${process.env.PORT}`);
-});
-
 if (prod) {
   const lex = require('greenlock-express').create({
     version: 'draft-11',
@@ -92,6 +88,6 @@ if (prod) {
   http.createServer(lex.middleware(require('redirect-https')())).listen(80);
 } else {
   app.listen(prod ? process.env.PORT : 3065, () => {
-    console.log(`next+express running on port ${process.env.PORT}`);
+    console.log(`server is running on ${process.env.PORT}`);
   });
 }
