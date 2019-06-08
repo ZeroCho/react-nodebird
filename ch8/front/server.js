@@ -53,7 +53,7 @@ app.prepare().then(() => {
     const lex = require('greenlock-express').create({
       version: 'draft-11',
       configDir: '/etc/letsencrypt', // 또는 ~/letsencrypt/etc
-      server: 'https://acme-staging-v02.api.letsencrypt.org/directory',
+      server: 'https://acme-v02.api.letsencrypt.org/directory',
       approveDomains: (opts, certs, cb) => {
         if (certs) {
           opts.domains = ['nodebird.com', 'www.nodebird.com'];
