@@ -28,7 +28,7 @@ if (prod) {
   app.use(helmet());
   app.use(morgan('combined'));
   app.use(cors({
-    origin: 'http://nodebird.com',
+    origin: 'https://nodebird.com',
     credentials: true,
   }));
 } else {
@@ -49,7 +49,7 @@ app.use(expressSession({
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
-    secure: false, // https를 쓸 때 true
+    secure: prod, // https를 쓸 때 true
     domain: prod && '.nodebird.com',
   },
   name: 'rnbck',

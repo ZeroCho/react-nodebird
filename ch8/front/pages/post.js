@@ -19,9 +19,9 @@ const Post = ({ id }) => {
         }, {
           property: 'og:description', content: singlePost.content,
         }, {
-          property: 'og:image', content: singlePost.Images[0] ? singlePost.Images[0].src : 'http://nodebird.com/favicon.ico',
+          property: 'og:image', content: singlePost.Images[0] ? singlePost.Images[0].src : 'https://nodebird.com/favicon.ico',
         }, {
-          property: 'og:url', content: `http://nodebird.com/post/${id}`,
+          property: 'og:url', content: `https://nodebird.com/post/${id}`,
         }]}
       />
       <div itemScope="content">{singlePost.content}</div>
