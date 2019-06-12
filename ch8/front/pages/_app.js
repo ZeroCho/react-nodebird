@@ -57,9 +57,6 @@ const NodeBird = ({ Component, store, pageProps }) => {
           }, {
             rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css',
           }]}
-          script={[{
-            src: 'https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.js',
-          }]}
         />
         <AppLayout>
           <Component {...pageProps} />
