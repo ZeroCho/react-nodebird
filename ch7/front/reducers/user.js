@@ -69,7 +69,7 @@ export default (state = initialState, action) => {
         break;
       }
       case LOG_IN_SUCCESS: {
-        draft.isLoggingIn = true;
+        draft.isLoggingIn = false;
         draft.logInErrorReason = '';
         draft.me = action.data;
         break;
