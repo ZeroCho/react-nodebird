@@ -10,8 +10,10 @@ const PostForm = () => {
   const imageInput = useRef();
 
   useEffect(() => {
-    setText('');
-  }, [postAdded === true]);
+    if (postAdded) {
+      setText('');
+    }
+  }, [postAdded]);
 
   const onSubmitForm = useCallback((e) => {
     e.preventDefault();
