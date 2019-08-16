@@ -1,6 +1,13 @@
-import { all, fork, takeLatest, takeEvery, call, put, take, delay } from 'redux-saga/effects';
+import { all, delay, fork, put, takeEvery } from 'redux-saga/effects';
 import axios from 'axios';
-import { LOG_IN_REQUEST, LOG_IN_SUCCESS, LOG_IN_FAILURE, SIGN_UP_REQUEST, SIGN_UP_FAILURE, SIGN_UP_SUCCESS } from '../reducers/user';
+import {
+  LOG_IN_FAILURE,
+  LOG_IN_REQUEST,
+  LOG_IN_SUCCESS,
+  SIGN_UP_FAILURE,
+  SIGN_UP_REQUEST,
+  SIGN_UP_SUCCESS,
+} from '../reducers/user';
 
 function loginAPI() {
   // 서버에 요청을 보내는 부분
@@ -43,7 +50,7 @@ function* signUp() {
     console.error(e);
     yield put({
       type: SIGN_UP_FAILURE,
-      error: e
+      error: e,
     });
   }
 }
