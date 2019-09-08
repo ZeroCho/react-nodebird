@@ -72,6 +72,7 @@ if (prod) {
     version: 'draft-11',
     configDir: '/etc/letsencrypt', // 또는 ~/letsencrypt/etc
     server: 'https://acme-v02.api.letsencrypt.org/directory',
+    email: 'zerohch0@gmail.com',
     approveDomains: (opts, certs, cb) => {
       if (certs) {
         opts.domains = ['api.nodebird.com'];
