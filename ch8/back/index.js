@@ -28,7 +28,7 @@ if (prod) {
   app.use(helmet());
   app.use(morgan('combined'));
   app.use(cors({
-    origin: 'https://nodebird.com',
+    origin: ['https://nodebird.com', 'http://vue.nodebird.com'],
     credentials: true,
   }));
 } else {
