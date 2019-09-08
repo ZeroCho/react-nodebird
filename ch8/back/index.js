@@ -73,6 +73,7 @@ if (prod) {
     configDir: '/etc/letsencrypt', // 또는 ~/letsencrypt/etc
     server: 'https://acme-v02.api.letsencrypt.org/directory',
     email: 'zerohch0@gmail.com',
+    store: require('greenlock-store-fs'),
     approveDomains: (opts, certs, cb) => {
       if (certs) {
         opts.domains = ['api.nodebird.com'];

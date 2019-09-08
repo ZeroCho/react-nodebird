@@ -20,6 +20,7 @@
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "greenlock-express": "^2.7.9",
+    "greenlock-store-fs": "^3.0.2",
     "helmet": "^3.18.0",
     "hpp": "^0.2.2",
     "morgan": "^1.9.1",
