@@ -29,7 +29,7 @@ app.prepare().then(() => {
     secret: process.env.COOKIE_SECRET,
     cookie: {
       httpOnly: true,
-      secure: false,
+      secure: prod,
     },
   }));
 
