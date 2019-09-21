@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import AppLayout from '../components/AppLayout';
 import Head from 'next/head';
 import { Button, Checkbox, Form, Input } from 'antd';
+import AppLayout from '../components/AppLayout';
 
 const Signup = () => {
   const [passwordCheck, setPasswordCheck] = useState('');

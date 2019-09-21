@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser');
 const expressSession = require('express-session');
 const dotenv = require('dotenv');
 const path = require('path');
+const https = require('https');
+const http = require('http');
 
 const dev = process.env.NODE_ENV !== 'production';
 const prod = process.env.NODE_ENV === 'production';
@@ -47,7 +49,30 @@ app.prepare().then(() => {
     return handle(req, res);
   });
 
-  server.listen(prod ? process.env.PORT : 3060, () => {
-    console.log(`next+express running on port ${prod ? process.env.PORT : 3060}`);
-  });
+  if (prod) {
+    const lex = require('greenlock-express').create({
+      version: 'draft-11',
+      configDir: '/etc/letsencrypt', // 또는 ~/letsencrypt/etc
+      server: 'https://acme-v02.api.letsencrypt.org/directory',
+      email: 'zerohch0@gmail.com',
+      store: require('greenlock-store-fs'),
+      approveDomains: (opts, certs, cb) => {
+        if (certs) {
+          opts.domains = ['nodebird.com', 'www.nodebird.com'];
+        } else {
+          opts.email = 'zerohch0@gmail.com';
+          opts.agreeTos = true;
+        }
+        cb(null, { options: opts, certs });
+      },
+      renewWithin: 81 * 24 * 60 * 60 * 1000,
+      renewBy: 80 * 24 * 60 * 60 * 1000,
+    });
+    https.createServer(lex.httpsOptions, lex.middleware(server)).listen(443);
+    http.createServer(lex.middleware(require('redirect-https')())).listen(80);
+  } else {
+    server.listen(prod ? process.env.PORT : 3060, () => {
+      console.log(`next+express running on port ${prod ? process.env.PORT : 3060}`);
+    });
+  }
 });

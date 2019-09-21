@@ -1,0 +1,43 @@
+{
+  "name": "react-nodebird-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon",
+    "start": "cross-env NODE_ENV=production PORT=80 pm2 start index.js"
+  },
+  "author": "ZeroCho",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.468.0",
+    "axios": "^0.18.0",
+    "bcrypt": "^3.0.6",
+    "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
+    "cross-env": "^5.2.0",
+    "dotenv": "^8.0.0",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "greenlock-express": "^2.7.9",
+    "greenlock-store-fs": "^3.0.2",
+    "helmet": "^3.18.0",
+    "hpp": "^0.2.2",
+    "morgan": "^1.9.1",
+    "multer": "^1.4.1",
+    "multer-s3": "^2.9.0",
+    "mysql2": "^1.6.5",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "pm2": "^3.5.1",
+    "redirect-https": "^1.3.0",
+    "sequelize": "^5.8.6",
+    "sequelize-cli": "^5.4.0"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "nodemon": "^1.19.0"
+  }
+}
