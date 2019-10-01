@@ -1,7 +1,7 @@
 import { all, fork, takeLatest, put, delay, call } from 'redux-saga/effects';
 import axios from 'axios';
-import { ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS } from '../../../lecture/front/reducers/post';
 import {
+  ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS,
   ADD_COMMENT_FAILURE,
   ADD_COMMENT_REQUEST,
   ADD_COMMENT_SUCCESS, LOAD_MAIN_POSTS_FAILURE, LOAD_MAIN_POSTS_REQUEST,
