@@ -14,19 +14,19 @@ const Hashtag = ({ tag }) => {
       if (hasMorePost) {
         dispatch({
           type: LOAD_HASHTAG_POSTS_REQUEST,
-          lastId: mainPosts[mainPosts.length - 1].id,
+          lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
           data: tag,
         });
       }
     }
-  }, [hasMorePost, mainPosts.length]);
+  }, [hasMorePost, mainPosts.length, tag]);
 
   useEffect(() => {
     window.addEventListener('scroll', onScroll);
     return () => {
       window.removeEventListener('scroll', onScroll);
     };
-  }, [mainPosts.length]);
+  }, [mainPosts.length, hasMorePost, tag]);
 
   return (
     <div>
@@ -42,7 +42,7 @@ Hashtag.propTypes = {
 };
 
 Hashtag.getInitialProps = async (context) => {
-  const tag = context.query.tag;
+  const { tag } = context.query;
   console.log('hashtag getInitialProps', tag);
   context.store.dispatch({
     type: LOAD_HASHTAG_POSTS_REQUEST,

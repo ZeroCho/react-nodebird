@@ -23,7 +23,7 @@ exports.handler = async (event, context, callback) => {
       .toFormat(requiredFormat)
       .toBuffer();
     console.log('resize', resizedImage.length);
-    await S3.putObject({
+    await S3.putObject({ // thumb 폴더에 저장
       Body: resizedImage,
       Bucket,
       Key: `thumb/${filename}`,
