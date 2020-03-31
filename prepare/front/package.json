@@ -25,7 +25,7 @@
     "immer": "^3.1.2",
     "moment": "^2.24.0",
     "morgan": "^1.9.1",
-    "next": "^8.1.0",
+    "next": "^9.3.2",
     "next-redux-saga": "^4.0.2",
     "next-redux-wrapper": "^3.0.0-alpha.2",
     "pm2": "^3.5.1",
