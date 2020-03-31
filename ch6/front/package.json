@@ -18,7 +18,7 @@
     "express": "^4.16.4",
     "express-session": "^1.16.1",
     "morgan": "^1.9.1",
-    "next": "^8.1.0",
+    "next": "^9.3.2",
     "next-redux-wrapper": "^3.0.0-alpha.2",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
