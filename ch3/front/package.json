@@ -11,21 +11,21 @@
   "author": "ZeroCho",
   "license": "MIT",
   "dependencies": {
-    "antd": "^3.17.0",
-    "next": "^8.1.0",
-    "next-redux-wrapper": "^3.0.0-alpha.2",
+    "antd": "^4.2.5",
+    "next": "^9.4.4",
+    "next-redux-wrapper": "^6.0.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-redux": "^7.1.0-alpha.4",
-    "redux": "^4.0.1"
+    "react-redux": "^7.2.0",
+    "redux": "^4.0.5"
   },
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^7.1.0",
     "eslint-plugin-import": "^2.17.2",
     "eslint-plugin-react": "^7.12.4",
-    "eslint-plugin-react-hooks": "^1.6.0",
-    "nodemon": "^1.19.0",
+    "eslint-plugin-react-hooks": "^4.0.4",
+    "nodemon": "^2.0.4",
     "webpack": "^4.30.0"
   }
 }

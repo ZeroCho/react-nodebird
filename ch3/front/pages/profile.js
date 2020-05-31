@@ -1,10 +1,12 @@
 import React from 'react';
 import { Button, List, Card, Icon } from 'antd';
+import {} from '@ant-design/icons';
 import NicknameEditForm from '../components/NicknameEditForm';
+import AppLayout from '../components/AppLayout';
 
 const Profile = () => {
   return (
-    <div>
+    <AppLayout>
       <NicknameEditForm />
       <List
         style={{ marginBottom: '20px' }}
@@ -34,7 +36,7 @@ const Profile = () => {
           </List.Item>
         )}
       />
-    </div>
+    </AppLayout>
   );
 };
 

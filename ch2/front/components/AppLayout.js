@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import PropTypes from 'prop-types';
 import { Col, Input, Menu, Row } from 'antd';
+
 import LoginForm from './LoginForm';
 import UserProfile from './UserProfile';
 
@@ -33,7 +34,7 @@ const AppLayout = ({ children }) => {
           {children}
         </Col>
         <Col xs={24} md={6}>
-          <Link href="https://www.zerocho.com" ><a target="_blank">Made by ZeroCho</a></Link>
+          <a href="https://www.zerocho.com" target="_blank" rel="noreferrer noopener">Made by ZeroCho</a>
         </Col>
       </Row>
     </div>
@@ -41,7 +42,7 @@ const AppLayout = ({ children }) => {
 };
 
 AppLayout.propTypes = {
-  children: PropTypes.node,
-};
+  children: PropTypes.node.isRequired,
+}
 
 export default AppLayout;

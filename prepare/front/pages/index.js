@@ -1,13 +1,12 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { LOAD_MAIN_POSTS_REQUEST } from '../reducers/post';
-import PostCard from '../containers/PostCard';
+import React, { useEffect, useCallback, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import PostForm from '../containers/PostForm';
+import PostCard from '../containers/PostCard';
+import { LOAD_MAIN_POSTS_REQUEST } from '../reducers/post';
 
 const Home = () => {
-  const mainPosts = useSelector(state => state.post.mainPosts);
-  const hasMorePost = useSelector(state => state.post.hasMorePost);
-  const { me } = useSelector(state => state.user);
+  const { me } = useSelector((state) => state.user);
+  const { mainPosts, hasMorePost } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const countRef = useRef([]);
 
@@ -19,35 +18,33 @@ const Home = () => {
           dispatch({
             type: LOAD_MAIN_POSTS_REQUEST,
             lastId,
-            date: +new Date(),
           });
           countRef.current.push(lastId);
         }
       }
     }
-  }, [mainPosts.length, hasMorePost]);
+  }, [hasMorePost, mainPosts.length]);
 
   useEffect(() => {
     window.addEventListener('scroll', onScroll);
     return () => {
       window.removeEventListener('scroll', onScroll);
+      countRef.current = [];
     };
-  }, [mainPosts.length]);
+  }, [hasMorePost, mainPosts.length]);
 
   return (
     <div>
-      {me && (
-        <PostForm />
-      )}
-      {mainPosts.map(c => (
-        <PostCard key={c.createdAt + c.User.id} post={c} />
+      {me && <PostForm />}
+      {mainPosts.map((c) => (
+        <PostCard key={c.id} post={c} />
       ))}
     </div>
   );
 };
 
 Home.getInitialProps = async (context) => {
-  console.log('home getInitialProps', Object.keys(context));
+  console.log(Object.keys(context));
   context.store.dispatch({
     type: LOAD_MAIN_POSTS_REQUEST,
   });

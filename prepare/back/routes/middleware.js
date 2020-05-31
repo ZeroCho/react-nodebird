@@ -1,14 +1,15 @@
 exports.isLoggedIn = (req, res, next) => {
-  console.log(req.cookie);
   if (req.isAuthenticated()) {
-    return next();
+    next();
+  } else {
+    res.status(401).send('로그인이 필요합니다.');
   }
-  res.status(401).json({ reason: '로그인이 필요합니다.' });
 };
 
 exports.isNotLoggedIn = (req, res, next) => {
   if (!req.isAuthenticated()) {
-    return next();
+    next();
+  } else {
+    res.status(401).send('로그인한 사용자는 접근할 수 없습니다.');
   }
-  res.status(401).json({ reason: '로그아웃하셔야 합니다.' });
 };

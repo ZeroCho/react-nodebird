@@ -2,9 +2,10 @@ import React from 'react';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
 import withRedux from 'next-redux-wrapper';
-import AppLayout from '../components/AppLayout';
 import { applyMiddleware, compose, createStore } from 'redux';
 import { Provider } from 'react-redux';
+import 'antd/dist/antd.css';
+
 import reducer from '../reducers';
 
 const NodeBird = ({ Component, store }) => {
@@ -12,11 +13,8 @@ const NodeBird = ({ Component, store }) => {
     <Provider store={store}>
       <Head>
         <title>NodeBird</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.css" />
       </Head>
-      <AppLayout>
-        <Component />
-      </AppLayout>
+      <Component />
     </Provider>
   );
 };

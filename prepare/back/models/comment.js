@@ -1,7 +1,7 @@
 module.exports = (sequelize, DataTypes) => {
   const Comment = sequelize.define('Comment', {
     content: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT, // 긴 글
       allowNull: false,
     },
   }, {

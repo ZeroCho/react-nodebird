@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Menu, Input, Button } from 'antd';
+import PropTypes from 'prop-types';
 
 const AppLayout = ({ children }) => {
   return (
@@ -12,10 +13,15 @@ const AppLayout = ({ children }) => {
           <Input.Search enterButton style={{ verticalAlign: 'middle' }} />
         </Menu.Item>
       </Menu>
-      <Link href="/signup"><a><Button>회원가입</Button></a></Link>
+      <Link href="/signup">
+        <a><Button>회원가입</Button></a>
+      </Link>
       {children}
     </div>
   );
 };
+AppLayout.propTypes = {
+  children: PropTypes.node.isRequired,
+}
 
 export default AppLayout;

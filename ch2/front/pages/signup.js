@@ -1,6 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { Form, Input, Checkbox, Button } from 'antd';
 import PropTypes from 'prop-types';
+import AppLayout from '../components/AppLayout';
+import useInput from '../hooks/useInput';
 
 const TextInput = ({ value }) => {
   return (
@@ -10,14 +12,6 @@ const TextInput = ({ value }) => {
 
 TextInput.propTypes = {
   value: PropTypes.string,
-};
-
-export const useInput = (initValue = null) => {
-  const [value, setter] = useState(initValue);
-  const handler = useCallback((e) => {
-    setter(e.target.value);
-  }, []);
-  return [value, handler];
 };
 
 const Signup = () => {
@@ -51,7 +45,7 @@ const Signup = () => {
   }, []);
 
   return (
-    <>
+    <AppLayout>
       <Form onSubmit={onSubmit} style={{ padding: 10 }}>
         <TextInput value="135135" />
         <div>
@@ -89,7 +83,7 @@ const Signup = () => {
           <Button type="primary" htmlType="submit">가입하기</Button>
         </div>
       </Form>
-    </>
+    </AppLayout>
   );
 };
 

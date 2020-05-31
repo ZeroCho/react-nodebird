@@ -1,15 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { Form, Input, Checkbox, Button } from 'antd';
 import { useDispatch } from 'react-redux';
-import { signUpAction } from '../reducers/user';
 
-export const useInput = (initValue = null) => {
-  const [value, setter] = useState(initValue);
-  const handler = useCallback((e) => {
-    setter(e.target.value);
-  }, []);
-  return [value, handler];
-};
+import { signUpAction } from '../reducers/user';
+import AppLayout from '../components/AppLayout';
+import useInput from '../hooks/useInput';
 
 const Signup = () => {
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -22,8 +17,7 @@ const Signup = () => {
   const [password, onChangePassword] = useInput('');
   const dispatch = useDispatch();
 
-  const onSubmit = useCallback((e) => {
-    e.preventDefault();
+  const onSubmit = useCallback(() => {
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
@@ -48,8 +42,8 @@ const Signup = () => {
   }, []);
 
   return (
-    <>
-      <Form onSubmit={onSubmit} style={{ padding: 10 }}>
+    <AppLayout>
+      <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <div>
           <label htmlFor="user-id">아이디</label>
           <br />
@@ -79,7 +73,7 @@ const Signup = () => {
           <Button type="primary" htmlType="submit">가입하기</Button>
         </div>
       </Form>
-    </>
+    </AppLayout>
   );
 };
 
