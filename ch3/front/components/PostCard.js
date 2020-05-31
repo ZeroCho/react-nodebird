@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { RetweetOutlined, HeartTwoTone, HeartOutlined, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
 
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
@@ -16,6 +17,8 @@ const CardWrapper = styled.div`
 
 const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
+  const id = useSelector((state) => state.user.me && state.user.me.id);
+
   const [liked, setLiked] = useState(false);
 
   const onToggleLike = useCallback(() => {
@@ -40,9 +43,14 @@ const PostCard = ({ post }) => {
             key="ellipsis"
             content={(
               <Button.Group>
-                <Button>신고</Button>
-                <Button>수정</Button>
-                <Button danger>삭제</Button>
+                {id && post.UserId === id
+                  ? (
+                    <>
+                      <Button>수정</Button>
+                      <Button type="danger">삭제</Button>
+                    </>
+                  )
+                  : <Button>신고</Button>}
               </Button.Group>
             )}
           >

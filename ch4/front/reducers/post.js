@@ -6,8 +6,24 @@ export const initialState = {
       nickname: '제로초',
     },
     content: '첫 번째 게시글',
-    img: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
-    Comments: [],
+    Images: [{
+      src: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
+    }, {
+      src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
+    }, {
+      src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
+    }],
+    Comments: [{
+      User: {
+        nickname: 'nero',
+      },
+      content: '우와 개정판이 나왔군요~',
+    }, {
+      User: {
+        nickname: 'hero',
+      },
+      content: '얼른 사고싶어요~',
+    }],
   }], // 화면에 보일 포스트들
   imagePaths: [], // 미리보기 이미지 경로
   addPostErrorReason: '', // 포스트 업로드 실패 사유
@@ -118,7 +134,7 @@ export default (state = initialState, action) => {
       };
     }
     case ADD_COMMENT_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
+      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
       const post = state.mainPosts[postIndex];
       const Comments = [...post.Comments, dummyComment];
       const mainPosts = [...state.mainPosts];
