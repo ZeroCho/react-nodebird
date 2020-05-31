@@ -7,6 +7,7 @@ const dummy = {
   isLoggedIn: true,
   imagePaths: [],
   mainPosts: [{
+    id: 1,
     User: {
       id: 1,
       nickname: '제로초',
@@ -28,7 +29,7 @@ const Home = () => {
       {dummy.isLoggedIn && <PostForm />}
       {dummy.mainPosts.map((c) => {
         return (
-          <PostCard key={c} post={c} />
+          <PostCard key={c.id} post={c} />
         );
       })}
     </AppLayout>

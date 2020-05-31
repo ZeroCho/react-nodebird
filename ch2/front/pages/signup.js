@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Form, Input, Checkbox, Button } from 'antd';
 import PropTypes from 'prop-types';
+
 import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
 
@@ -24,8 +25,7 @@ const Signup = () => {
   const [nick, onChangeNick] = useInput('');
   const [password, onChangePassword] = useInput('');
 
-  const onSubmit = useCallback((e) => {
-    e.preventDefault();
+  const onSubmit = useCallback(() => {
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
@@ -46,7 +46,7 @@ const Signup = () => {
 
   return (
     <AppLayout>
-      <Form onSubmit={onSubmit} style={{ padding: 10 }}>
+      <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <TextInput value="135135" />
         <div>
           <label htmlFor="user-id">아이디</label>

@@ -39,9 +39,8 @@ const PostCard = ({ post }) => {
   }, []);
 
   return (
-    <CardWrapper>
+    <CardWrapper key={post.id}>
       <Card
-        key={+post.createdAt}
         cover={post.Images[0] && <PostImages images={post.Images} />}
         actions={[
           <RetweetOutlined key="retweet" />,
@@ -99,6 +98,7 @@ const PostCard = ({ post }) => {
 
 PostCard.propTypes = {
   post: PropTypes.shape({
+    id: PropTypes.number,
     User: PropTypes.object,
     content: PropTypes.string,
     Images: PropTypes.arrayOf(PropTypes.shape({
