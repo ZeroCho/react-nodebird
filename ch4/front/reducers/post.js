@@ -41,7 +41,9 @@ const dummyPost = {
     nickname: '제로초',
   },
   content: '나는 더미입니다.',
+  Images: [],
   Comments: [],
+  createdAt: new Date(),
 };
 
 const dummyComment = {

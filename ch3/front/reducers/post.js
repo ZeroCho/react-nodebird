@@ -35,7 +35,7 @@ export const addPost = {
   type: ADD_POST,
 };
 
-const dummy = {
+const dummyPost = {
   id: 2,
   content: '더미데이터입니다.',
   User: {
@@ -51,7 +51,7 @@ export default (state = initialState, action) => {
     case ADD_POST: {
       return {
         ...state,
-        mainPosts: [...state.mainPosts, dummy],
+        mainPosts: [dummyPost, ...state.mainPosts],
         postAdded: true,
       };
     }

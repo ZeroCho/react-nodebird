@@ -1,7 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Button, Form, Input } from 'antd';
 import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
+import Router from 'next/router';
 
 import useInput from '../hooks/useInput';
 import { LOG_IN_REQUEST } from '../reducers/user';
@@ -9,8 +10,14 @@ import { LOG_IN_REQUEST } from '../reducers/user';
 const LoginForm = () => {
   const [id, onChangeId] = useInput('');
   const [password, onChangePassword] = useInput('');
-  const { isLoggingIn } = useSelector(state => state.user);
+  const { isLoggingIn, isLoggedIn } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      Router.back();
+    }
+  }, [isLoggedIn]);
 
   const onSubmitForm = useCallback(() => {
     dispatch({

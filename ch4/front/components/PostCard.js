@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { RetweetOutlined, HeartTwoTone, HeartOutlined, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import Link from 'next/link';
 
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
@@ -18,39 +17,16 @@ const CardWrapper = styled.div`
 
 const PostCard = ({ post }) => {
   const [commentFormOpened, setCommentFormOpened] = useState(false);
-  const [commentText, setCommentText] = useState('');
   const [liked, setLiked] = useState(false);
-  const { me } = useSelector(state => state.user);
-  const { commentAdded, isAddingComment } = useSelector(state => state.post);
-  const dispatch = useDispatch();
+  const { me } = useSelector((state) => state.user);
   const id = me && me.id;
 
   const onToggleComment = useCallback(() => {
-    setCommentFormOpened(prev => !prev);
+    setCommentFormOpened((prev) => !prev);
   }, []);
-
-  const onSubmitComment = useCallback(() => {
-    if (!me) {
-      return alert('로그인이 필요합니다.');
-    }
-    return dispatch({
-      type: ADD_COMMENT_REQUEST,
-      data: {
-        postId: post.id,
-      },
-    });
-  }, [me && me.id]);
-
-  useEffect(() => {
-    setCommentText('');
-  }, [commentAdded === true]);
 
   const onToggleLike = useCallback(() => {
     setLiked((prev) => !prev);
-  }, []);
-
-  const onChangeCommentText = useCallback((e) => {
-    setCommentText(e.target.value);
   }, []);
 
   return (
@@ -67,7 +43,7 @@ const PostCard = ({ post }) => {
             key="ellipsis"
             content={(
               <Button.Group>
-                {id && post.UserId === id
+                {id && post.User.id === id
                   ? (
                     <>
                       <Button>수정</Button>
@@ -91,21 +67,20 @@ const PostCard = ({ post }) => {
       </Card>
       {commentFormOpened && (
         <>
-          <Form onSubmit={onSubmitComment}>
-            <Form.Item>
-              <Input.TextArea rows={4} value={commentText} onChange={onChangeCommentText} />
-            </Form.Item>
-            <Button type="primary" htmlType="submit" loading={isAddingComment}>삐약</Button>
-          </Form>
+          <CommentForm post={post} />
           <List
             header={`${post.Comments ? post.Comments.length : 0} 댓글`}
             itemLayout="horizontal"
             dataSource={post.Comments || []}
-            renderItem={item => (
+            renderItem={(item) => (
               <li>
                 <Comment
                   author={item.User.nickname}
-                  avatar={<Avatar>{item.User.nickname[0]}</Avatar>}
+                  avatar={(
+                    <Link href={{ pathname: '/user', query: { id: item.User.id } }} as={`/user/${item.User.id}`}>
+                      <a><Avatar>{item.User.nickname[0]}</Avatar></a>
+                    </Link>
+                  )}
                   content={item.content}
                 />
               </li>
@@ -119,11 +94,13 @@ const PostCard = ({ post }) => {
 
 PostCard.propTypes = {
   post: PropTypes.shape({
+    id: PropTypes.number,
     User: PropTypes.object,
     content: PropTypes.string,
-    img: PropTypes.string,
     createdAt: PropTypes.object,
-  }),
+    Comments: PropTypes.arrayOf(PropTypes.any),
+    Images: PropTypes.arrayOf(PropTypes.any),
+  }).isRequired,
 };
 
 export default PostCard;

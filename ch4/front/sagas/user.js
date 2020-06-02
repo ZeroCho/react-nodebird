@@ -10,7 +10,7 @@ import {
 } from '../reducers/user';
 
 function loginAPI() {
-  // 서버에 요청을 보내는 부분
+  // 서버에 요청을 보내는 부분 * 붙이지 말 것
   return axios.post('/login');
 }
 

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 
 import NicknameEditForm from '../components/NicknameEditForm';
 import AppLayout from '../components/AppLayout';
-import FollowList from '../../../ch3/front/components/FollowList';
+import FollowList from '../components/FollowList';
 
 const Profile = () => {
   const { isLoggedIn } = useSelector((state) => state.user);

@@ -11,10 +11,11 @@
   "author": "ZeroCho",
   "license": "MIT",
   "dependencies": {
+    "@ant-design/icons": "^4.2.1",
     "antd": "^4.3.0",
     "axios": "^0.19.2",
     "next": "^9.4.4",
-    "next-redux-wrapper": "^6.0.0",
+    "next-redux-wrapper": "^6.0.1",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
