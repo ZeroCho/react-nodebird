@@ -43,7 +43,7 @@ const PostCard = ({ post }) => {
             key="ellipsis"
             content={(
               <Button.Group>
-                {id && post.User.id === id
+                {id && post.UserId === id
                   ? (
                     <>
                       <Button>수정</Button>
@@ -96,6 +96,7 @@ PostCard.propTypes = {
   post: PropTypes.shape({
     id: PropTypes.number,
     User: PropTypes.object,
+    UserId: PropTypes.number,
     content: PropTypes.string,
     createdAt: PropTypes.object,
     Comments: PropTypes.arrayOf(PropTypes.any),

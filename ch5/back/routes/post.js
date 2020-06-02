@@ -24,6 +24,13 @@ router.post('/', async (req, res, next) => { // POST /api/post
       where: { id: newPost.id },
       include: [{
         model: db.User,
+        attributes: {
+          exclude: ['password'],
+        },
+      }, {
+        model: db.Image,
+      }, {
+        model: db.Comment,
       }],
     });
     res.json(fullPost);

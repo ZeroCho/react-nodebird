@@ -9,7 +9,7 @@ import UserProfile from './UserProfile';
 import { LOAD_USER_REQUEST } from '../reducers/user';
 
 const AppLayout = ({ children }) => {
-  const { isLoggedIn, me } = useSelector((state) => state.user);
+  const { me } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ const AppLayout = ({ children }) => {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoggedIn
+          {me
             ? <UserProfile />
             : <LoginForm />}
         </Col>
