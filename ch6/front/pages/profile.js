@@ -1,94 +1,45 @@
-import React, { useEffect, useCallback } from 'react';
-import { Button, List, Card, Icon } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import Router from 'next/router';
+import { useSelector } from 'react-redux';
+import Head from 'next/head';
 
 import NicknameEditForm from '../components/NicknameEditForm';
-import {
-  LOAD_FOLLOWERS_REQUEST,
-  LOAD_FOLLOWINGS_REQUEST,
-  REMOVE_FOLLOWER_REQUEST,
-  UNFOLLOW_USER_REQUEST,
-} from '../reducers/user';
-import { LOAD_USER_POSTS_REQUEST } from '../reducers/post';
-import PostCard from '../components/PostCard';
+import AppLayout from '../components/AppLayout';
+import FollowList from '../components/FollowList';
 
 const Profile = () => {
-  const dispatch = useDispatch();
-  const { me, followingList, followerList } = useSelector(state => state.user);
-  const { mainPosts } = useSelector(state => state.post);
+  const { isLoggedIn, isSignedUp } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (me) {
-      dispatch({
-        type: LOAD_FOLLOWERS_REQUEST,
-        data: me.id,
-      });
-      dispatch({
-        type: LOAD_FOLLOWINGS_REQUEST,
-        data: me.id,
-      });
-      dispatch({
-        type: LOAD_USER_POSTS_REQUEST,
-        data: me.id,
-      });
+    if (!isLoggedIn) {
+      Router.replace('/');
     }
-  }, [me && me.id]);
+  }, [isLoggedIn]);
 
-  const onUnfollow = useCallback(userId => () => {
-    dispatch({
-      type: UNFOLLOW_USER_REQUEST,
-      data: userId,
-    });
-  }, []);
+  useEffect(() => {
+    if (!isSignedUp) {
+      Router.replace('/');
+    }
+  }, [isSignedUp]);
 
-  const onRemoveFollower = useCallback(userId => () => {
-    dispatch({
-      type: REMOVE_FOLLOWER_REQUEST,
-      data: userId,
-    });
-  }, []);
+  const followerList = [{ nickname: '제로초' }, { nickname: '바보' }, { nickname: '노드버드오피셜' }];
+  const followingList = [{ nickname: '제로초' }, { nickname: '바보' }, { nickname: '노드버드오피셜' }];
 
   return (
-    <div>
+    <AppLayout>
+      <Head>
+        <title>내 프로필 | NodeBird</title>
+      </Head>
       <NicknameEditForm />
-      <List
-        style={{ marginBottom: '20px' }}
-        grid={{ gutter: 4, xs: 2, md: 3 }}
-        size="small"
-        header={<div>팔로잉 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
-        bordered
-        dataSource={followingList}
-        renderItem={item => (
-          <List.Item style={{ marginTop: '20px' }}>
-            <Card actions={[<Icon key="stop" type="stop" onClick={onUnfollow(item.id)} />]}>
-              <Card.Meta description={item.nickname} />
-            </Card>
-          </List.Item>
-        )}
+      <FollowList
+        header="팔로잉 목록"
+        data={followingList}
       />
-      <List
-        style={{ marginBottom: '20px' }}
-        grid={{ gutter: 4, xs: 2, md: 3 }}
-        size="small"
-        header={<div>팔로워 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
-        bordered
-        dataSource={followerList}
-        renderItem={item => (
-          <List.Item style={{ marginTop: '20px' }}>
-            <Card actions={[<Icon key="stop" type="stop" onClick={onRemoveFollower(item.id)} />]}>
-              <Card.Meta description={item.nickname} />
-            </Card>
-          </List.Item>
-        )}
+      <FollowList
+        header="팔로워 목록"
+        data={followerList}
       />
-      <div>
-        {mainPosts.map(c => (
-          <PostCard key={+c.createdAt} post={c} />
-        ))}
-      </div>
-    </div>
+    </AppLayout>
   );
 };
 

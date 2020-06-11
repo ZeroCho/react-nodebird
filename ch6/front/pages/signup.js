@@ -1,25 +1,12 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
+import Head from 'next/head';
 import Router from 'next/router';
+
 import { SIGN_UP_REQUEST } from '../reducers/user';
-
-const TextInput = ({ value }) => (
-  <div>{value}</div>
-);
-
-TextInput.propTypes = {
-  value: PropTypes.string,
-};
-
-export const useInput = (initValue = null) => {
-  const [value, setter] = useState(initValue);
-  const handler = useCallback((e) => {
-    setter(e.target.value);
-  }, []);
-  return [value, handler];
-};
+import useInput from '../hooks/useInput';
+import AppLayout from '../components/AppLayout';
 
 const Signup = () => {
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -31,7 +18,7 @@ const Signup = () => {
   const [nick, onChangeNick] = useInput('');
   const [password, onChangePassword] = useInput('');
   const dispatch = useDispatch();
-  const { isSigningUp, me } = useSelector(state => state.user);
+  const { isSigningUp, me } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (me) {
@@ -40,8 +27,7 @@ const Signup = () => {
     }
   }, [me && me.id]);
 
-  const onSubmit = useCallback((e) => {
-    e.preventDefault();
+  const onSubmit = useCallback(() => {
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
@@ -69,9 +55,11 @@ const Signup = () => {
   }, []);
 
   return (
-    <>
-      <Form onSubmit={onSubmit} style={{ padding: 10 }}>
-        <TextInput value="135135" />
+    <AppLayout>
+      <Head>
+        <title>회원가입 | NodeBird</title>
+      </Head>
+      <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <div>
           <label htmlFor="user-id">아이디</label>
           <br />
@@ -107,7 +95,7 @@ const Signup = () => {
           <Button type="primary" htmlType="submit" loading={isSigningUp}>가입하기</Button>
         </div>
       </Form>
-    </>
+    </AppLayout>
   );
 };
 

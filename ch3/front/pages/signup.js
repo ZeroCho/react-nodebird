@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Checkbox, Button } from 'antd';
 import { useDispatch } from 'react-redux';
+import Head from 'next/head';
 
 import { signUpAction } from '../reducers/user';
 import AppLayout from '../components/AppLayout';
@@ -51,6 +52,9 @@ const Signup = () => {
 
   return (
     <AppLayout>
+      <Head>
+        <title>회원가입 | NodeBird</title>
+      </Head>
       <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <div>
           <label htmlFor="user-id">아이디</label>

@@ -1,7 +1,7 @@
 {
   "parser": "babel-eslint",
   "parserOptions": {
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2020,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
@@ -20,8 +20,13 @@
     "react-hooks"
   ],
   "rules": {
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "no-console": "off",
     "no-underscore-dangle": "off",
-    "react/forbid-prop-types": 0,
-    "object-curly-newline": 0
+    "react/forbid-prop-types": "off",
+    "react/jsx-filename-extension": "off",
+    "object-curly-newline": "off",
+    "linebreak-style": "off"
   }
 }

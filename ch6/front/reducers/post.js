@@ -1,5 +1,20 @@
 export const initialState = {
-  mainPosts: [], // 화면에 보일 포스트들
+  mainPosts: [{
+    id: 1,
+    User: {
+      id: 1,
+      nickname: '제로초',
+    },
+    content: '첫 번째 게시글',
+    Images: [{
+      src: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
+    }, {
+      src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
+    }, {
+      src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
+    }],
+    Comments: [],
+  }], // 화면에 보일 포스트들
   imagePaths: [], // 미리보기 이미지 경로
   addPostErrorReason: '', // 포스트 업로드 실패 사유
   isAddingPost: false, // 포스트 업로드 중
@@ -7,6 +22,16 @@ export const initialState = {
   isAddingComment: false,
   addCommentErrorReason: '',
   commentAdded: false,
+};
+
+const dummyComment = {
+  id: 1,
+  User: {
+    id: 1,
+    nickname: '제로초',
+  },
+  createdAt: new Date(),
+  content: '더미 댓글입니다.',
 };
 
 export const LOAD_MAIN_POSTS_REQUEST = 'LOAD_MAIN_POSTS_REQUEST';
@@ -57,28 +82,6 @@ export const REMOVE_POST_FAILURE = 'REMOVE_POST_FAILURE';
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case UPLOAD_IMAGES_REQUEST: {
-      return {
-        ...state,
-      };
-    }
-    case UPLOAD_IMAGES_SUCCESS: {
-      return {
-        ...state,
-        imagePaths: [...state.imagePaths, ...action.data],
-      };
-    }
-    case UPLOAD_IMAGES_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case REMOVE_IMAGE: {
-      return {
-        ...state,
-        imagePaths: state.imagePaths.filter((v, i) => i !== action.index),
-      };
-    }
     case ADD_POST_REQUEST: {
       return {
         ...state,
@@ -93,7 +96,6 @@ export default (state = initialState, action) => {
         isAddingPost: false,
         mainPosts: [action.data, ...state.mainPosts],
         postAdded: true,
-        imagePaths: [],
       };
     }
     case ADD_POST_FAILURE: {
@@ -112,9 +114,9 @@ export default (state = initialState, action) => {
       };
     }
     case ADD_COMMENT_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
+      const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
       const post = state.mainPosts[postIndex];
-      const Comments = [...post.Comments, action.data.comment];
+      const Comments = [...post.Comments, dummyComment];
       const mainPosts = [...state.mainPosts];
       mainPosts[postIndex] = { ...post, Comments };
       return {
@@ -131,94 +133,19 @@ export default (state = initialState, action) => {
         addCommentErrorReason: action.error,
       };
     }
-    case LOAD_COMMENTS_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
-      const post = state.mainPosts[postIndex];
-      const Comments = action.data.comments;
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = { ...post, Comments };
-      return {
-        ...state,
-        mainPosts,
-      };
-    }
-    case LOAD_MAIN_POSTS_REQUEST:
-    case LOAD_HASHTAG_POSTS_REQUEST:
-    case LOAD_USER_POSTS_REQUEST: {
+    case LOAD_MAIN_POSTS_REQUEST: {
       return {
         ...state,
         mainPosts: [],
       };
     }
-    case LOAD_MAIN_POSTS_SUCCESS:
-    case LOAD_HASHTAG_POSTS_SUCCESS:
-    case LOAD_USER_POSTS_SUCCESS: {
+    case LOAD_MAIN_POSTS_SUCCESS: {
       return {
         ...state,
         mainPosts: action.data,
       };
     }
-    case LOAD_MAIN_POSTS_FAILURE:
-    case LOAD_HASHTAG_POSTS_FAILURE:
-    case LOAD_USER_POSTS_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case LIKE_POST_REQUEST: {
-      return {
-        ...state,
-      };
-    }
-    case LIKE_POST_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
-      const post = state.mainPosts[postIndex];
-      const Likers = [{ id: action.data.userId }, ...post.Likers];
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = { ...post, Likers };
-      return {
-        ...state,
-        mainPosts,
-      };
-    }
-    case LIKE_POST_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case UNLIKE_POST_REQUEST: {
-      return {
-        ...state,
-      };
-    }
-    case UNLIKE_POST_SUCCESS: {
-      const postIndex = state.mainPosts.findIndex(v => v.id === action.data.postId);
-      const post = state.mainPosts[postIndex];
-      const Likers = post.Likers.filter(v => v.id !== action.data.userId);
-      const mainPosts = [...state.mainPosts];
-      mainPosts[postIndex] = { ...post, Likers };
-      return {
-        ...state,
-        mainPosts,
-      };
-    }
-    case UNLIKE_POST_FAILURE: {
-      return {
-        ...state,
-      };
-    }
-    case RETWEET_REQUEST: {
-      return {
-        ...state,
-      };
-    }
-    case RETWEET_SUCCESS: {
-      return {
-        ...state,
-        mainPosts: [action.data, ...state.mainPosts],
-      };
-    }
-    case RETWEET_FAILURE: {
+    case LOAD_MAIN_POSTS_FAILURE: {
       return {
         ...state,
       };

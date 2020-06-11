@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import Router from 'next/router';
 import { useSelector } from 'react-redux';
+import Head from 'next/head';
 
 import NicknameEditForm from '../components/NicknameEditForm';
 import AppLayout from '../components/AppLayout';
@@ -20,6 +21,9 @@ const Profile = () => {
 
   return (
     <AppLayout>
+      <Head>
+        <title>내 프로필 | NodeBird</title>
+      </Head>
       <NicknameEditForm />
       <FollowList
         header="팔로잉 목록"

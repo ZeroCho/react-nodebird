@@ -2,6 +2,7 @@ import { Button, Form, Input } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { ADD_COMMENT_REQUEST } from '../reducers/post';
 
 const CommentForm = ({ post }) => {
@@ -41,7 +42,8 @@ const CommentForm = ({ post }) => {
           type="primary"
           htmlType="submit"
           loading={isAddingComment}
-        >삐약
+        >
+          삐약
         </Button>
       </Form.Item>
     </Form>

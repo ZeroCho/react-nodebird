@@ -1,33 +1,32 @@
-import { Button, Card, List } from 'antd';
-import { StopOutlined } from '@ant-design/icons';
-import React, { memo } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { List, Button, Card } from 'antd';
+import { StopOutlined } from '@ant-design/icons';
 
-const FollowList = memo(({ header, hasMore, onClickMore, data, onClickStop }) => (
-  <List
-    style={{ marginBottom: '20px' }}
-    grid={{ gutter: 4, xs: 2, md: 3 }}
-    size="small"
-    header={<div>{header}</div>}
-    loadMore={hasMore && <Button style={{ width: '100%' }} onClick={onClickMore}>더 보기</Button>}
-    bordered
-    dataSource={data}
-    renderItem={(item) => (
-      <List.Item style={{ marginTop: '20px' }}>
-        <Card actions={[<StopOutlined key="stop" onClick={onClickStop(item.id)} />]}>
-          <Card.Meta description={item.nickname} />
-        </Card>
-      </List.Item>
-    )}
-  />
-));
+const FollowList = ({ header, data }) => {
+  return (
+    <List
+      style={{ marginBottom: 20 }}
+      grid={{ gutter: 4, xs: 2, md: 3 }}
+      size="small"
+      header={<div>{header}</div>}
+      loadMore={<div style={{ textAlign: 'center', margin: '10px 0' }}><Button>더 보기</Button></div>}
+      bordered
+      dataSource={data}
+      renderItem={(item) => (
+        <List.Item style={{ marginTop: 20 }}>
+          <Card actions={[<StopOutlined key="stop" />]}>
+            <Card.Meta description={item.nickname} />
+          </Card>
+        </List.Item>
+      )}
+    />
+  );
+};
 
 FollowList.propTypes = {
   header: PropTypes.string.isRequired,
-  hasMore: PropTypes.bool.isRequired,
-  onClickMore: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
-  onClickStop: PropTypes.func.isRequired,
 };
 
 export default FollowList;
