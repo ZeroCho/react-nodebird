@@ -15,6 +15,7 @@
     "antd": "^4.3.3",
     "axios": "^0.19.2",
     "next": "^9.4.4",
+    "next-redux-saga": "^4.1.2",
     "next-redux-wrapper": "^6.0.2",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
