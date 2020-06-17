@@ -53,6 +53,7 @@ export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
 export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
 
 export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
 export default (state = initialState, action) => {
   switch (action.type) {
@@ -109,6 +110,14 @@ export default (state = initialState, action) => {
         isSigningUp: false,
         signUpErrorReason: action.error,
       };
+    } case ADD_POST_TO_ME: {
+      draft.me.Posts.unshift({ id: action.data });
+      break;
+    }
+    case REMOVE_POST_OF_ME: {
+      const index = draft.me.Posts.findIndex((v) => v.id === action.data);
+      draft.me.Posts.splice(index, 1);
+      break;
     }
     default: {
       return {
