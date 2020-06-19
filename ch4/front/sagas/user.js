@@ -5,6 +5,9 @@ import {
   LOG_IN_FAILURE,
   LOG_IN_REQUEST,
   LOG_IN_SUCCESS,
+  LOG_OUT_FAILURE,
+  LOG_OUT_REQUEST,
+  LOG_OUT_SUCCESS,
   SIGN_UP_FAILURE,
   SIGN_UP_REQUEST,
   SIGN_UP_SUCCESS,
@@ -18,7 +21,7 @@ function loginAPI() {
 function* login() {
   try {
     // yield call(loginAPI);
-    yield delay(2000);
+    yield delay(1000);
     yield put({ // put은 dispatch 동일
       type: LOG_IN_SUCCESS,
     });
@@ -42,7 +45,7 @@ function signUpAPI() {
 function* signUp() {
   try {
     // yield call(signUpAPI);
-    yield delay(2000);
+    yield delay(1000);
     yield put({ // put은 dispatch 동일
       type: SIGN_UP_SUCCESS,
     });
@@ -68,12 +71,12 @@ function* logOut() {
     // const result = yield call(logOutAPI);
     yield delay(1000);
     yield put({
-      type: 'LOG_OUT_SUCCESS',
+      type: LOG_OUT_SUCCESS,
     });
   } catch (err) {
     yield put({
-      type: 'LOG_OUT_FAILURE',
-      data: err.response.data,
+      type: LOG_OUT_FAILURE,
+      error: err.response.data,
     });
   }
 }

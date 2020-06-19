@@ -5,7 +5,7 @@ export const Global = createGlobalStyle`
   .slick-slide {
     display: inline-block;
   }
-`
+`;
 
 export const Overlay = styled.div`
   position: fixed;
