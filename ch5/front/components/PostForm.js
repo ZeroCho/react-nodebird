@@ -7,31 +7,27 @@ import { ADD_POST_REQUEST } from '../reducers/post';
 const PostForm = () => {
   const dispatch = useDispatch();
   const [text, setText] = useState('');
-  const { imagePaths, isAddingPost, postAdded } = useSelector((state) => state.post);
-  const imageInput = useRef();
+  const { imagePaths, addPostLoading, addPostDone } = useSelector((state) => state.post);
 
+  const imageInput = useRef();
   const onClickImageUpload = useCallback(() => {
     imageInput.current.click();
   }, [imageInput.current]);
 
   useEffect(() => {
-    if (postAdded) {
+    if (addPostDone) {
       setText('');
     }
-  }, [postAdded]);
+  }, [addPostDone]);
 
   const onSubmitForm = useCallback(() => {
-    if (!text || !text.trim()) {
-      alert('게시글을 작성하세요.');
-      return;
-    }
     dispatch({
       type: ADD_POST_REQUEST,
       data: {
-        content: text.trim(),
+        text,
       },
     });
-  }, [text]);
+  }, []);
 
   const onChangeText = useCallback((e) => {
     setText(e.target.value);
@@ -43,7 +39,7 @@ const PostForm = () => {
       <div>
         <input type="file" multiple hidden ref={imageInput} />
         <Button onClick={onClickImageUpload}>이미지 업로드</Button>
-        <Button type="primary" style={{ float: 'right' }} htmlType="submit" loading={isAddingPost}>짹짹</Button>
+        <Button type="primary" style={{ float: 'right' }} htmlType="submit" loading={addPostLoading}>짹짹</Button>
       </div>
       <div>
         {imagePaths.map((v) => (

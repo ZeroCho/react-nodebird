@@ -8,23 +8,15 @@ import AppLayout from '../components/AppLayout';
 import FollowList from '../components/FollowList';
 
 const Profile = () => {
-  const { isLoggedIn, isSignedUp } = useSelector((state) => state.user);
-
+  const { me } = useSelector((state) => state.user);
   useEffect(() => {
-    if (!isLoggedIn) {
-      Router.replace('/');
+    if (!(me && me.id)) {
+      Router.push('/');
     }
-  }, [isLoggedIn]);
-
-  useEffect(() => {
-    if (!isSignedUp) {
-      Router.replace('/');
-    }
-  }, [isSignedUp]);
-
-  const followerList = [{ nickname: '제로초' }, { nickname: '바보' }, { nickname: '노드버드오피셜' }];
-  const followingList = [{ nickname: '제로초' }, { nickname: '바보' }, { nickname: '노드버드오피셜' }];
-
+  }, [me && me.id]);
+  if (!me) {
+    return null;
+  }
   return (
     <AppLayout>
       <Head>
@@ -33,11 +25,11 @@ const Profile = () => {
       <NicknameEditForm />
       <FollowList
         header="팔로잉 목록"
-        data={followingList}
+        data={me.Followings}
       />
       <FollowList
         header="팔로워 목록"
-        data={followerList}
+        data={me.Followers}
       />
     </AppLayout>
   );

@@ -1,25 +1,54 @@
-import { all, fork, takeLatest, put, delay, call } from 'redux-saga/effects';
+import { all, delay, fork, put, takeLatest, throttle } from 'redux-saga/effects';
 import axios from 'axios';
 import {
-  ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS,
   ADD_COMMENT_FAILURE,
   ADD_COMMENT_REQUEST,
-  ADD_COMMENT_SUCCESS, LOAD_MAIN_POSTS_FAILURE, LOAD_MAIN_POSTS_REQUEST,
-  LOAD_MAIN_POSTS_SUCCESS,
+  ADD_COMMENT_SUCCESS,
+  ADD_POST_FAILURE,
+  ADD_POST_REQUEST,
+  ADD_POST_SUCCESS,
+  LOAD_POSTS_FAILURE, LOAD_POSTS_REQUEST, LOAD_POSTS_SUCCESS,
+  REMOVE_POST_FAILURE,
+  REMOVE_POST_REQUEST,
+  REMOVE_POST_SUCCESS,
+  generateDummyPost,
 } from '../reducers/post';
+import { REMOVE_POST_OF_ME } from '../reducers/user';
 
-function addPostAPI(postData) {
-  return axios.post('/post', postData, {
-    withCredentials: true,
-  });
+function loadPostsAPI() {
+
 }
 
-function* addPost(action) {
+function* loadPosts() {
   try {
-    const result = yield call(addPostAPI, action.data);
+    // const result = yield call(loadPostsAPI)
+    yield delay(1000);
+    yield put({
+      type: LOAD_POSTS_SUCCESS,
+      data: generateDummyPost(10),
+    });
+  } catch (e) {
+    yield put({
+      type: LOAD_POSTS_FAILURE,
+      error: e,
+    });
+  }
+}
+
+function* watchLoadPosts() {
+  yield throttle(5000, LOAD_POSTS_REQUEST, loadPosts);
+}
+
+function addPostAPI() {
+
+}
+
+function* addPost() {
+  try {
+    // const result = yield call(addPostAPI)
+    yield delay(1000);
     yield put({
       type: ADD_POST_SUCCESS,
-      data: result.data,
     });
   } catch (e) {
     yield put({
@@ -33,36 +62,14 @@ function* watchAddPost() {
   yield takeLatest(ADD_POST_REQUEST, addPost);
 }
 
-function loadMainPostsAPI() {
-  return axios.get('/posts');
-}
-
-function* loadMainPosts() {
-  try {
-    const result = yield call(loadMainPostsAPI);
-    yield put({
-      type: LOAD_MAIN_POSTS_SUCCESS,
-      data: result.data,
-    });
-  } catch (e) {
-    yield put({
-      type: LOAD_MAIN_POSTS_FAILURE,
-      error: e,
-    });
-  }
-}
-
-function* watchLoadMainPosts() {
-  yield takeLatest(LOAD_MAIN_POSTS_REQUEST, loadMainPosts);
-}
-
 function addCommentAPI() {
 
 }
 
 function* addComment(action) {
   try {
-    yield delay(2000);
+    // const result = yield call(addCommentAPI)
+    yield delay(1000);
     yield put({
       type: ADD_COMMENT_SUCCESS,
       data: {
@@ -81,10 +88,40 @@ function* watchAddComment() {
   yield takeLatest(ADD_COMMENT_REQUEST, addComment);
 }
 
+function removePostAPI(data) {
+  return axios.delete('/api/post', data);
+}
+
+function* removePost(action) {
+  try {
+    // const result = yield call(removePostAPI, action.data);
+    yield delay(1000);
+    yield put({
+      type: REMOVE_POST_SUCCESS,
+      data: action.data,
+    });
+    yield put({
+      type: REMOVE_POST_OF_ME,
+      data: action.data,
+    });
+  } catch (err) {
+    console.error(err);
+    yield put({
+      type: REMOVE_POST_FAILURE,
+      data: err.response.data,
+    });
+  }
+}
+
+function* watchRemovePost() {
+  yield takeLatest(REMOVE_POST_REQUEST, removePost);
+}
+
 export default function* postSaga() {
   yield all([
-    fork(watchLoadMainPosts),
+    fork(watchLoadPosts),
     fork(watchAddPost),
+    fork(watchRemovePost),
     fork(watchAddComment),
   ]);
 }
