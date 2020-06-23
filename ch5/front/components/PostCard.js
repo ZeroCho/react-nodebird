@@ -10,7 +10,7 @@ import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
 import PostImages from './PostImages';
 import FollowButton from './FollowButton';
-import { REMOVE_POST_REQUEST } from '../../../prepare/front/reducers/post';
+import { REMOVE_POST_REQUEST } from '../reducers/post';
 
 const CardWrapper = styled.div`
   margin-bottom: 20px;
