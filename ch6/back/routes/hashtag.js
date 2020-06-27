@@ -1,5 +1,5 @@
 const express = require('express');
-const db = require('../models');
+const { User, Hashtag, Image, Post } = require('../models');
 
 const router = express.Router();
 
@@ -7,26 +7,26 @@ router.get('/:tag', async (req, res, next) => {
   try {
     const posts = await db.Post.findAll({
       include: [{
-        model: db.Hashtag,
+        model: Hashtag,
         where: { name: decodeURIComponent(req.params.tag) },
       }, {
-        model: db.User,
+        model: User,
         attributes: ['id', 'nickname'],
       }, {
-        model: db.Image,
+        model: Image,
       }, {
-        model: db.User,
+        model: User,
         through: 'Like',
         as: 'Likers',
         attributes: ['id'],
       }, {
-        model: db.Post,
+        model: Post,
         as: 'Retweet',
         include: [{
-          model: db.User,
+          model: User,
           attributes: ['id', 'nickname'],
         }, {
-          model: db.Image,
+          model: Image,
         }],
       }],
     });

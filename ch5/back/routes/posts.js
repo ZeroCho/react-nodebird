@@ -1,25 +1,37 @@
 const express = require('express');
-const db = require('../models');
+
+const { Post, Image, User, Comment } = require('../models');
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => { // GET /api/posts
+router.get('/', async (req, res, next) => { // GET /posts
   try {
-    const posts = await db.Post.findAll({
+    const posts = await Post.findAll({
+      limit: 10,
+      order: [['createdAt', 'DESC']],
       include: [{
-        model: db.User,
+        model: User,
         attributes: ['id', 'nickname'],
       }, {
-        model: db.Image,
+        model: Image,
       }, {
-        model: db.Comment,
+        model: Comment,
+        include: [{
+          model: User,
+          attributes: ['id', 'nickname'],
+          order: [['createdAt', 'DESC']],
+        }],
+      }, {
+        model: User, // 좋아요 누른 사람
+        as: 'Likers',
+        attributes: ['id'],
       }],
-      order: [['createdAt', 'DESC']], // DESC는 내림차순, ASC는 오름차순
     });
-    res.json(posts);
-  } catch (e) {
-    console.error(e);
-    next(e);
+    console.log(posts);
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 

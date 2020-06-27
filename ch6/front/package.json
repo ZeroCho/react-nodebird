@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon",
+    "dev": "next -p 3060",
     "build": "next build",
     "start": "next start"
   },
@@ -12,10 +12,11 @@
   "license": "MIT",
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
-    "antd": "^4.3.3",
+    "antd": "^4.3.5",
     "axios": "^0.19.2",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
+    "immer": "^7.0.5",
     "next": "^9.4.4",
     "next-redux-saga": "^4.1.2",
     "next-redux-wrapper": "^6.0.2",
@@ -31,10 +32,10 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.2.0",
-    "eslint-config-airbnb": "^18.1.0",
+    "eslint": "^7.3.1",
+    "eslint-config-airbnb": "^18.2.0",
     "eslint-plugin-import": "^2.21.2",
-    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-jsx-a11y": "^6.3.1",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "^4.0.4",
     "nodemon": "^2.0.4",
