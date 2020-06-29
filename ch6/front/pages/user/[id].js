@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Card } from 'antd';
 import { END } from 'redux-saga';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import { LOAD_USER_POSTS_REQUEST } from '../../reducers/post';
-import { LOAD_USER_REQUEST } from '../../reducers/user';
+import { LOAD_MY_INFO_REQUEST, LOAD_USER_REQUEST } from '../../reducers/user';
 import PostCard from '../../components/PostCard';
 import wrapper from '../../store/configureStore';
 import AppLayout from '../../components/AppLayout';
@@ -86,9 +86,12 @@ const User = () => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  console.log(context);
+  context.store.dispatch({
+    type: LOAD_MY_INFO_REQUEST,
+  });
   context.store.dispatch({
     type: LOAD_USER_REQUEST,
+    data: context.params.id,
   });
   context.store.dispatch({
     type: LOAD_USER_POSTS_REQUEST,
@@ -96,6 +99,7 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   });
   context.store.dispatch(END);
   await context.store.sagaTask.toPromise();
+  console.log('getState', context.store.getState().post.mainPosts);
   return { props: {} };
 });
 

@@ -8,7 +8,7 @@ import { LOAD_POST_REQUEST } from '../../reducers/post';
 import wrapper from '../../store/configureStore';
 import PostCard from '../../components/PostCard';
 import AppLayout from '../../components/AppLayout';
-import { LOAD_USER_REQUEST } from '../../reducers/user';
+import { LOAD_MY_INFO_REQUEST } from '../../reducers/user';
 
 const Post = () => {
   const { singlePost } = useSelector((state) => state.post);
@@ -36,7 +36,7 @@ const Post = () => {
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
   console.log(context);
   context.store.dispatch({
-    type: LOAD_USER_REQUEST,
+    type: LOAD_MY_INFO_REQUEST,
   });
   context.store.dispatch({
     type: LOAD_POST_REQUEST,

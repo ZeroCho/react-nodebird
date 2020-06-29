@@ -8,7 +8,7 @@ import PostCard from '../components/PostCard';
 import { LOAD_POSTS_REQUEST } from '../reducers/post';
 import AppLayout from '../components/AppLayout';
 import wrapper from '../store/configureStore';
-import { LOAD_USER_REQUEST } from '../reducers/user';
+import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Home = () => {
   const { me } = useSelector((state) => state.user);
@@ -33,7 +33,7 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
     axios.defaults.headers.Cookie = cookie;
   }
   context.store.dispatch({
-    type: LOAD_USER_REQUEST,
+    type: LOAD_MY_INFO_REQUEST,
   });
   context.store.dispatch({
     type: LOAD_POSTS_REQUEST,

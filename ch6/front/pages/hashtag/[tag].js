@@ -6,7 +6,7 @@ import { END } from 'redux-saga';
 import { LOAD_HASHTAG_POSTS_REQUEST } from '../../reducers/post';
 import PostCard from '../../components/PostCard';
 import wrapper from '../../store/configureStore';
-import { LOAD_USER_REQUEST } from '../../reducers/user';
+import { LOAD_MY_INFO_REQUEST } from '../../reducers/user';
 import AppLayout from '../../components/AppLayout';
 
 const Hashtag = () => {
@@ -46,7 +46,7 @@ const Hashtag = () => {
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
   console.log(context);
   context.store.dispatch({
-    type: LOAD_USER_REQUEST,
+    type: LOAD_MY_INFO_REQUEST,
   });
   context.store.dispatch({
     type: LOAD_HASHTAG_POSTS_REQUEST,

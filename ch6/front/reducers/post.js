@@ -118,6 +118,20 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.unlikePostLoading = false;
       draft.unlikePostError = action.error;
       break;
+    case LOAD_POST_REQUEST:
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+      break;
+    case LOAD_POST_SUCCESS:
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      draft.singlePost = action.data;
+      break;
+    case LOAD_POST_FAILURE:
+      draft.loadPostLoading = false;
+      draft.loadPostError = action.error;
+      break;
     case LOAD_USER_POSTS_REQUEST:
       draft.loadUserPostsLoading = true;
       draft.loadUserPostsDone = false;
@@ -147,20 +161,6 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case LOAD_HASHTAG_POSTS_FAILURE:
       draft.loadHashtagPostsLoading = false;
       draft.loadHashtagPostsError = action.error;
-      break;
-    case LOAD_POST_REQUEST:
-      draft.loadPostLoading = true;
-      draft.loadPostDone = false;
-      draft.loadPostError = null;
-      break;
-    case LOAD_POST_SUCCESS:
-      draft.loadPostLoading = false;
-      draft.loadPostDone = true;
-      draft.singlePost = action.data;
-      break;
-    case LOAD_POST_FAILURE:
-      draft.loadPostLoading = false;
-      draft.loadPostError = action.error;
       break;
     case LOAD_POSTS_REQUEST:
       draft.loadPostsLoading = true;
