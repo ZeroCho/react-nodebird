@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Slick from 'react-slick';
 
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
+import Slick from 'react-slick';
+
 import { Overlay, Global, Header, CloseBtn, ImgWrapper, Indicator, SlickWrapper } from './styles';
 
 const ImagesZoom = ({ images, onClose }) => {
@@ -25,7 +29,7 @@ const ImagesZoom = ({ images, onClose }) => {
           >
             {images.map((v) => (
               <ImgWrapper key={v.src}>
-                <img src={v.src} alt={v.src} />
+                <img src={`http://localhost:3065/${v.src}`} alt={v.src} />
               </ImgWrapper>
             ))}
           </Slick>
@@ -41,7 +45,7 @@ const ImagesZoom = ({ images, onClose }) => {
       </SlickWrapper>
     </Overlay>
   );
-}
+};
 
 ImagesZoom.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired,
