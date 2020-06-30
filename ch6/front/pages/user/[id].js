@@ -5,6 +5,7 @@ import { END } from 'redux-saga';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
+import axios from 'axios';
 import { LOAD_USER_POSTS_REQUEST } from '../../reducers/post';
 import { LOAD_MY_INFO_REQUEST, LOAD_USER_REQUEST } from '../../reducers/user';
 import PostCard from '../../components/PostCard';
@@ -18,19 +19,18 @@ const User = () => {
   const { mainPosts, hasMorePosts, loadUserPostsLoading } = useSelector((state) => state.post);
   const { userInfo } = useSelector((state) => state.user);
 
-  const onScroll = useCallback(() => {
-    if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
-      if (hasMorePosts && !loadUserPostsLoading) {
-        dispatch({
-          type: LOAD_USER_POSTS_REQUEST,
-          lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
-          data: id,
-        });
-      }
-    }
-  }, [hasMorePosts, mainPosts.length, id, loadUserPostsLoading]);
-
   useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+        if (hasMorePosts && !loadUserPostsLoading) {
+          dispatch({
+            type: LOAD_USER_POSTS_REQUEST,
+            lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
+            data: id,
+          });
+        }
+      }
+    };
     window.addEventListener('scroll', onScroll);
     return () => {
       window.removeEventListener('scroll', onScroll);
@@ -86,15 +86,20 @@ const User = () => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch({
+    type: LOAD_USER_POSTS_REQUEST,
+    data: context.params.id,
+  });
   context.store.dispatch({
     type: LOAD_MY_INFO_REQUEST,
   });
   context.store.dispatch({
     type: LOAD_USER_REQUEST,
-    data: context.params.id,
-  });
-  context.store.dispatch({
-    type: LOAD_USER_POSTS_REQUEST,
     data: context.params.id,
   });
   context.store.dispatch(END);

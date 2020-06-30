@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { END } from 'redux-saga';
 
+import axios from 'axios';
 import { LOAD_HASHTAG_POSTS_REQUEST } from '../../reducers/post';
 import PostCard from '../../components/PostCard';
 import wrapper from '../../store/configureStore';
@@ -15,19 +16,18 @@ const Hashtag = () => {
   const { tag } = router.query;
   const { mainPosts, hasMorePosts, loadHashtagPostsLoading } = useSelector((state) => state.post);
 
-  const onScroll = useCallback(() => {
-    if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
-      if (hasMorePosts && !loadHashtagPostsLoading) {
-        dispatch({
-          type: LOAD_HASHTAG_POSTS_REQUEST,
-          lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
-          data: tag,
-        });
-      }
-    }
-  }, [hasMorePosts, mainPosts.length, tag, loadHashtagPostsLoading]);
-
   useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+        if (hasMorePosts && !loadHashtagPostsLoading) {
+          dispatch({
+            type: LOAD_HASHTAG_POSTS_REQUEST,
+            lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
+            data: tag,
+          });
+        }
+      }
+    };
     window.addEventListener('scroll', onScroll);
     return () => {
       window.removeEventListener('scroll', onScroll);
@@ -45,6 +45,12 @@ const Hashtag = () => {
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
   console.log(context);
+  const cookie = context.req ? context.req.headers.cookie : '';
+  console.log(context);
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
   context.store.dispatch({
     type: LOAD_MY_INFO_REQUEST,
   });

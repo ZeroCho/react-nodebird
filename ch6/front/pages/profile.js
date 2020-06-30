@@ -1,49 +1,50 @@
 import React, { useEffect } from 'react';
-import Router from 'next/router';
-import { useSelector } from 'react-redux';
 import Head from 'next/head';
+import { useSelector, useDispatch } from 'react-redux';
+import Router from 'next/router';
 import { END } from 'redux-saga';
 import axios from 'axios';
 
-import NicknameEditForm from '../components/NicknameEditForm';
 import AppLayout from '../components/AppLayout';
+import NicknameEditForm from '../components/NicknameEditForm';
 import FollowList from '../components/FollowList';
+import { LOAD_MY_INFO_REQUEST, LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWINGS_REQUEST } from '../reducers/user';
 import wrapper from '../store/configureStore';
-import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 
 const Profile = () => {
-  const { isLoggedIn, isSignedUp } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const { me } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      Router.replace('/');
-    }
-  }, [isLoggedIn]);
+    dispatch({
+      type: LOAD_FOLLOWERS_REQUEST,
+    });
+    dispatch({
+      type: LOAD_FOLLOWINGS_REQUEST,
+    });
+  }, []);
 
   useEffect(() => {
-    if (!isSignedUp) {
-      Router.replace('/');
+    if (!(me && me.id)) {
+      Router.push('/');
     }
-  }, [isSignedUp]);
+  }, [me && me.id]);
 
-  const followerList = [{ nickname: '제로초' }, { nickname: '바보' }, { nickname: '노드버드오피셜' }];
-  const followingList = [{ nickname: '제로초' }, { nickname: '바보' }, { nickname: '노드버드오피셜' }];
-
+  if (!me) {
+    return null;
+  }
   return (
-    <AppLayout>
+    <>
       <Head>
         <title>내 프로필 | NodeBird</title>
       </Head>
-      <NicknameEditForm />
-      <FollowList
-        header="팔로잉 목록"
-        data={followingList}
-      />
-      <FollowList
-        header="팔로워 목록"
-        data={followerList}
-      />
-    </AppLayout>
+      <AppLayout>
+        <NicknameEditForm />
+        <FollowList header="팔로잉" data={me.Followings} />
+        <FollowList header="팔로워" data={me.Followers} />
+      </AppLayout>
+    </>
   );
 };
 

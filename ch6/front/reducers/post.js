@@ -23,12 +23,6 @@ export const initialState = {
   addCommentLoading: false,
   addCommentDone: false,
   addCommentError: null,
-  loadUserPostsLoading: false,
-  loadUserPostsDone: false,
-  loadUserPostsError: null,
-  loadHashtagPostsLoading: false,
-  loadHashtagPostsDone: false,
-  loadHashtagPostsError: null,
   loadPostLoading: false,
   loadPostDone: false,
   loadPostError: null,
@@ -179,34 +173,34 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
       draft.loadPostError = action.error;
       break;
     case LOAD_USER_POSTS_REQUEST:
-      draft.loadUserPostsLoading = true;
-      draft.loadUserPostsDone = false;
-      draft.loadUserPostsError = null;
+      draft.loadPostsLoading = true;
+      draft.loadPostsDone = false;
+      draft.loadPostsError = null;
       break;
     case LOAD_USER_POSTS_SUCCESS:
-      draft.loadUserPostsLoading = false;
-      draft.loadUserPostsDone = true;
+      draft.loadPostsLoading = false;
+      draft.loadPostsDone = true;
       draft.mainPosts = draft.mainPosts.concat(action.data);
       draft.hasMorePosts = action.data.length === 10;
       break;
     case LOAD_USER_POSTS_FAILURE:
-      draft.loadUserPostsLoading = false;
-      draft.loadUserPostsError = action.error;
+      draft.loadPostsLoading = false;
+      draft.loadPostsError = action.error;
       break;
     case LOAD_HASHTAG_POSTS_REQUEST:
-      draft.loadHashtagPostsLoading = true;
-      draft.loadHashtagPostsDone = false;
-      draft.loadHashtagPostsError = null;
+      draft.loadPostsLoading = true;
+      draft.loadPostsDone = false;
+      draft.loadPostsError = null;
       break;
     case LOAD_HASHTAG_POSTS_SUCCESS:
-      draft.loadHashtagPostsLoading = false;
-      draft.loadHashtagPostsDone = true;
-      draft.mainPosts = action.data.concat(draft.mainPosts);
-      draft.hasMorePosts = draft.mainPosts.length < 50;
+      draft.loadPostsLoading = false;
+      draft.loadPostsDone = true;
+      draft.mainPosts = draft.mainPosts.concat(action.data);
+      draft.hasMorePosts = action.data.length === 10;
       break;
     case LOAD_HASHTAG_POSTS_FAILURE:
-      draft.loadHashtagPostsLoading = false;
-      draft.loadHashtagPostsError = action.error;
+      draft.loadPostsLoading = false;
+      draft.loadPostsError = action.error;
       break;
     case LOAD_POSTS_REQUEST:
       draft.loadPostsLoading = true;
@@ -216,8 +210,8 @@ const reducer = (state = initialState, action) => produce(state, (draft) => {
     case LOAD_POSTS_SUCCESS:
       draft.loadPostsLoading = false;
       draft.loadPostsDone = true;
-      draft.mainPosts = action.data.concat(draft.mainPosts);
-      draft.hasMorePosts = draft.mainPosts.length < 50;
+      draft.mainPosts = draft.mainPosts.concat(action.data);
+      draft.hasMorePosts = action.data.length === 10;
       break;
     case LOAD_POSTS_FAILURE:
       draft.loadPostsLoading = false;

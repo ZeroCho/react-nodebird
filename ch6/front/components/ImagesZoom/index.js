@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Slick from 'react-slick';
 
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import Slick from 'react-slick';
-
 import { Overlay, Global, Header, CloseBtn, ImgWrapper, Indicator, SlickWrapper } from './styles';
 
 const ImagesZoom = ({ images, onClose }) => {

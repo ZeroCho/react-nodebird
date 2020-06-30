@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { END } from 'redux-saga';
 
+import axios from 'axios';
 import { LOAD_POST_REQUEST } from '../../reducers/post';
 import wrapper from '../../store/configureStore';
 import PostCard from '../../components/PostCard';
@@ -34,7 +35,12 @@ const Post = () => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  const cookie = context.req ? context.req.headers.cookie : '';
   console.log(context);
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
   context.store.dispatch({
     type: LOAD_MY_INFO_REQUEST,
   });
