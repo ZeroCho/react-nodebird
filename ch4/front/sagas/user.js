@@ -33,6 +33,7 @@ function* logIn(action) {
       data: action.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOG_IN_FAILURE,
       error: err.response.data,
@@ -52,6 +53,7 @@ function* logOut() {
       type: LOG_OUT_SUCCESS,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOG_OUT_FAILURE,
       error: err.response.data,
@@ -71,6 +73,7 @@ function* signUp() {
       type: SIGN_UP_SUCCESS,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: SIGN_UP_FAILURE,
       error: err.response.data,
@@ -91,6 +94,7 @@ function* follow(action) {
       data: action.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: FOLLOW_FAILURE,
       error: err.response.data,
@@ -111,6 +115,7 @@ function* unfollow(action) {
       data: action.data,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: UNFOLLOW_FAILURE,
       error: err.response.data,

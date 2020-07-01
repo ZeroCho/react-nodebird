@@ -32,6 +32,7 @@ function* loadPosts(action) {
       data: generateDummyPost(10),
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: LOAD_POSTS_FAILURE,
       data: err.response.data,
@@ -60,6 +61,7 @@ function* addPost(action) {
       data: id,
     });
   } catch (err) {
+    console.error(err);
     yield put({
       type: ADD_POST_FAILURE,
       data: err.response.data,
