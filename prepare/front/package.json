@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next -p 3060",
     "build": "cross-env ANALYZE=true NODE_ENV=production next build",
-    "start": "cross-env NODE_ENV=production next start -p 3060"
+    "start": "cross-env NODE_ENV=production pm2 start npm --name \"next\" -- start -p 3060"
   },
   "author": "ZeroCho",
   "license": "ISC",
@@ -22,6 +22,7 @@
     "moment": "^2.27.0",
     "next": "^9.4.4",
     "next-redux-wrapper": "^6.0.2",
+    "pm2": "^4.4.0",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
