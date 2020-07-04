@@ -15,7 +15,6 @@
     "@next/bundle-analyzer": "^9.4.4",
     "antd": "^4.3.5",
     "axios": "^0.19.2",
-    "compression-webpack-plugin": "^4.0.0",
     "cookie-parser": "^1.4.5",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
