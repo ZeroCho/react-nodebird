@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app",
-    "start": "pm2 start app"
+    "start": "cross-env NODE_ENV=production pm2 start app"
   },
   "author": "ZeroCho",
   "license": "ISC",
@@ -13,9 +13,12 @@
     "bcrypt": "^5.0.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "helmet": "^3.23.3",
+    "hpp": "^0.2.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "mysql2": "^2.1.0",
