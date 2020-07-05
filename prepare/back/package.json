@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app",
-    "start": "cross-env NODE_ENV=production pm2 start app"
+    "start": "cross-env NODE_ENV=production pm2 start app.js"
   },
   "author": "ZeroCho",
   "license": "ISC",
