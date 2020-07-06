@@ -44,6 +44,11 @@ app.use(session({
   saveUninitialized: false,
   resave: false,
   secret: process.env.COOKIE_SECRET,
+  cookie: {
+    httpOnly: true,
+    secure: false, // https 켜면 true로
+    domain: prod && '54.90.1.82'
+  }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
