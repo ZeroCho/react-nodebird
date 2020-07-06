@@ -1,40 +1,47 @@
-import React from 'react';
-import { Button, List, Card, Icon } from 'antd';
+import React, { useEffect } from 'react';
+import Head from 'next/head';
+import { useSelector, useDispatch } from 'react-redux';
+import Router from 'next/router';
+
+import AppLayout from '../components/AppLayout';
 import NicknameEditForm from '../components/NicknameEditForm';
+import FollowList from '../components/FollowList';
+import { LOAD_FOLLOWERS_REQUEST, LOAD_FOLLOWINGS_REQUEST } from '../reducers/user';
 
 const Profile = () => {
+  const dispatch = useDispatch();
+
+  const { me } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    dispatch({
+      type: LOAD_FOLLOWERS_REQUEST,
+    });
+    dispatch({
+      type: LOAD_FOLLOWINGS_REQUEST,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!(me && me.id)) {
+      Router.push('/');
+    }
+  }, [me && me.id]);
+
+  if (!me) {
+    return null;
+  }
   return (
-    <div>
-      <NicknameEditForm />
-      <List
-        style={{ marginBottom: '20px' }}
-        grid={{ gutter: 4, xs: 2, md: 3 }}
-        size="small"
-        header={<div>팔로잉 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
-        bordered
-        dataSource={['제로초', '바보', '노드버드오피셜']}
-        renderItem={item => (
-          <List.Item style={{ marginTop: '20px' }}>
-            <Card actions={[<Icon key="stop" type="stop" />]}><Card.Meta description={item} /></Card>
-          </List.Item>
-        )}
-      />
-      <List
-        style={{ marginBottom: '20px' }}
-        grid={{ gutter: 4, xs: 2, md: 3 }}
-        size="small"
-        header={<div>팔로워 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
-        bordered
-        dataSource={['제로초', '바보', '노드버드오피셜']}
-        renderItem={item => (
-          <List.Item style={{ marginTop: '20px' }}>
-            <Card actions={[<Icon key="stop" type="stop" />]}><Card.Meta description={item} /></Card>
-          </List.Item>
-        )}
-      />
-    </div>
+    <>
+      <Head>
+        <title>내 프로필 | NodeBird</title>
+      </Head>
+      <AppLayout>
+        <NicknameEditForm />
+        <FollowList header="팔로잉" data={me.Followings} />
+        <FollowList header="팔로워" data={me.Followers} />
+      </AppLayout>
+    </>
   );
 };
 

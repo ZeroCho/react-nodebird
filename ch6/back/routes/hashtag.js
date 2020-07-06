@@ -1,32 +1,40 @@
 const express = require('express');
-const db = require('../models');
+const { Op } = require('sequelize');
+
+const { User, Hashtag, Image, Post } = require('../models');
 
 const router = express.Router();
 
 router.get('/:tag', async (req, res, next) => {
   try {
-    const posts = await db.Post.findAll({
+    const where = {};
+    if (parseInt(req.query.lastId, 10)) { // 초기 로딩이 아닐 때
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10)}
+    } // 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+    const posts = await Post.findAll({
+      where,
+      limit: 10,
       include: [{
-        model: db.Hashtag,
+        model: Hashtag,
         where: { name: decodeURIComponent(req.params.tag) },
       }, {
-        model: db.User,
+        model: User,
         attributes: ['id', 'nickname'],
       }, {
-        model: db.Image,
+        model: Image,
       }, {
-        model: db.User,
+        model: User,
         through: 'Like',
         as: 'Likers',
         attributes: ['id'],
       }, {
-        model: db.Post,
+        model: Post,
         as: 'Retweet',
         include: [{
-          model: db.User,
+          model: User,
           attributes: ['id', 'nickname'],
         }, {
-          model: db.Image,
+          model: Image,
         }],
       }],
     });

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import Head from 'next/head';
 import { Button, Checkbox, Form, Input } from 'antd';
+
 import AppLayout from '../components/AppLayout';
+import useInput from '../hooks/useInput';
 
 const Signup = () => {
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -9,25 +11,18 @@ const Signup = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [termError, setTermError] = useState(false);
 
-  const useInput = (initValue = null) => {
-    const [value, setter] = useState(initValue);
-    const handler = (e) => {
-      setter(e.target.value);
-    };
-    return [value, handler];
-  };
-
   const [id, onChangeId] = useInput('');
   const [nick, onChangeNick] = useInput('');
   const [password, onChangePassword] = useInput('');
 
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = () => {
     if (password !== passwordCheck) {
-      return setPasswordError(true);
+      setPasswordError(true);
+      return;
     }
     if (!term) {
-      return setTermError(true);
+      setTermError(true);
+      return;
     }
     console.log({
       id,
@@ -52,11 +47,9 @@ const Signup = () => {
     <>
       <Head>
         <title>NodeBird</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.css" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/antd/3.16.2/antd.js" />
       </Head>
       <AppLayout>
-        <Form onSubmit={onSubmit} style={{ padding: 10 }}>
+        <Form onFinish={onSubmit} style={{ padding: 10 }}>
           <div>
             <label htmlFor="user-id">아이디</label>
             <br />

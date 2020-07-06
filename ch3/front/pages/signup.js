@@ -1,15 +1,11 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Form, Input, Checkbox, Button } from 'antd';
 import { useDispatch } from 'react-redux';
-import { signUpAction } from '../reducers/user';
+import Head from 'next/head';
 
-export const useInput = (initValue = null) => {
-  const [value, setter] = useState(initValue);
-  const handler = useCallback((e) => {
-    setter(e.target.value);
-  }, []);
-  return [value, handler];
-};
+import { signUpAction } from '../reducers/user';
+import AppLayout from '../components/AppLayout';
+import useInput from '../hooks/useInput';
 
 const Signup = () => {
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -21,9 +17,16 @@ const Signup = () => {
   const [nick, onChangeNick] = useInput('');
   const [password, onChangePassword] = useInput('');
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
 
-  const onSubmit = useCallback((e) => {
-    e.preventDefault();
+  useEffect(() => {
+    if (user) {
+      alert('로그인했으니 메인페이지로 이동합니다.');
+      Router.push('/');
+    }
+  }, [user && user.id]);
+
+  const onSubmit = useCallback(() => {
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
@@ -48,8 +51,11 @@ const Signup = () => {
   }, []);
 
   return (
-    <>
-      <Form onSubmit={onSubmit} style={{ padding: 10 }}>
+    <AppLayout>
+      <Head>
+        <title>회원가입 | NodeBird</title>
+      </Head>
+      <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <div>
           <label htmlFor="user-id">아이디</label>
           <br />
@@ -72,14 +78,14 @@ const Signup = () => {
           {passwordError && <div style={{ color: 'red' }}>비밀번호가 일치하지 않습니다.</div>}
         </div>
         <div>
-          <Checkbox name="user-term" value={term} onChange={onChangeTerm}>제로초 말을 잘 들을 것을 동의합니다.</Checkbox>
+          <Checkbox name="user-term" checked={term} onChange={onChangeTerm}>제로초 말을 잘 들을 것을 동의합니다.</Checkbox>
           {termError && <div style={{ color: 'red' }}>약관에 동의하셔야 합니다.</div>}
         </div>
         <div style={{ marginTop: 10 }}>
           <Button type="primary" htmlType="submit">가입하기</Button>
         </div>
       </Form>
-    </>
+    </AppLayout>
   );
 };
 

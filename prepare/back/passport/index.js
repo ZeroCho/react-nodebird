@@ -1,33 +1,19 @@
 const passport = require('passport');
-const db = require('../models');
 const local = require('./local');
+const { User } = require('../models');
 
 module.exports = () => {
   passport.serializeUser((user, done) => {
-    return done(null, user.id);
+    done(null, user.id);
   });
+
   passport.deserializeUser(async (id, done) => {
     try {
-      const user = await db.User.findOne({
-        where: { id },
-        include: [{
-          model: db.Post,
-          as: 'Post',
-          attributes: ['id'],
-        }, {
-          model: db.User,
-          as: 'Followers',
-          attributes: ['id'],
-        }, {
-          model: db.User,
-          as: 'Followings',
-          attributes: ['id'],
-        }],
-      });
-      return done(null, user);
-    } catch (e) {
-      console.error(e);
-      return done(e);
+      const user = await User.findOne({ where: { id }});
+      done(null, user); // req.user
+    } catch (error) {
+      console.error(error);
+      done(error);
     }
   });
 
