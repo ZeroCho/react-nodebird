@@ -47,7 +47,7 @@ app.use(session({
   cookie: {
     httpOnly: true,
     secure: false, // https 켜면 true로
-    domain: process.env.NODE_ENV === 'production' && 'http://54.90.1.82',
+    domain: process.env.NODE_ENV === 'production' && '54.90.1.82',
     sameSite: 'none',
   }
 }));
