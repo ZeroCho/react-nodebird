@@ -1,1 +1,1 @@
-export const backUrl = 'http://34.232.77.127';
+export const backUrl = 'http://api.nodebird.com';
