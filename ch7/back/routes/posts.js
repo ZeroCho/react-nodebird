@@ -1,47 +1,52 @@
 const express = require('express');
-const db = require('../models');
+const { Op } = require('sequelize');
+
+const { Post, Image, User, Comment } = require('../models');
 
 const router = express.Router();
 
-router.get('/', async (req, res, next) => { // GET /api/posts
+router.get('/', async (req, res, next) => { // GET /posts
   try {
-    let where = {};
-    if (parseInt(req.query.lastId, 10)) {
-      where = {
-        id: {
-          [db.Sequelize.Op.lt]: parseInt(req.query.lastId, 10), // less than
-        },
-      };
-    }
-    const posts = await db.Post.findAll({
+    const where = {};
+    if (parseInt(req.query.lastId, 10)) { // 초기 로딩이 아닐 때
+      where.id = { [Op.lt]: parseInt(req.query.lastId, 10)}
+    } // 21 20 19 18 17 16 15 14 13 12 11 10 9 8 7 6 5 4 3 2 1
+    const posts = await Post.findAll({
       where,
+      limit: 10,
+      order: [['createdAt', 'DESC']],
       include: [{
-        model: db.User,
+        model: User,
         attributes: ['id', 'nickname'],
       }, {
-        model: db.Image,
+        model: Image,
       }, {
-        model: db.User,
-        through: 'Like',
+        model: Comment,
+        include: [{
+          model: User,
+          attributes: ['id', 'nickname'],
+          order: [['createdAt', 'DESC']],
+        }],
+      }, {
+        model: User, // 좋아요 누른 사람
         as: 'Likers',
         attributes: ['id'],
       }, {
-        model: db.Post,
+        model: Post,
         as: 'Retweet',
         include: [{
-          model: db.User,
+          model: User,
           attributes: ['id', 'nickname'],
         }, {
-          model: db.Image,
-        }],
+          model: Image,
+        }]
       }],
-      order: [['createdAt', 'DESC']], // DESC는 내림차순, ASC는 오름차순
-      limit: parseInt(req.query.limit, 10),
     });
-    res.json(posts);
-  } catch (e) {
-    console.error(e);
-    next(e);
+    console.log(posts);
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error(error);
+    next(error);
   }
 });
 

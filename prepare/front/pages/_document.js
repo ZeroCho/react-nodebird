@@ -1,37 +1,41 @@
 import React from 'react';
-import Document, { Main, NextScript } from 'next/document';
+import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import Helmet from 'react-helmet';
 
-class MyDocument extends Document {
-  static getInitialProps(context) {
+export default class MyDocument extends Document {
+  static async getInitalProps(ctx) {
     const sheet = new ServerStyleSheet();
-    const page = context.renderPage((App) => (props) => sheet.collectStyles(<App {...props} />));
-    const styleTags = sheet.getStyleElement();
-
-    return { ...page, styleTags, helmet: Helmet.renderStatic() };
+    const originalRenderPage = ctx.renderPage;
+    try {
+      ctx.renderPage = () => originalRenderPage({
+        enhanceApp: (App) => (props) => sheet.collectStyles(<App {...props} />),
+      });
+      const initialProps = await Document.getInitialProps(ctx);
+      return {
+        ...initialProps,
+        styles: (
+          <>
+            {initialProps.styles}
+            {sheet.getStyleElement()}
+          </>
+        ),
+      };
+    } catch (error) {
+      console.error(error);
+    } finally {
+      sheet.seal();
+    }
   }
 
   render() {
-    const { htmlAttributes, bodyAttributes, ...helmet } = this.props.helmet;
-    const htmlAttrs = htmlAttributes.toComponent();
-    const bodyAttrs = bodyAttributes.toComponent();
-
     return (
-      <html {...htmlAttrs}>
-        <head>
-          {this.props.styleTags}
-          {Object.values(helmet).map(el => el.toComponent())}
-        </head>
-        <body {...bodyAttrs}>
+      <Html>
+        <Head />
+        <body>
           <Main />
-          {process.env.NODE_ENV === 'production'
-          && <script src="https://polyfill.io/v3/polyfill.min.js?features=es6,es7,es8,es9,NodeList.prototype.forEach&flags=gated" />}
           <NextScript />
         </body>
-      </html>
+      </Html>
     );
   }
 }
-
-export default MyDocument;

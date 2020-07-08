@@ -1,25 +1,12 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { Button, Checkbox, Form, Input } from 'antd';
-import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
+import Head from 'next/head';
+
 import { SIGN_UP_REQUEST } from '../reducers/user';
-
-const TextInput = ({ value }) => (
-  <div>{value}</div>
-);
-
-TextInput.propTypes = {
-  value: PropTypes.string,
-};
-
-export const useInput = (initValue = null) => {
-  const [value, setter] = useState(initValue);
-  const handler = useCallback((e) => {
-    setter(e.target.value);
-  }, []);
-  return [value, handler];
-};
+import AppLayout from '../components/AppLayout';
+import useInput from '../hooks/useInput';
 
 const Signup = () => {
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -27,11 +14,11 @@ const Signup = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [termError, setTermError] = useState(false);
 
-  const [id, onChangeId] = useInput('');
+  const [email, onChangeEmail] = useInput('');
   const [nick, onChangeNick] = useInput('');
   const [password, onChangePassword] = useInput('');
   const dispatch = useDispatch();
-  const { isSigningUp, me } = useSelector(state => state.user);
+  const { isSigningUp, me } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (me) {
@@ -40,8 +27,7 @@ const Signup = () => {
     }
   }, [me && me.id]);
 
-  const onSubmit = useCallback((e) => {
-    e.preventDefault();
+  const onSubmit = useCallback(() => {
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
@@ -51,12 +37,12 @@ const Signup = () => {
     return dispatch({
       type: SIGN_UP_REQUEST,
       data: {
-        id,
+        email,
         password,
         nick,
       },
     });
-  }, [password, passwordCheck, term]);
+  }, [email, password, passwordCheck, term]);
 
   const onChangePasswordCheck = useCallback((e) => {
     setPasswordError(e.target.value !== password);
@@ -69,13 +55,15 @@ const Signup = () => {
   }, []);
 
   return (
-    <>
-      <Form onSubmit={onSubmit} style={{ padding: 10 }}>
-        <TextInput value="135135" />
+    <AppLayout>
+      <Head>
+        <title>회원가입 | NodeBird</title>
+      </Head>
+      <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <div>
-          <label htmlFor="user-id">아이디</label>
+          <label htmlFor="user-email">아이디</label>
           <br />
-          <Input name="user-id" value={id} required onChange={onChangeId} />
+          <Input name="user-email" value={email} required onChange={onChangeEmail} />
         </div>
         <div>
           <label htmlFor="user-nick">닉네임</label>
@@ -107,7 +95,7 @@ const Signup = () => {
           <Button type="primary" htmlType="submit" loading={isSigningUp}>가입하기</Button>
         </div>
       </Form>
-    </>
+    </AppLayout>
   );
 };
 

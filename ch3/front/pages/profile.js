@@ -1,40 +1,39 @@
-import React from 'react';
-import { Button, List, Card, Icon } from 'antd';
+import React, { useEffect } from 'react';
+import Router from 'next/router';
+import { useSelector } from 'react-redux';
+import Head from 'next/head';
+
 import NicknameEditForm from '../components/NicknameEditForm';
+import AppLayout from '../components/AppLayout';
+import FollowList from '../components/FollowList';
 
 const Profile = () => {
+  const { isLoggedIn } = useSelector(state => state.user);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      Router.replace('/');
+    }
+  }, [isLoggedIn])
+
+  const followerList = [{ nickname: '제로초' }, { nickname: '바보' }, { nickname: '노드버드오피셜' }];
+  const followingList = [{ nickname: '제로초' }, { nickname: '바보' }, { nickname: '노드버드오피셜' }];
+
   return (
-    <div>
+    <AppLayout>
+      <Head>
+        <title>내 프로필 | NodeBird</title>
+      </Head>
       <NicknameEditForm />
-      <List
-        style={{ marginBottom: '20px' }}
-        grid={{ gutter: 4, xs: 2, md: 3 }}
-        size="small"
-        header={<div>팔로잉 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
-        bordered
-        dataSource={['제로초', '바보', '노드버드오피셜']}
-        renderItem={item => (
-          <List.Item style={{ marginTop: '20px' }}>
-            <Card actions={[<Icon key="stop" type="stop" />]}><Card.Meta description={item} /></Card>
-          </List.Item>
-        )}
+      <FollowList
+        header="팔로잉 목록"
+        data={followingList}
       />
-      <List
-        style={{ marginBottom: '20px' }}
-        grid={{ gutter: 4, xs: 2, md: 3 }}
-        size="small"
-        header={<div>팔로워 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
-        bordered
-        dataSource={['제로초', '바보', '노드버드오피셜']}
-        renderItem={item => (
-          <List.Item style={{ marginTop: '20px' }}>
-            <Card actions={[<Icon key="stop" type="stop" />]}><Card.Meta description={item} /></Card>
-          </List.Item>
-        )}
+      <FollowList
+        header="팔로워 목록"
+        data={followerList}
       />
-    </div>
+    </AppLayout>
   );
 };
 

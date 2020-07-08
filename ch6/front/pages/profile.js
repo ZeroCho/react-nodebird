@@ -1,95 +1,76 @@
-import React, { useEffect, useCallback } from 'react';
-import { Button, List, Card, Icon } from 'antd';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import Head from 'next/head';
+import { useSelector } from 'react-redux';
+import Router from 'next/router';
+import { END } from 'redux-saga';
+import axios from 'axios';
+import useSWR from 'swr';
 
+import AppLayout from '../components/AppLayout';
 import NicknameEditForm from '../components/NicknameEditForm';
-import {
-  LOAD_FOLLOWERS_REQUEST,
-  LOAD_FOLLOWINGS_REQUEST,
-  REMOVE_FOLLOWER_REQUEST,
-  UNFOLLOW_USER_REQUEST,
-} from '../reducers/user';
-import { LOAD_USER_POSTS_REQUEST } from '../reducers/post';
-import PostCard from '../components/PostCard';
+import FollowList from '../components/FollowList';
+import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
+import wrapper from '../store/configureStore';
+
+const fetcher = (url) => axios.get(url, { withCredentials: true }).then((result) => result.data);
 
 const Profile = () => {
-  const dispatch = useDispatch();
-  const { me, followingList, followerList } = useSelector(state => state.user);
-  const { mainPosts } = useSelector(state => state.post);
+  const [followingsLimit, setFollowingsLimit] = useState(3);
+  const [followersLimit, setFollowersLimit] = useState(3);
+  const { data: followingsData, error: followingError } = useSWR(`http://localhost:3065/user/followings?limit=${followingsLimit}`, fetcher);
+  const { data: followersData, error: followerError } = useSWR(`http://localhost:3065/user/followers?limit=${followersLimit}`, fetcher);
+  const { me } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (me) {
-      dispatch({
-        type: LOAD_FOLLOWERS_REQUEST,
-        data: me.id,
-      });
-      dispatch({
-        type: LOAD_FOLLOWINGS_REQUEST,
-        data: me.id,
-      });
-      dispatch({
-        type: LOAD_USER_POSTS_REQUEST,
-        data: me.id,
-      });
+    if (!(me && me.id)) {
+      Router.push('/');
     }
   }, [me && me.id]);
 
-  const onUnfollow = useCallback(userId => () => {
-    dispatch({
-      type: UNFOLLOW_USER_REQUEST,
-      data: userId,
-    });
+  const loadMoreFollowers = useCallback(() => {
+    setFollowersLimit((prev) => prev + 3);
   }, []);
 
-  const onRemoveFollower = useCallback(userId => () => {
-    dispatch({
-      type: REMOVE_FOLLOWER_REQUEST,
-      data: userId,
-    });
+  const loadMoreFollowings = useCallback(() => {
+    setFollowingsLimit((prev) => prev + 3);
   }, []);
 
+  if (followerError || followingError) {
+    console.error(followerError || followingError);
+    return '팔로잉/팔로워 로딩 중 에러가 발생했습니다.';
+  }
+
+  if (!me) {
+    return '내 정보 로딩중...';
+  }
   return (
-    <div>
-      <NicknameEditForm />
-      <List
-        style={{ marginBottom: '20px' }}
-        grid={{ gutter: 4, xs: 2, md: 3 }}
-        size="small"
-        header={<div>팔로잉 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
-        bordered
-        dataSource={followingList}
-        renderItem={item => (
-          <List.Item style={{ marginTop: '20px' }}>
-            <Card actions={[<Icon key="stop" type="stop" onClick={onUnfollow(item.id)} />]}>
-              <Card.Meta description={item.nickname} />
-            </Card>
-          </List.Item>
-        )}
-      />
-      <List
-        style={{ marginBottom: '20px' }}
-        grid={{ gutter: 4, xs: 2, md: 3 }}
-        size="small"
-        header={<div>팔로워 목록</div>}
-        loadMore={<Button style={{ width: '100%' }}>더 보기</Button>}
-        bordered
-        dataSource={followerList}
-        renderItem={item => (
-          <List.Item style={{ marginTop: '20px' }}>
-            <Card actions={[<Icon key="stop" type="stop" onClick={onRemoveFollower(item.id)} />]}>
-              <Card.Meta description={item.nickname} />
-            </Card>
-          </List.Item>
-        )}
-      />
-      <div>
-        {mainPosts.map(c => (
-          <PostCard key={+c.createdAt} post={c} />
-        ))}
-      </div>
-    </div>
+    <>
+      <Head>
+        <title>내 프로필 | NodeBird</title>
+      </Head>
+      <AppLayout>
+        <NicknameEditForm />
+        <FollowList header="팔로잉" data={followingsData} onClickMore={loadMoreFollowings} loading={!followingError && !followingsData} />
+        <FollowList header="팔로워" data={followersData} onClickMore={loadMoreFollowers} loading={!followerError && !followersData} />
+      </AppLayout>
+    </>
   );
 };
+
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  console.log('getServerSideProps start');
+  console.log(context.req.headers);
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch({
+    type: LOAD_MY_INFO_REQUEST,
+  });
+  context.store.dispatch(END);
+  console.log('getServerSideProps end');
+  await context.store.sagaTask.toPromise();
+});
 
 export default Profile;

@@ -1,6 +1,7 @@
 const dummyUser = {
+  id: 1,
   nickname: '제로초',
-  Post: [],
+  Posts: [],
   Followings: [],
   Followers: [],
 };

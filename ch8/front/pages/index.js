@@ -29,8 +29,9 @@ const Home = () => {
     window.addEventListener('scroll', onScroll);
     return () => {
       window.removeEventListener('scroll', onScroll);
+      countRef.current = [];
     };
-  }, [mainPosts.length]);
+  }, [hasMorePost, mainPosts.length]);
 
   return (
     <div>

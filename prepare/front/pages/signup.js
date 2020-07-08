@@ -1,114 +1,134 @@
-import { Button, Checkbox, Form, Input } from 'antd';
+import React, { useCallback, useState, useEffect } from 'react';
+import Head from 'next/head';
+import { Form, Input, Checkbox, Button } from 'antd';
+import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import Router from 'next/router';
-import React, { useCallback, useState, useEffect } from 'react';
-import styled from 'styled-components';
+import axios from 'axios';
+import { END } from 'redux-saga';
 
-import { SIGN_UP_REQUEST } from '../reducers/user';
+import AppLayout from '../components/AppLayout';
+import useInput from '../hooks/useInput';
+import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from '../reducers/user';
+import wrapper from '../store/configureStore';
 
-const ButtonZone = styled.div`
-  margin-top: 10px;
+const ErrorMessage = styled.div`
+  color: red;
 `;
 
-const SignUpForm = styled(Form)`
-  padding: 10px;
-`;
-
-const SignUp = () => {
-  const [idDuplicated] = useState(false);
-  const [term, setTerm] = useState(false);
-  const [termError, setTermError] = useState(false);
-  const [passwordCheck, setPasswordCheck] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
+const Signup = () => {
   const dispatch = useDispatch();
-  const { signedUp, signUpErrorReason, isSigningUp, me } = useSelector(state => state.user);
-
-  const useInput = (initValue = null) => {
-    const [value, setter] = useState(initValue);
-    const handler = useCallback((e) => {
-      setter(e.target.value);
-    }, []);
-    return [value, handler];
-  };
-
-  const [id, onChangeId] = useInput('');
-  const [nick, onChangeNick] = useInput('');
-  const [password, onChangePassword] = useInput('');
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (me) {
-      Router.push('/');
+    if (me && me.id) {
+      Router.replace('/');
     }
-  }, [me]);
+  }, [me && me.id]);
 
-  const signUpAttempt = useCallback(() => {
-    dispatch({
-      type: SIGN_UP_REQUEST,
-      data: {
-        id,
-        nick,
-        password,
-      },
-    });
-  }, [id, nick, password]);
+  useEffect(() => {
+    if (signUpDone) {
+      Router.replace('/');
+    }
+  }, [signUpDone]);
 
-  const onSubmit = useCallback((e) => {
-    e.preventDefault();
-    console.log('submit');
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
+
+  const [email, onChangeEmail] = useInput('');
+  const [nickname, onChangeNickname] = useInput('');
+  const [password, onChangePassword] = useInput('');
+
+  const [passwordCheck, setPasswordCheck] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
+  const onChangePasswordCheck = useCallback((e) => {
+    setPasswordCheck(e.target.value);
+    setPasswordError(e.target.value !== password);
+  }, [password]);
+
+  const [term, setTerm] = useState('');
+  const [termError, setTermError] = useState(false);
+  const onChangeTerm = useCallback((e) => {
+    setTerm(e.target.checked);
+    setTermError(false);
+  }, []);
+
+  const onSubmit = useCallback(() => {
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
     if (!term) {
       return setTermError(true);
     }
-    signUpAttempt();
-  }, [password, passwordCheck, term]);
-
-  const onChangePasswordCheck = useCallback((e) => {
-    setPasswordCheck(e.target.value);
-    setPasswordError(e.target.value !== password);
-  }, [password]);
-
-  const onChangeTerm = useCallback((e) => {
-    setTerm(e.target.checked);
-    setTermError(false);
-  }, []);
+    console.log(email, nickname, password);
+    dispatch({
+      type: SIGN_UP_REQUEST,
+      data: { email, password, nickname },
+    });
+  }, [email, password, passwordCheck, term]);
 
   return (
-    <SignUpForm onSubmit={onSubmit}>
-      <div>
-        <label htmlFor="user-id">아이디</label>
-        <br />
-        <Input name="user-id" required onChange={onChangeId} />
-        {idDuplicated && <div>아이디가 중복되었습니다.</div>}
-      </div>
-      <div>
-        <label htmlFor="user-nick">닉네임</label>
-        <br />
-        <Input name="user-nick" required onChange={onChangeNick} />
-      </div>
-      <div>
-        <label htmlFor="user-password">비밀번호</label>
-        <br />
-        <Input name="user-password" type="password" onChange={onChangePassword} required />
-      </div>
-      <div>
-        <label htmlFor="user-password-check">비밀번호 확인</label>
-        <br />
-        <Input name="user-password-check" type="password" value={passwordCheck} onChange={onChangePasswordCheck} required />
-        {passwordError && <div>비밀번호 확인이 일치하지 않습니다.</div>}
-      </div>
-      <div>
-        <Checkbox name="user-term" value={term} onChange={onChangeTerm}>약관에 동의합니다.</Checkbox>
-        {termError && <div>약관에 동의해주세요.</div>}
-      </div>
-      {signUpErrorReason && <div>{signUpErrorReason}</div>}
-      <ButtonZone>
-        <Button type="primary" htmlType="submit" loading={isSigningUp}>가입하기</Button>
-        {signedUp && <div>가입에 성공했습니다. 로그인해주세요.</div>}
-      </ButtonZone>
-    </SignUpForm>
+    <AppLayout>
+      <Head>
+        <title>회원가입 | NodeBird</title>
+      </Head>
+      <Form onFinish={onSubmit}>
+        <div>
+          <label htmlFor="user-email">이메일</label>
+          <br />
+          <Input name="user-email" type="email" value={email} required onChange={onChangeEmail} />
+        </div>
+        <div>
+          <label htmlFor="user-nick">닉네임</label>
+          <br />
+          <Input name="user-nick" value={nickname} required onChange={onChangeNickname} />
+        </div>
+        <div>
+          <label htmlFor="user-password">비밀번호</label>
+          <br />
+          <Input name="user-password" type="password" value={password} required onChange={onChangePassword} />
+        </div>
+        <div>
+          <label htmlFor="user-password-check">비밀번호체크</label>
+          <br />
+          <Input
+            name="user-password-check"
+            type="password"
+            value={passwordCheck}
+            required
+            onChange={onChangePasswordCheck}
+          />
+          {passwordError && <ErrorMessage>비밀번호가 일치하지 않습니다.</ErrorMessage>}
+        </div>
+        <div>
+          <Checkbox name="user-term" checked={term} onChange={onChangeTerm}>제로초 말을 잘 들을 것을 동의합니다.</Checkbox>
+          {termError && <ErrorMessage>약관에 동의하셔야 합니다.</ErrorMessage>}
+        </div>
+        <div style={{ marginTop: 10 }}>
+          <Button type="primary" htmlType="submit" loading={signUpLoading}>가입하기</Button>
+        </div>
+      </Form>
+    </AppLayout>
   );
 };
 
-export default SignUp;
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
+  console.log('getServerSideProps start');
+  console.log(context.req.headers);
+  const cookie = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+  if (context.req && cookie) {
+    axios.defaults.headers.Cookie = cookie;
+  }
+  context.store.dispatch({
+    type: LOAD_MY_INFO_REQUEST,
+  });
+  context.store.dispatch(END);
+  console.log('getServerSideProps end');
+  await context.store.sagaTask.toPromise();
+});
+
+export default Signup;

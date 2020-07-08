@@ -2,6 +2,9 @@ import React, { useState, useCallback } from 'react';
 import { Form, Input, Checkbox, Button } from 'antd';
 import PropTypes from 'prop-types';
 
+import AppLayout from '../components/AppLayout';
+import useInput from '../hooks/useInput';
+
 const TextInput = ({ value }) => {
   return (
     <div>{value}</div>
@@ -10,14 +13,6 @@ const TextInput = ({ value }) => {
 
 TextInput.propTypes = {
   value: PropTypes.string,
-};
-
-export const useInput = (initValue = null) => {
-  const [value, setter] = useState(initValue);
-  const handler = useCallback((e) => {
-    setter(e.target.value);
-  }, []);
-  return [value, handler];
 };
 
 const Signup = () => {
@@ -30,8 +25,7 @@ const Signup = () => {
   const [nick, onChangeNick] = useInput('');
   const [password, onChangePassword] = useInput('');
 
-  const onSubmit = useCallback((e) => {
-    e.preventDefault();
+  const onSubmit = useCallback(() => {
     if (password !== passwordCheck) {
       return setPasswordError(true);
     }
@@ -51,8 +45,8 @@ const Signup = () => {
   }, []);
 
   return (
-    <>
-      <Form onSubmit={onSubmit} style={{ padding: 10 }}>
+    <AppLayout>
+      <Form onFinish={onSubmit} style={{ padding: 10 }}>
         <TextInput value="135135" />
         <div>
           <label htmlFor="user-id">아이디</label>
@@ -89,7 +83,7 @@ const Signup = () => {
           <Button type="primary" htmlType="submit">가입하기</Button>
         </div>
       </Form>
-    </>
+    </AppLayout>
   );
 };
 
