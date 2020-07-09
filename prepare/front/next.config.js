@@ -6,14 +6,18 @@ module.exports = withBundleAnalyzer({
   compress: true,
   webpack(config, { webpack }) {
     const prod = process.env.NODE_ENV === 'production';
+    const plugins = [
+      ...config.plugins,
+      new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /^\.\/ko$/),
+    ];
+    if (prod) {
+      plugins.push(new webpack.EnvironmentPlugin(['NODE_ENV']));
+    }
     return {
       ...config,
       mode: prod ? 'production' : 'development',
       devtool: prod ? 'hidden-source-map' : 'eval',
-      plugins: [
-        ...config.plugins,
-        new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /^\.\/ko$/),
-      ],
+      plugins,
     };
   },
 });
