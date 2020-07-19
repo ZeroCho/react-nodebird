@@ -23,7 +23,7 @@ const UserProfile = () => {
     >
       <Card.Meta
         avatar={(
-          <Link href={`/user/${me.id}`}>
+          <Link href={`/user/${me.id}`} prefetch={false}>
             <a><Avatar>{me.nickname[0]}</Avatar></a>
           </Link>
         )}
