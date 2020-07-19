@@ -18,9 +18,6 @@ const Home = () => {
   useEffect(() => {
     if (retweetError) {
       alert(retweetError);
-      alert(retweetError);
-      alert(retweetError);
-      alert(retweetError);
     }
   }, [retweetError]);
 
