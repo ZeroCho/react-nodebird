@@ -18,7 +18,7 @@ const Hashtag = () => {
 
   useEffect(() => {
     const onScroll = () => {
-      if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
         if (hasMorePosts && !loadHashtagPostsLoading) {
           dispatch({
             type: LOAD_HASHTAG_POSTS_REQUEST,
