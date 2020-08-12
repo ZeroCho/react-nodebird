@@ -27,7 +27,7 @@ const PostImages = ({ images }) => {
       <>
         <div>
           <img src={images[0].src.replace(/original\//, 'thumb/')} width="50%" onClick={onZoom} />
-          <img src={images[0].src.replace(/original\//, 'thumb/')} width="50%" onClick={onZoom} />
+          <img src={images[1].src.replace(/original\//, 'thumb/')} width="50%" onClick={onZoom} />
         </div>
         {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
       </>
