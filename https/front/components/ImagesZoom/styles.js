@@ -69,4 +69,7 @@ export const Global = createGlobalStyle`
   .slick-slide {
     display: inline-block;
   }
+  .ant-card-cover {
+    transform: none !important;
+  }
 `;
