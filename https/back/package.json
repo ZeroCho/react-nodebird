@@ -10,7 +10,7 @@
   "author": "ZeroCho",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.710.0",
+    "aws-sdk": "^2.766.0",
     "bcrypt": "^5.0.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -23,11 +23,11 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "multer-s3": "^2.9.0",
-    "mysql2": "^2.1.0",
+    "mysql2": "^2.2.5",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "pm2": "^4.4.0",
-    "sequelize": "^5.21.13",
+    "pm2": "^4.5.0",
+    "sequelize": "^5.22.3",
     "sequelize-cli": "^5.5.1"
   },
   "devDependencies": {
