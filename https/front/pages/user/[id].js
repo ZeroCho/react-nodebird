@@ -36,20 +36,23 @@ const User = () => {
       window.removeEventListener('scroll', onScroll);
     };
   }, [mainPosts.length, hasMorePosts, id, loadPostsLoading]);
+  console.log('userInfo', userInfo);
 
   return (
     <AppLayout>
-      <Head>
-        <title>
-          {userInfo.nickname}
-          님의 글
-        </title>
-        <meta name="description" content={`${userInfo.nickname}님의 게시글`} />
-        <meta property="og:title" content={`${userInfo.nickname}님의 게시글`} />
-        <meta property="og:description" content={`${userInfo.nickname}님의 게시글`} />
-        <meta property="og:image" content="https://nodebird.com/favicon.ico" />
-        <meta property="og:url" content={`https://nodebird.com/user/${id}`} />
-      </Head>
+      {userInfo && (
+        <Head>
+          <title>
+            {userInfo.nickname}
+            님의 글
+          </title>
+          <meta name="description" content={`${userInfo.nickname}님의 게시글`} />
+          <meta property="og:title" content={`${userInfo.nickname}님의 게시글`} />
+          <meta property="og:description" content={`${userInfo.nickname}님의 게시글`} />
+          <meta property="og:image" content="https://nodebird.com/favicon.ico" />
+          <meta property="og:url" content={`https://nodebird.com/user/${id}`} />
+        </Head>
+      )}
       {userInfo && (userInfo.id !== me?.id)
         ? (
           <Card
@@ -93,15 +96,15 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
     axios.defaults.headers.Cookie = cookie;
   }
   context.store.dispatch({
+    type: LOAD_USER_REQUEST,
+    data: context.params.id,
+  });
+  context.store.dispatch({
     type: LOAD_USER_POSTS_REQUEST,
     data: context.params.id,
   });
   context.store.dispatch({
     type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
-    type: LOAD_USER_REQUEST,
-    data: context.params.id,
   });
   context.store.dispatch(END);
   await context.store.sagaTask.toPromise();

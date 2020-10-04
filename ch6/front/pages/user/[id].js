@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Avatar, Card } from 'antd';
 import { END } from 'redux-saga';
@@ -39,17 +39,19 @@ const User = () => {
 
   return (
     <AppLayout>
-      <Head>
-        <title>
-          {userInfo.nickname}
-          님의 글
-        </title>
-        <meta name="description" content={`${userInfo.nickname}님의 게시글`} />
-        <meta property="og:title" content={`${userInfo.nickname}님의 게시글`} />
-        <meta property="og:description" content={`${userInfo.nickname}님의 게시글`} />
-        <meta property="og:image" content="https://nodebird.com/favicon.ico" />
-        <meta property="og:url" content={`https://nodebird.com/user/${id}`} />
-      </Head>
+      {userInfo && (
+        <Head>
+          <title>
+            {userInfo.nickname}
+            님의 글
+          </title>
+          <meta name="description" content={`${userInfo.nickname}님의 게시글`} />
+          <meta property="og:title" content={`${userInfo.nickname}님의 게시글`} />
+          <meta property="og:description" content={`${userInfo.nickname}님의 게시글`} />
+          <meta property="og:image" content="https://nodebird.com/favicon.ico" />
+          <meta property="og:url" content={`https://nodebird.com/user/${id}`} />
+        </Head>
+      )}
       {userInfo
         ? (
           <Card
@@ -78,9 +80,7 @@ const User = () => {
           </Card>
         )
         : null}
-      {mainPosts.map((c) => (
-        <PostCard key={c.id} post={c} />
-      ))}
+      {mainPosts.map((post) => <PostCard key={post.id} post={post} />)}
     </AppLayout>
   );
 };
