@@ -19,7 +19,9 @@ const AppLayout = ({ children }) => {
   const { me } = useSelector((state) => state.user);
 
   const onSearch = useCallback(() => {
-    Router.push(`/hashtag/${searchInput}`);
+    if (searchInput) {
+      Router.push(`/hashtag/${searchInput}`);
+    }
   }, [searchInput]);
 
   return (
