@@ -46,14 +46,14 @@ const PostForm = () => {
       type: UPLOAD_IMAGES_REQUEST,
       data: imageFormData,
     });
-  });
+  }, []);
 
   const onRemoveImage = useCallback((index) => () => {
     dispatch({
       type: REMOVE_IMAGE,
       data: index,
     });
-  });
+  }, []);
 
   return (
     <Form style={{ margin: '10px 0 20px' }} encType="multipart/form-data" onFinish={onSubmit}>
