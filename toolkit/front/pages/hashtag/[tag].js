@@ -1,15 +1,12 @@
-// hashtag/[tag].js
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
-import { END } from 'redux-saga';
-
 import axios from 'axios';
-import { LOAD_HASHTAG_POSTS_REQUEST } from '../../reducers/post';
 import PostCard from '../../components/PostCard';
-import wrapper from '../../store/configureStore';
-import { LOAD_MY_INFO_REQUEST } from '../../reducers/user';
+import { loadMyInfo } from '../../actions/user';
+import { loadHashtagPosts } from '../../actions/post';
 import AppLayout from '../../components/AppLayout';
+import wrapper from '../../store/configureStore';
 
 const Hashtag = () => {
   const dispatch = useDispatch();
@@ -19,13 +16,14 @@ const Hashtag = () => {
 
   useEffect(() => {
     const onScroll = () => {
-      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
-        if (hasMorePosts && !loadPostsLoading) {
-          dispatch({
-            type: LOAD_HASHTAG_POSTS_REQUEST,
-            lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
-            data: tag,
-          });
+      if (hasMorePosts && !loadPostsLoading) {
+        if ((window.pageYOffset + document.documentElement.clientHeight)
+          > (document.documentElement.scrollHeight - 300)) {
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
+          dispatch(loadHashtagPosts({
+            lastId,
+            hashtag: tag,
+          }));
         }
       }
     };
@@ -44,22 +42,21 @@ const Hashtag = () => {
   );
 };
 
+// SSR (프론트 서버에서 실행)
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
   const cookie = context.req ? context.req.headers.cookie : '';
-  console.log(context);
   axios.defaults.headers.Cookie = '';
+  // 쿠키가 브라우저에 있는경우만 넣어서 실행
+  // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
   if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
-    type: LOAD_HASHTAG_POSTS_REQUEST,
-    data: context.params.tag,
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
+  await context.store.dispatch(loadHashtagPosts({ hashtag: context.params.tag }));
+  await context.store.dispatch(loadMyInfo());
+
+  return {
+    props: {},
+  };
 });
 
 export default Hashtag;

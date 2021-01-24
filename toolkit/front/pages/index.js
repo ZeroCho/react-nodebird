@@ -1,34 +1,30 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-
 import AppLayout from '../components/AppLayout';
 import PostForm from '../components/PostForm';
 import PostCard from '../components/PostCard';
-import { loadPostsAPI } from '../sagas/post';
-import { loadMyInfoAPI } from '../sagas/user';
-import { backUrl } from '../config/config';
-import { initialState as userInitialState } from '../reducers/user';
-import { initialState as postInitialState, loadPosts } from '../reducers/post';
+import { loadMyInfo } from '../actions/user';
+import { loadPosts } from '../actions/post';
+import wrapper from '../store/configureStore';
 
-const Home = (props) => {
-  console.log('props', props);
+const Home = () => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
-  const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector((state) => state.post);
+  const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
 
-  useEffect(() => {
-    if (retweetError) {
-      alert(retweetError);
-    }
-  }, [retweetError]);
-
-  const lastId = mainPosts[mainPosts.length - 1]?.id;
   useEffect(() => {
     function onScroll() {
-      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
-        if (hasMorePosts && !loadPostsLoading) {
-          dispatch(loadPosts(lastId));
+      // window.scrollY : 얼마나 내렸는지
+      // document.documentElement.clientHeight : 화면에 보이는 길이
+      // document.documentElement.scrollHeight : 총길이
+      if (hasMorePosts && !loadPostsLoading) {
+        if ((window.scrollY + document.documentElement.clientHeight)
+          > (document.documentElement.scrollHeight - 300)) {
+          const lastId = mainPosts[mainPosts.length - 1]?.id;
+          dispatch(loadPosts({
+            lastId,
+          }));
         }
       }
     }
@@ -37,6 +33,7 @@ const Home = (props) => {
       window.removeEventListener('scroll', onScroll);
     };
   }, [hasMorePosts, loadPostsLoading, mainPosts]);
+
   return (
     <AppLayout>
       {me && <PostForm />}
@@ -45,34 +42,21 @@ const Home = (props) => {
   );
 };
 
-export const getServerSideProps = async (context) => {
+// SSR (프론트 서버에서 실행)
+export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
   const cookie = context.req ? context.req.headers.cookie : '';
   axios.defaults.headers.Cookie = '';
-  axios.defaults.baseURL = backUrl;
+  // 쿠키가 브라우저에 있는경우만 넣어서 실행
+  // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
   if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  const results = await Promise.allSettled([loadPostsAPI(), loadMyInfoAPI()]);
-  const [posts, myInfo] = results.map((result) => result.value.data);
-  return {
-    props: {
-      initialState: {
-        user: {
-          ...userInitialState,
-          me: myInfo,
-        },
-        post: {
-          ...postInitialState,
-          mainPosts: posts,
-          hasMorePosts: posts.length === 10,
-        },
-      },
-    },
-  };
-};
+  await context.store.dispatch(loadPosts());
+  await context.store.dispatch(loadMyInfo());
 
-export function reportWebVitals(metric) {
-  console.log(metric);
-}
+  return {
+    props: {},
+  };
+});
 
 export default Home;

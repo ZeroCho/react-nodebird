@@ -1,134 +1,164 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import { Form, Input, Checkbox, Button } from 'antd';
-import styled from 'styled-components';
+import { Checkbox, Form, Input } from 'formik-antd';
 import { useDispatch, useSelector } from 'react-redux';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+import { Button, message } from 'antd';
+import styled from 'styled-components';
+import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import Router from 'next/router';
 import axios from 'axios';
-import { END } from 'redux-saga';
-
+import { loadMyInfo, signup } from '../actions/user';
 import AppLayout from '../components/AppLayout';
-import useInput from '../hooks/useInput';
-import { LOAD_MY_INFO_REQUEST, SIGN_UP_REQUEST } from '../reducers/user';
 import wrapper from '../store/configureStore';
 
-const ErrorMessage = styled.div`
-  color: red;
+const SignupSchema = Yup.object().shape({
+  user_email: Yup.string()
+    .email('올바르지 않은 이메일 형식 입니다.')
+    .required('이메일은 필수 입력 항목 입니다.'),
+  user_nickname: Yup.string()
+    .required('닉네임은 필수 입력 항목 입니다.'),
+  user_password: Yup.string()
+    .required('비밀번호는 필수 입력 항목 입니다.'),
+  user_password_check: Yup.string()
+    .oneOf([Yup.ref('user_password')], '비밀번호가 일치 하지 않습니다.')
+    .required('비밀번호 체크는 필수 입력 항목 입니다.'),
+  user_term: Yup.bool()
+    .oneOf([true], '약관에 동의하여 주십시오'),
+});
+const FormWrapper = styled(Form)`
+  margin-bottom: 20px;
+  border: 1px solid #d9d9d9;
+  padding: 20px;
+  box-sizing: border-box;
 `;
-
 const Signup = () => {
   const dispatch = useDispatch();
-  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user);
+  const [action, setAction] = useState(null);
+  const { me, signupLoading, signupDone, signupError } = useSelector((state) => state.user);
 
   useEffect(() => {
     if (me && me.id) {
-      Router.replace('/');
+      message.warn('로그인 한 사용자는 가입하실수 없습니다.').then();
+      Router.push('/').then();
     }
   }, [me && me.id]);
 
   useEffect(() => {
-    if (signUpDone) {
-      Router.replace('/');
+    if (action) {
+      if (signupDone) {
+        message.success('회원가입에 성공하셨습니다.').then(() => Router.push('/').then());
+      }
+      if (signupError) {
+        message.error(JSON.stringify(signupError, null, 4)).then();
+      }
+      action.setSubmitting(false);
+      setAction(null);
     }
-  }, [signUpDone]);
-
-  useEffect(() => {
-    if (signUpError) {
-      alert(signUpError);
-    }
-  }, [signUpError]);
-
-  const [email, onChangeEmail] = useInput('');
-  const [nickname, onChangeNickname] = useInput('');
-  const [password, onChangePassword] = useInput('');
-
-  const [passwordCheck, setPasswordCheck] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
-  const onChangePasswordCheck = useCallback((e) => {
-    setPasswordCheck(e.target.value);
-    setPasswordError(e.target.value !== password);
-  }, [password]);
-
-  const [term, setTerm] = useState('');
-  const [termError, setTermError] = useState(false);
-  const onChangeTerm = useCallback((e) => {
-    setTerm(e.target.checked);
-    setTermError(false);
-  }, []);
-
-  const onSubmit = useCallback(() => {
-    if (password !== passwordCheck) {
-      return setPasswordError(true);
-    }
-    if (!term) {
-      return setTermError(true);
-    }
-    console.log(email, nickname, password);
-    dispatch({
-      type: SIGN_UP_REQUEST,
-      data: { email, password, nickname },
-    });
-  }, [email, password, passwordCheck, term]);
+  }, [signupDone, signupError]);
 
   return (
     <AppLayout>
       <Head>
         <title>회원가입 | NodeBird</title>
       </Head>
-      <Form onFinish={onSubmit}>
-        <div>
-          <label htmlFor="user-email">이메일</label>
-          <br />
-          <Input name="user-email" type="email" value={email} required onChange={onChangeEmail} />
-        </div>
-        <div>
-          <label htmlFor="user-nick">닉네임</label>
-          <br />
-          <Input name="user-nick" value={nickname} required onChange={onChangeNickname} />
-        </div>
-        <div>
-          <label htmlFor="user-password">비밀번호</label>
-          <br />
-          <Input name="user-password" type="password" value={password} required onChange={onChangePassword} />
-        </div>
-        <div>
-          <label htmlFor="user-password-check">비밀번호체크</label>
-          <br />
-          <Input
-            name="user-password-check"
-            type="password"
-            value={passwordCheck}
-            required
-            onChange={onChangePasswordCheck}
-          />
-          {passwordError && <ErrorMessage>비밀번호가 일치하지 않습니다.</ErrorMessage>}
-        </div>
-        <div>
-          <Checkbox name="user-term" checked={term} onChange={onChangeTerm}>제로초 말을 잘 들을 것을 동의합니다.</Checkbox>
-          {termError && <ErrorMessage>약관에 동의하셔야 합니다.</ErrorMessage>}
-        </div>
-        <div style={{ marginTop: 10 }}>
-          <Button type="primary" htmlType="submit" loading={signUpLoading}>가입하기</Button>
-        </div>
-      </Form>
+      <Formik
+        initialValues={{
+          user_email: '',
+          user_nickname: '',
+          user_password: '',
+          user_password_check: '',
+          user_term: false,
+        }}
+        validationSchema={SignupSchema}
+        onSubmit={(values, { setSubmitting, resetForm }) => {
+          dispatch(signup({
+            email: values.user_email,
+            nickname: values.user_nickname,
+            password: values.user_password,
+          }));
+          setAction({ setSubmitting, resetForm });
+        }}
+      >
+        <FormWrapper layout="vertical">
+          <Form.Item
+            name="user_email"
+            label="이메일"
+          >
+            <Input
+              name="user_email"
+              type="email"
+              placeholder="User Email"
+              prefix={<MailOutlined />}
+            />
+          </Form.Item>
+          <Form.Item
+            name="user_nickname"
+            label="닉네임"
+          >
+            <Input
+              name="user_nickname"
+              placeholder="Nickname"
+              prefix={<UserOutlined />}
+            />
+          </Form.Item>
+          <Form.Item
+            name="user_password"
+            label="비밀번호"
+          >
+            <Input.Password
+              name="user_password"
+              placeholder="Password"
+              prefix={<LockOutlined />}
+            />
+          </Form.Item>
+          <Form.Item
+            name="user_password_check"
+            label="비밀번호체크"
+          >
+            <Input.Password
+              name="user_password_check"
+              placeholder="Password Check"
+              prefix={<LockOutlined />}
+            />
+          </Form.Item>
+          <Form.Item name="user_term">
+            <Checkbox
+              name="user_term"
+              placeholder="user_term Check"
+            >
+              동의 하시겠습니까?
+            </Checkbox>
+          </Form.Item>
+          <Form.Item name="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={signupLoading}
+            >
+              가입하기
+            </Button>
+          </Form.Item>
+        </FormWrapper>
+      </Formik>
     </AppLayout>
   );
 };
 
+// SSR (프론트 서버에서 실행)
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  console.log('getServerSideProps start');
-  console.log(context.req.headers);
   const cookie = context.req ? context.req.headers.cookie : '';
   axios.defaults.headers.Cookie = '';
+  // 쿠키가 브라우저에 있는경우만 넣어서 실행
+  // (주의, 아래 조건이 없다면 다른 사람으로 로그인 될 수도 있음)
   if (context.req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch(END);
-  console.log('getServerSideProps end');
-  await context.store.sagaTask.toPromise();
+  await context.store.dispatch(loadMyInfo());
+  return {
+    props: {},
+  };
 });
 
 export default Signup;

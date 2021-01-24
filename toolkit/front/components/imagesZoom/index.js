@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import Slick from 'react-slick';
-import Image from 'next/image';
+import { CloseBtn, Global, Header, ImgWrapper, Indicator, Overlay, SlickWrapper } from './styles';
+import { imageUrl } from '../../config/config';
 
-import { Overlay, Global, Header, CloseBtn, ImgWrapper, Indicator, SlickWrapper } from './styles';
-import { backUrl } from '../../config/config';
-
-const ImagesZoom = ({ images, onClose }) => {
+const ImagesZoom = ({ id, images, onClose }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   return (
     <Overlay>
@@ -19,23 +17,24 @@ const ImagesZoom = ({ images, onClose }) => {
         <div>
           <Slick
             initialSlide={0}
-            beforeChange={(slide) => setCurrentSlide(slide)}
+            afterChange={(slide) => setCurrentSlide(slide)}
             infinite
             arrows={false}
-            slidesToShow={1}
-            slidesToScroll={1}
+            slideToShow={1}
+            slideToScroll={1}
           >
             {images.map((v) => (
               <ImgWrapper key={v.src}>
-                <Image src={`${v.src.replace(/\/thumb\//, '/original/')}`} width={300} alt={v.src} />
+                <img
+                  src={imageUrl ? `${imageUrl}/${id}/${v.src}` : v.src.replace(/\/thumb\//, '/original/')}
+                  alt={v.src}
+                />
               </ImgWrapper>
             ))}
           </Slick>
           <Indicator>
             <div>
-              {currentSlide + 1}
-              {' '}
-              /
+              {currentSlide + 1}&nbsp;/&nbsp;
               {images.length}
             </div>
           </Indicator>
@@ -44,9 +43,12 @@ const ImagesZoom = ({ images, onClose }) => {
     </Overlay>
   );
 };
-
 ImagesZoom.propTypes = {
-  images: PropTypes.arrayOf(PropTypes.object).isRequired,
+  id: PropTypes.number.isRequired,
+  images: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    src: PropTypes.string.isRequired,
+  })).isRequired,
   onClose: PropTypes.func.isRequired,
 };
 

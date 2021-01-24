@@ -1,61 +1,81 @@
-import React, { useCallback, useEffect } from 'react';
-import { Form, Input, Button } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Button, message } from 'antd';
 import Link from 'next/link';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-
-import useInput from '../hooks/useInput';
-import { logIn } from '../reducers/user';
-
-const ButtonWrapper = styled.div`
-  margin-top: 10px;
-`;
+import { Formik } from 'formik';
+import { Form, Input } from 'formik-antd';
+import * as Yup from 'yup';
+import { LockOutlined, LoginOutlined, MailOutlined } from '@ant-design/icons';
+import { login } from '../actions/user';
 
 const FormWrapper = styled(Form)`
   padding: 10px;
+  box-sizing: border-box;
 `;
+
+const LoginFormSchema = Yup.object().shape({
+  user_email: Yup.string()
+    .email('올바르지 않은 이메일 형식 입니다.')
+    .required('이메일은 필수 입력 항목 입니다.'),
+  user_password: Yup.string()
+    .required('비밀번호는 필수 입력 항목 입니다.'),
+});
 
 const LoginForm = () => {
   const dispatch = useDispatch();
-  const { logInLoading, logInError } = useSelector((state) => state.user);
-  const [email, onChangeEmail] = useInput('');
-  const [password, onChangePassword] = useInput('');
+  const [action, setAction] = useState(null);
+  const { loginLoading, loginError } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (logInError) {
-      alert(logInError);
+    if (action) {
+      if (loginError) {
+        message.error(JSON.stringify(loginError, null, 4)).then();
+      }
+      action.setSubmitting(false);
+      setAction(null);
     }
-  }, [logInError]);
-
-  const onSubmitForm = useCallback(() => {
-    console.log(email, password);
-    dispatch(logIn({ email, password }));
-  }, [email, password]);
+  }, [loginError]);
 
   return (
-    <FormWrapper onFinish={onSubmitForm}>
-      <div>
-        <label htmlFor="user-email">이메일</label>
-        <br />
-        <Input name="user-email" type="email" value={email} onChange={onChangeEmail} required />
-      </div>
-      <div>
-        <label htmlFor="user-password">비밀번호</label>
-        <br />
-        <Input
-          name="user-password"
-          type="password"
-          value={password}
-          onChange={onChangePassword}
-          required
-        />
-      </div>
-      <ButtonWrapper>
-        <Button type="primary" htmlType="submit" loading={logInLoading}>로그인</Button>
-        <Link href="/signup"><a><Button>회원가입</Button></a></Link>
-      </ButtonWrapper>
-    </FormWrapper>
+    <Formik
+      initialValues={{
+        user_email: '',
+        user_password: '',
+      }}
+      validationSchema={LoginFormSchema}
+      onSubmit={(values, { setSubmitting, resetForm }) => {
+        dispatch(login({
+          email: values.user_email,
+          password: values.user_password,
+        }));
+        setAction({ setSubmitting, resetForm });
+      }}
+    >
+      <FormWrapper>
+        <Form.Item name="user_email">
+          <Input
+            name="user_email"
+            type="email"
+            placeholder="User Email"
+            prefix={<MailOutlined />}
+          />
+        </Form.Item>
+        <Form.Item name="user_password">
+          <Input.Password
+            name="user_password"
+            placeholder="Password"
+            prefix={<LockOutlined />}
+          />
+        </Form.Item>
+        <Form.Item name="submit">
+          <Button block type="primary" htmlType="submit" loading={loginLoading}>
+            <LoginOutlined /> Log in
+          </Button>
+          Or <Link href="/signup"><a>register now!</a></Link>
+        </Form.Item>
+      </FormWrapper>
+    </Formik>
   );
 };
-
 export default LoginForm;
