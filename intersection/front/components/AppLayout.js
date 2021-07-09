@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Menu, Input, Row, Col } from 'antd';
 import styled from 'styled-components';
 import { useSelector } from 'react-redux';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 
 import UserProfile from './UserProfile';
 import LoginForm from './LoginForm';
@@ -16,6 +16,7 @@ const SearchInput = styled(Input.Search)`
 
 const AppLayout = ({ children }) => {
   const [searchInput, onChangeSearchInput] = useInput('');
+  const router = useRouter();
   const { me } = useSelector((state) => state.user);
 
   const onSearch = useCallback(() => {
@@ -24,14 +25,14 @@ const AppLayout = ({ children }) => {
 
   return (
     <div>
-      <Menu mode="horizontal">
-        <Menu.Item>
+      <Menu mode="horizontal" selectedKeys={[router.pathname]}>
+        <Menu.Item key="/">
           <Link href="/"><a>노드버드</a></Link>
         </Menu.Item>
-        <Menu.Item>
+        <Menu.Item key="/profile">
           <Link href="/profile"><a>프로필</a></Link>
         </Menu.Item>
-        <Menu.Item>
+        <Menu.Item key="/search">
           <SearchInput
             enterButton
             value={searchInput}
