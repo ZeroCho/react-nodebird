@@ -13,7 +13,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.2.1",
     "antd": "^4.3.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "faker": "^4.1.0",
     "immer": "^7.0.1",
     "next": "^9.4.4",
