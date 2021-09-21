@@ -1,65 +1,75 @@
 // hashtag/[tag].js
+import { GetStaticPropsContext } from 'next';
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useInView } from 'react-intersection-observer';
+import { dehydrate, QueryClient, useInfiniteQuery } from 'react-query';
 import { useRouter } from 'next/router';
-import { END } from 'redux-saga';
 
-import axios from 'axios';
-import { LOAD_HASHTAG_POSTS_REQUEST } from '../../reducers/post';
+import { loadHashtagPostsAPI } from '../../apis/post';
+import Post from '../../interfaces/post';
 import PostCard from '../../components/PostCard';
-import wrapper from '../../store/configureStore';
-import { LOAD_MY_INFO_REQUEST } from '../../reducers/user';
 import AppLayout from '../../components/AppLayout';
 
 const Hashtag = () => {
-  const dispatch = useDispatch();
+  const [ref, inView] = useInView();
   const router = useRouter();
   const { tag } = router.query;
-  const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
+
+  const {
+    data,
+    isLoading: loadPostsLoading,
+    fetchNextPage,
+  } = useInfiniteQuery<Post[]>(
+    ['hashtag', tag],
+    ({ pageParam = '' }) => loadHashtagPostsAPI(tag as string, pageParam),
+    {
+      getNextPageParam: (lastPage) => {
+        return lastPage?.[lastPage.length - 1]?.id;
+      },
+    },
+  );
+
+  const mainPosts = data?.pages.flat();
+  const isEmpty = data?.pages[0]?.length === 0;
+  const isReachingEnd = isEmpty || (data && data.pages[data.pages.length - 1]?.length < 10);
+  const hasMorePosts = !isEmpty && !isReachingEnd;
+  const readToLoad = hasMorePosts && !loadPostsLoading;
 
   useEffect(() => {
-    const onScroll = () => {
-      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
-        if (hasMorePosts && !loadPostsLoading) {
-          dispatch({
-            type: LOAD_HASHTAG_POSTS_REQUEST,
-            lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
-            data: tag,
-          });
-        }
-      }
-    };
-    window.addEventListener('scroll', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, [mainPosts.length, hasMorePosts, tag, loadPostsLoading]);
+    console.log('inView!!!', inView);
+    if (inView && readToLoad) {
+      fetchNextPage();
+    }
+  }, [inView, readToLoad, fetchNextPage]);
 
   return (
     <AppLayout>
-      {mainPosts.map((c) => (
+      {mainPosts?.map((c) => (
         <PostCard key={c.id} post={c} />
       ))}
+      <div ref={readToLoad ? ref : undefined} style={{ height: 50, backgroundColor: 'yellow' }} />
     </AppLayout>
   );
 };
 
-export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  console.log(context);
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const queryClient = new QueryClient();
+  const tag = context.params?.tag as string;
+  if (!tag) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: true,
+      },
+    };
   }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
-    type: LOAD_HASHTAG_POSTS_REQUEST,
-    data: context.params.tag,
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
-});
+  await queryClient.prefetchInfiniteQuery(['hashtag', tag], () => loadHashtagPostsAPI(tag));
+
+  return {
+    props: {
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+    },
+  };
+};
 
 export default Hashtag;

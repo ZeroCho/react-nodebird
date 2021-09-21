@@ -1,25 +1,23 @@
 // post/[id].js
+import { GetStaticPropsContext } from 'next';
 import React from 'react';
 import { useRouter } from 'next/router';
-import { END } from 'redux-saga';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import { dehydrate, QueryClient, useQuery } from 'react-query';
 import Head from 'next/head';
 
-import wrapper from '../../store/configureStore';
-import { LOAD_MY_INFO_REQUEST } from '../../reducers/user';
-import { LOAD_POST_REQUEST } from '../../reducers/post';
+import { loadPostAPI } from '../../apis/post';
+import Post from '../../interfaces/post';
 import AppLayout from '../../components/AppLayout';
 import PostCard from '../../components/PostCard';
 
-const Post = () => {
+const SinglePost = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { singlePost } = useSelector((state) => state.post);
+  const { data: singlePost } = useQuery<Post>(['post', id], () => loadPostAPI(Number(id)));
 
-  // if (router.isFallback) {
-  //   return <div>로딩중...</div>;
-  // }
+  if (!singlePost) {
+    return <div>존재하지 않는 게시물입니다.</div>;
+  }
 
   return (
     <AppLayout>
@@ -31,7 +29,10 @@ const Post = () => {
         <meta name="description" content={singlePost.content} />
         <meta property="og:title" content={`${singlePost.User.nickname}님의 게시글`} />
         <meta property="og:description" content={singlePost.content} />
-        <meta property="og:image" content={singlePost.Images[0] ? singlePost.Images[0].src : 'https://nodebird.com/favicon.ico'} />
+        <meta
+          property="og:image"
+          content={singlePost.Images[0] ? singlePost.Images[0].src : 'https://nodebird.com/favicon.ico'}
+        />
         <meta property="og:url" content={`https://nodebird.com/post/${id}`} />
       </Head>
       <PostCard post={singlePost} />
@@ -50,22 +51,24 @@ const Post = () => {
 //   };
 // }
 
-export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  const cookie = context.req ? context.req.headers.cookie : '';
-  console.log(context);
-  axios.defaults.headers.Cookie = '';
-  if (context.req && cookie) {
-    axios.defaults.headers.Cookie = cookie;
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const queryClient = new QueryClient();
+  const id = context.params?.id as string;
+  if (!id) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: true,
+      },
+    };
   }
-  context.store.dispatch({
-    type: LOAD_MY_INFO_REQUEST,
-  });
-  context.store.dispatch({
-    type: LOAD_POST_REQUEST,
-    data: context.params.id,
-  });
-  context.store.dispatch(END);
-  await context.store.sagaTask.toPromise();
-});
+  await queryClient.prefetchQuery(['post', id], () => loadPostAPI(Number(id)));
 
-export default Post;
+  return {
+    props: {
+      dehydratedState: JSON.parse(JSON.stringify(dehydrate(queryClient))),
+    },
+  };
+};
+
+export default SinglePost;
