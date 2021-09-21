@@ -1,0 +1,17 @@
+version: '3.4'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: react_nodebird_admin
+    environment:
+      - APPLICATION_PORT=${APPLICATION_PORT}
+      - DATABASE_URL=${DOCKER_DATABASE_URL}
+      - DATABASE_SSL=${DATABASE_SSL}
+      - FOREST_AUTH_SECRET=${FOREST_AUTH_SECRET}
+      - FOREST_ENV_SECRET=${FOREST_ENV_SECRET}
+    ports:
+      - "${APPLICATION_PORT}:${APPLICATION_PORT}"
+    volumes:
+      - ./:/usr/src/app
