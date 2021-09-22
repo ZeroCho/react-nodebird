@@ -1,5 +1,5 @@
 // hashtag/[tag].js
-import { GetStaticPropsContext } from 'next';
+import { GetStaticPathsContext, GetStaticPropsContext } from 'next';
 import React, { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { dehydrate, QueryClient, useInfiniteQuery } from 'react-query';
@@ -50,6 +50,13 @@ const Hashtag = () => {
       <div ref={readToLoad ? ref : undefined} style={{ height: 50, backgroundColor: 'yellow' }} />
     </AppLayout>
   );
+};
+
+export const getStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
 };
 
 export const getStaticProps = async (context: GetStaticPropsContext) => {

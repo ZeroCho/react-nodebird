@@ -39,6 +39,7 @@ const PostForm = () => {
     },
     onSuccess() {
       setText('');
+      setImagePaths([]);
       queryClient.refetchQueries('posts');
     },
     onSettled() {

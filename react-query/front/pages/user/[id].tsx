@@ -90,6 +90,13 @@ const UserPosts = () => {
   );
 };
 
+export const getStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
+
 export const getStaticProps = async (context: GetStaticPropsContext) => {
   const queryClient = new QueryClient();
   const id = context.params?.id as string;
