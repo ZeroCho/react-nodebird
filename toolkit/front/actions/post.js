@@ -7,8 +7,19 @@ axios.defaults.baseURL = backendUrl;
 axios.defaults.withCredentials = true; // front, backend 간 쿠키공유
 
 export const loadPosts = createAsyncThunk('post/loadPosts', async (data) => {
-  const response = await axios.get(`/posts?last=${data?.lastId || 0}`);
+  const response = await axios.get(`/posts?lastId=${data?.lastId || 0}`);
   return response.data;
+},
+{
+  condition: (data, { getState }) => {
+    const { post } = getState();
+
+    if (post.loadPostsLoading) {
+      // console.warn('중복 요청 취소');
+      return false;
+    }
+    return true;
+  },
 });
 
 export const addPost = createAsyncThunk('post/addPost', async (data, thunkAPI) => {
