@@ -29,7 +29,7 @@ const Global = createGlobalStyle`
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `;
-const AppLayout = ({ children }) => {
+function AppLayout({ children }) {
   const { me } = useSelector((state) => state.user);
   const [searchInput, setSearchInput] = useState('');
   const onChangeSearchInput = useCallback((e) => {
@@ -44,22 +44,22 @@ const AppLayout = ({ children }) => {
     <Layout className="layout">
       <Global />
       <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
-        <Menu theme="dark" mode="horizontal" defaultSelectedKeys={[router.pathname]}>
-          <Menu.Item key="/">
-            <Link href="/"><a>노드버드</a></Link>
-          </Menu.Item>
-          <Menu.Item key="/profile">
-            <Link href="/profile"><a>프로필</a></Link>
-          </Menu.Item>
-          <Menu.Item key="/search">
-            <SearchInput
+        <Menu
+          theme="dark"
+          mode="horizontal"
+          defaultSelectedKeys={[router.pathname]}
+          items={[
+            { label: <Link href="/"><a>노드버드</a></Link>, key: '/' },
+            { label: <Link href="/profile"><a>프로필</a></Link>, key: '/profile' },
+            { label: <SearchInput
               enterButton
               value={searchInput}
               onChange={onChangeSearchInput}
               onSearch={onSearch}
-            />
-          </Menu.Item>
-        </Menu>
+            />,
+            key: '/search' },
+          ]}
+        />
       </Header>
       <Content style={{ padding: '0 50px', marginTop: 64 }}>
         <div style={{ minHeight: '400px', padding: '24px', backgroundColor: '#FFF' }}>
@@ -76,7 +76,7 @@ const AppLayout = ({ children }) => {
       </Content>
     </Layout>
   );
-};
+}
 
 AppLayout.propTypes = {
   children: ProTypes.node.isRequired,
