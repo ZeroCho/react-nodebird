@@ -16,7 +16,7 @@ const ErrorMessage = styled.div`
   color: red;
 `;
 
-const Signup = () => {
+function Signup() {
   const dispatch = useDispatch();
   const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user);
 
@@ -113,7 +113,7 @@ const Signup = () => {
       </Form>
     </AppLayout>
   );
-};
+}
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {
   console.log('getServerSideProps start');

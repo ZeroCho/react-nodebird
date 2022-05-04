@@ -12,7 +12,7 @@ function isImageValid(src) {
     img.src = src;
   });
 }
-const PostImages = ({ images }) => {
+function PostImages({ images }) {
   const [showImagesZoom, setShowImagesZoom] = useState(false);
   const imgEl = useRef();
 
@@ -87,7 +87,7 @@ const PostImages = ({ images }) => {
       {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
     </>
   );
-};
+}
 
 PostImages.propTypes = {
   images: PropTypes.arrayOf(PropTypes.object).isRequired,

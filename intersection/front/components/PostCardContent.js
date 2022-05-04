@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 const { TextArea } = Input;
-const PostCardContent = ({ postData, editMode, onChangePost, onCancelUpdate }) => {
+function PostCardContent({ postData, editMode, onChangePost, onCancelUpdate }) {
   const { updatePostLoading, updatePostDone } = useSelector((state) => state.post);
   const [editText, setEditText] = useState(postData);
 
@@ -39,7 +39,7 @@ const PostCardContent = ({ postData, editMode, onChangePost, onCancelUpdate }) =
         })}
     </div>
   );
-};
+}
 
 PostCardContent.propTypes = {
   postData: PropTypes.string.isRequired,

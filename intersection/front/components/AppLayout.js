@@ -14,7 +14,7 @@ const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `;
 
-const AppLayout = ({ children }) => {
+function AppLayout({ children }) {
   const [searchInput, onChangeSearchInput] = useInput('');
   const router = useRouter();
   const { me } = useSelector((state) => state.user);
@@ -25,22 +25,21 @@ const AppLayout = ({ children }) => {
 
   return (
     <div>
-      <Menu mode="horizontal" selectedKeys={[router.pathname]}>
-        <Menu.Item key="/">
-          <Link href="/"><a>노드버드</a></Link>
-        </Menu.Item>
-        <Menu.Item key="/profile">
-          <Link href="/profile"><a>프로필</a></Link>
-        </Menu.Item>
-        <Menu.Item key="/search">
-          <SearchInput
+      <Menu
+        mode="horizontal"
+        selectedKeys={[router.pathname]}
+        items={[
+          { label: <Link href="/"><a>노드버드</a></Link>, key: '/' },
+          { label: <Link href="/profile"><a>프로필</a></Link>, key: '/profile' },
+          { label: <SearchInput
             enterButton
             value={searchInput}
             onChange={onChangeSearchInput}
             onSearch={onSearch}
-          />
-        </Menu.Item>
-      </Menu>
+          />,
+          key: '/search' },
+        ]}
+      />
       <Row gutter={8}>
         <Col xs={24} md={6}>
           {me ? <UserProfile /> : <LoginForm />}
@@ -54,7 +53,7 @@ const AppLayout = ({ children }) => {
       </Row>
     </div>
   );
-};
+}
 
 AppLayout.propTypes = {
   children: PropTypes.node.isRequired,

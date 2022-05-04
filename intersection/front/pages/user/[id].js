@@ -13,7 +13,7 @@ import PostCard from '../../components/PostCard';
 import wrapper from '../../store/configureStore';
 import AppLayout from '../../components/AppLayout';
 
-const User = () => {
+function User() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { id } = router.query;
@@ -83,10 +83,10 @@ const User = () => {
       {mainPosts.map((c) => (
         <PostCard key={c.id} post={c} />
       ))}
-      <div ref={hasMorePosts && !loadPostsLoading ? ref : undefined} />
+      <div ref={hasMorePosts && !loadPostsLoading ? ref : undefined} style={{ height: 10 }} />
     </AppLayout>
   );
-};
+}
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req, params }) => {
   const cookie = req ? req.headers.cookie : '';

@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 
 import { UNFOLLOW_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
 
-const FollowList = ({ header, data, onClickMore, loading }) => {
+function FollowList({ header, data, onClickMore, loading }) {
   const dispatch = useDispatch();
   const onCancel = (id) => () => {
     if (header === '팔로잉') {
@@ -43,11 +43,15 @@ const FollowList = ({ header, data, onClickMore, loading }) => {
       )}
     />
   );
+}
+
+FollowList.defaultProps = {
+  data: [],
 };
 
 FollowList.propTypes = {
   header: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired,
+  data: PropTypes.array,
   onClickMore: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
 };

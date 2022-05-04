@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import { logoutRequestAction } from '../reducers/user';
 
-const UserProfile = () => {
+function UserProfile() {
   const dispatch = useDispatch();
   const { me, logOutLoading } = useSelector((state) => state.user);
 
@@ -32,6 +32,6 @@ const UserProfile = () => {
       <Button onClick={onLogOut} loading={logOutLoading}>로그아웃</Button>
     </Card>
   );
-};
+}
 
 export default UserProfile;

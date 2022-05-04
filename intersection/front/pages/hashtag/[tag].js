@@ -12,7 +12,7 @@ import wrapper from '../../store/configureStore';
 import { LOAD_MY_INFO_REQUEST } from '../../reducers/user';
 import AppLayout from '../../components/AppLayout';
 
-const Hashtag = () => {
+function Hashtag() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { tag } = router.query;
@@ -38,10 +38,10 @@ const Hashtag = () => {
       {mainPosts.map((c) => (
         <PostCard key={c.id} post={c} />
       ))}
-      <div ref={hasMorePosts && !loadPostsLoading ? ref : undefined} />
+      <div ref={hasMorePosts && !loadPostsLoading ? ref : undefined} style={{ height: 10 }} />
     </AppLayout>
   );
-};
+}
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req, params }) => {
   const cookie = req ? req.headers.cookie : '';

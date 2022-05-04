@@ -15,7 +15,7 @@ import { backUrl } from '../config/config';
 
 const fetcher = (url) => axios.get(url, { withCredentials: true }).then((result) => result.data);
 
-const Profile = () => {
+function Profile() {
   const { me } = useSelector((state) => state.user);
   const [followersLimit, setFollowersLimit] = useState(3);
   const [followingsLimit, setFollowingsLimit] = useState(3);
@@ -58,7 +58,7 @@ const Profile = () => {
       </AppLayout>
     </>
   );
-};
+}
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {
   console.log('getServerSideProps start');

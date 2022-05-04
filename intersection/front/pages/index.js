@@ -11,7 +11,7 @@ import { LOAD_POSTS_REQUEST } from '../reducers/post';
 import { LOAD_MY_INFO_REQUEST } from '../reducers/user';
 import wrapper from '../store/configureStore';
 
-const Home = () => {
+function Home() {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
   const { mainPosts, hasMorePosts, loadPostsLoading, retweetError } = useSelector((state) => state.post);
@@ -40,10 +40,10 @@ const Home = () => {
     <AppLayout>
       {me && <PostForm />}
       {mainPosts.map((post) => <PostCard key={post.id} post={post} />)}
-      <div ref={hasMorePosts && !loadPostsLoading ? ref : undefined} />
+      <div ref={hasMorePosts && !loadPostsLoading ? ref : undefined} style={{ height: 10 }} />
     </AppLayout>
   );
-};
+}
 
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {
   const cookie = req ? req.headers.cookie : '';

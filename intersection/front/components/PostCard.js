@@ -22,7 +22,7 @@ import FollowButton from './FollowButton';
 
 moment.locale('ko');
 
-const PostCard = ({ post }) => {
+function PostCard({ post }) {
   const dispatch = useDispatch();
   const { removePostLoading } = useSelector((state) => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -178,7 +178,7 @@ const PostCard = ({ post }) => {
       )}
     </div>
   );
-};
+}
 
 PostCard.propTypes = {
   post: PropTypes.shape({

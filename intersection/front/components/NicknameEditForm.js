@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import useInput from '../hooks/useInput';
 import { CHANGE_NICKNAME_REQUEST } from '../reducers/user';
 
-const NicknameEditForm = () => {
+function NicknameEditForm() {
   const { me } = useSelector((state) => state.user);
   const [nickname, onChangeNickname] = useInput(me?.nickname || '');
   const dispatch = useDispatch();
@@ -28,6 +28,6 @@ const NicknameEditForm = () => {
       />
     </Form>
   );
-};
+}
 
 export default NicknameEditForm;

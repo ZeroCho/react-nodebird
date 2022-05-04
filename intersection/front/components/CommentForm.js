@@ -6,7 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import useInput from '../hooks/useInput';
 import { ADD_COMMENT_REQUEST } from '../reducers/post';
 
-const CommentForm = ({ post }) => {
+function CommentForm({ post }) {
   const dispatch = useDispatch();
   const id = useSelector((state) => state.user.me?.id);
   const { addCommentDone, addCommentLoading } = useSelector((state) => state.post);
@@ -39,7 +39,7 @@ const CommentForm = ({ post }) => {
       </Form.Item>
     </Form>
   );
-};
+}
 
 CommentForm.propTypes = {
   post: PropTypes.object.isRequired,

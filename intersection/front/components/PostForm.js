@@ -6,7 +6,7 @@ import { ADD_POST_REQUEST, UPLOAD_IMAGES_REQUEST, REMOVE_IMAGE } from '../reduce
 import useInput from '../hooks/useInput';
 import { backUrl } from '../config/config';
 
-const PostForm = () => {
+function PostForm() {
   const { imagePaths, addPostDone } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const [text, onChangeText, setText] = useInput('');
@@ -81,6 +81,6 @@ const PostForm = () => {
       </div>
     </Form>
   );
-};
+}
 
 export default PostForm;
