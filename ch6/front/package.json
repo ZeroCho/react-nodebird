@@ -19,7 +19,7 @@
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
     "immer": "^9.0.6",
-    "moment": "^2.27.0",
+    "moment": "^2.29.2",
     "next": "^9.4.4",
     "next-redux-saga": "^4.1.2",
     "next-redux-wrapper": "^6.0.2",
