@@ -1,21 +1,22 @@
-import { Form, Input, Button } from "antd";
-import Link from "next/link";
 import { useCallback, useState } from "react";
+import Link from "next/link";
+import PropTypes from "prop-types";
 
-const LoginForm = () => {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
+import { Form, Input, Button } from "antd";
+import styled from "styled-components";
+import useInput from "../hooks/useInput";
 
-  const onChangeId = useCallback((e) => {
-    setId(e.target.value);
-  }, []);
+const LoginForm = ({ setIsLoggedIn }) => {
+  const [id, onChangeId] = useInput("");
+  const [password, onChangePassword] = useInput("");
 
-  const onChangePassword = useCallback((e) => {
-    setPassword(e.target.value);
-  }, []);
+  const onSubmitForm = useCallback(() => {
+    console.log(id, password);
+    setIsLoggedIn(true);
+  }, [id, password]);
 
   return (
-    <Form>
+    <FormWrapper onFinish={onSubmitForm}>
       <div>
         <label htmlFor="user-id">아이디</label>
         <br />
@@ -32,7 +33,7 @@ const LoginForm = () => {
           required
         />
       </div>
-      <div>
+      <ButtonWrapper>
         <Button type="primary" htmlType="submit" loading={false}>
           로그인
         </Button>
@@ -41,9 +42,21 @@ const LoginForm = () => {
             <Button>회원가입</Button>
           </a>
         </Link>
-      </div>
-    </Form>
+      </ButtonWrapper>
+    </FormWrapper>
   );
+};
+
+const ButtonWrapper = styled.div`
+  margin: 10px 0 0 0;
+`;
+
+const FormWrapper = styled(Form)`
+  padding: 10px;
+`;
+
+LoginForm.propTypes = {
+  setIsLoggedIn: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

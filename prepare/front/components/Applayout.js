@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
+import styled from "styled-components";
 
 import { Input, Menu, Row, Col } from "antd";
 
 import UserProfile from "./UserProfile";
 import LoginForm from "./LoginForm";
 
-const Applayout = ({ children }) => {
+const AppLayout = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   return (
@@ -24,7 +25,7 @@ const Applayout = ({ children }) => {
           </Link>
         </Menu.Item>
         <Menu.Item>
-          <Input.Search enterButton style={{ verticalAlign: "middle" }} />
+          <SearchInput enterButton />
         </Menu.Item>
         <Menu.Item>
           <Link href="/signup">
@@ -34,7 +35,11 @@ const Applayout = ({ children }) => {
       </Menu>
       <Row gutter={8}>
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          {isLoggedIn ? (
+            <UserProfile setIsLoggedIn={setIsLoggedIn} />
+          ) : (
+            <LoginForm setIsLoggedIn={setIsLoggedIn} />
+          )}
         </Col>
         <Col xs={24} md={12}>
           {children}
@@ -53,8 +58,12 @@ const Applayout = ({ children }) => {
   );
 };
 
-Applayout.propTypes = {
+const SearchInput = styled(Input.Search)`
+  vertical-align: middle;
+`;
+
+AppLayout.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default Applayout;
+export default AppLayout;
