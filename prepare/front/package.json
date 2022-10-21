@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 3060",
     "build": "next build"
   },
   "author": "Sorin0404",
@@ -13,8 +13,11 @@
     "@ant-design/icons": "^4.7.0",
     "antd": "^4.22.2",
     "next": "^12.2.3",
+    "next-redux-wrapper": "^8.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "redux": "^4.2.0",
+    "redux-devtools-extension": "^2.13.9",
     "styled-components": "^5.3.5"
   },
   "devDependencies": {
