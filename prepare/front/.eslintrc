@@ -1,0 +1,30 @@
+// .eslintrc
+
+// 파일명 앞에 .이 붙는 이유는 리눅스나 맥에서는 숨긴파일이고 확장자는 없다라는 의미를 가진다.
+// 얘는 json이다
+
+{
+    "parserOptions": {
+        "ecmaVersion": 2022,
+        "sourceType": "module", // import/export 가 module모드임
+        "ecmaFeatures": {
+            "jsx" : true
+        }
+    },
+    "env": { // 이 파일이 실행될 환경
+        "browser" : true,
+        "node": true,
+        "es6": true
+    },
+    "extends" :[ // 아래 두개는 기본 규칙, 원래 eslint에 유명한 규칙들을 사용하겠다라는 뜻
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "prettier"
+    ],
+    "plugins": [
+        "import",
+        "react-hooks"
+    ],
+    "rules": {
+     }
+}
