@@ -17,6 +17,7 @@ const AppLayout = ({children}) => {
 
     return (
     <div>
+        {/* header */}
         <Menu mode="horizontal">
             <Menu.Item>
                 <Link href={"/"}><a>노드버드</a></Link>
@@ -32,6 +33,8 @@ const AppLayout = ({children}) => {
                 <Link href={"/signup"}><a>회원가입</a></Link>
             </Menu.Item>
         </Menu>
+
+        {/* 로그인 - body - 오른쪽 */}
         <Row gutter={4}>
             <Col xs={24} md={6}>
                 {isLoggedin ? <UserProfile setIsLoggedin={setIsLoggedin} /> : <LoginForm setIsLoggedin={setIsLoggedin} />} 

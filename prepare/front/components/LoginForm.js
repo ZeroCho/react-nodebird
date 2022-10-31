@@ -2,7 +2,8 @@ import React, { useCallback, useMemo, useState } from "react";
 import {Form, Input, Button} from 'antd'
 import Link from "next/link";
 import styled from 'styled-components'
-
+import PropTypes from 'prop-types'
+import useInput from "../hooks/useInput";
 
 
 const ButtonWrapper = styled.div`
@@ -19,19 +20,29 @@ const FormWrapper = styled(Form)`
 // 로그인 화면
 const LoginForm = ({setIsLoggedin}) => {
 
-    const [id, setId] = useState('')
-    const [password, setPassword] = useState('')
-    // const [passwordCheck, setPasswordCheck] = useState('')
+    const [id, onChangeId] = useInput('')
+    // 이 한 줄 자체가 
+    // const [id, setId] = useState('')
+    // const onChangeId = useCallback((e) => {
+//          setId(e.target.value)     
+   // })
+    //  요 두 기능과 같은 것이다..!!
 
-const onChangeId = useCallback((e) => {
-    // 컴포넌트에 프롭스로 넘겨주는 함수는 usecallback을 써라. 그래야 최적화가 되기 때문이다.
-    setId(e.target.value)
-},[])
+    const[nickname, onChangeNickname] = useInput('');
+    const[password, onChangePassword] = useInput('');
+    const [passwordCheck, setPasswordCheck] = useState('');
+    const[passwordError, setPasswordError] = useState(false)
 
 
-const onChangePassword = useCallback((e) => {
-    setPassword(e.target.value)
-},[])
+    const oonChangePasswordCheck = useCallback((e) => {
+        setPasswordCheck(e.target.value)
+        setPasswordError(e.target.value !== password)
+    },[password])
+
+
+
+
+
 
 const style = useMemo(() => ({margin: 10}),[])
 // 이렇게 해야 최적화가 된다..
@@ -60,7 +71,6 @@ const onSubmitForm = useCallback(() => {
                      type="password"
                      /> 
             </div>
-
             {/* <div>
                 <label htmlFor="user-passwordCheck">비밀번호 체크</label>
                 <br />
@@ -74,5 +84,7 @@ const onSubmitForm = useCallback(() => {
         </FormWrapper>
     )
 }
-
+LoginForm.protoTypes = {
+    setIsLoggedin : PropTypes.func.isRequired,
+}
 export default LoginForm;

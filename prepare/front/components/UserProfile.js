@@ -17,7 +17,7 @@ const UserProfile = ({setIsLoggedin}) => {
                 <div key="following">팔로잉<br />0</div>,
                 <div key="follower">팔로워<br />0</div>
             ]}
-        >
+        > 
 
             <Card.Meta 
                 avatar={<Avatar>ZC</Avatar>}
