@@ -1,67 +1,46 @@
-import { HYDRATE } from "next-redux-wrapper";
+import { HYDRATE } from "next-redux-wrapper"; // 리덕스 서버 사이드 랜더링을 하기 위한 것
+import user from './user' // user.js의 함수형 이름을 변경할 수 있다. reducer가 user로 이름 바꿔쓴 것!
+import post from './post'  // 마찬가지로 post의 reducer를 post로 이름을 바꾼 것!
+import { combineReducers } from "redux";
+// combineReducers : reducer함수들을 합쳐주는 기능!!!
+// user랑 post를 합쳐주기 위함
 
-
-// 초기 state
-const initialState = {
-    user : {
-        isLoggedIn : false,
-        user: null,
-        signUpData: {},
-        loginData: {}
-    },
-
-    post : {
-        mainPosts: []
-    }
-};
-
-
-// login Action Creator
-export const loginAction = (data) => {
-    return{
-        type: 'LOG_IN',
-        data,
-    }
-}
-
-export const logOutAction = (data) => {
-    return{
-        type: 'LOG_OUT',
-        data,
-    }
-}
 
 
 // Reducer - 변경서(Action)을 받고 변경사항에 따라 바꿔주도록 하는 함수
 // (이전상태,액션) => 다음상태
-const rootReducer = (state = initialState, action) => {
+const rootReducer = combineReducers({
+    index : (state = {} , action) => {
     switch (action.type) {
         case HYDRATE: 
         console.log('HYDRATE', action)
         return {...state, ...action.payload}
-        case "LOG_IN" :
-    return{
-        ...state,
-       user : {
-        ...state.user,
-        isLoggedIn: true,
-        user : action.data // user객체 안에 있는 user! (6번줄)
-            }
-        };
+    //     case "LOG_IN" :
+    // return{
+    //     ...state,
+    //    user : {
+    //     ...state.user,
+    //     isLoggedIn: true,
+    //     user : action.data // user객체 안에 있는 user! (6번줄)
+    //         }
+    //     };
 
-        case "LOG_OUT" :
-            return{
-                ...state,
-               user : {
-                ...state.user,
-                isLoggedIn: false,
-                user : null // user객체 안에 있는 user! (6번줄)
-                    }
-                };
-                default :
-                return state
-    }
-}
+    //     case "LOG_OUT" :
+    //         return{
+    //             ...state,
+    //            user : {
+    //             ...state.user,
+    //             isLoggedIn: false,
+    //             user : null // user객체 안에 있는 user! (6번줄)
+    //                 }
+    //             };
+        default :
+        return state
+        }
+    },
+    post,
+    user
+});
 
 export default rootReducer;
  

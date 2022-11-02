@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 import useInput from "../hooks/useInput";
 import { useDispatch } from "react-redux";
-import { loginAction } from "../reducers";
+import { loginAction } from "../reducers/user";
 
 const ButtonWrapper = styled.div`
     margin-top:10px;
@@ -49,7 +49,7 @@ const style = useMemo(() => ({margin: 10}),[])
 
 const onSubmitForm = useCallback(() => {
     console.log(id, password)
-    dispatch(loginAction({id,password}))
+    dispatch(loginAction({id,password})) // {id.password}가 action.data임 => 여기서 data 만든 이름임. 다른 이름으로 변경 가능함
 },[id, password])
 
 

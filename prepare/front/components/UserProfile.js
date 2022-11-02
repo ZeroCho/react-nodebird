@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { Avatar, Button, Card } from "antd";
 import { useDispatch } from "react-redux";
-import { logOutAction } from "../reducers";
+import { logOutAction } from "../reducers/user";
 
 // 로그인 후 보여질 화면
 const UserProfile = () => {
