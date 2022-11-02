@@ -12,7 +12,7 @@ const SearchInput  = styled(Input.Search)`
 `
 
 const AppLayout = ({children}) => {
-    const isLoggedIn = useSelector((state) => state.user.isLoggedIn)
+    const isLoggedIn = useSelector((state) => state.user.isLoggedIn) // false or true가 나오게 된다
     
 
     return (
