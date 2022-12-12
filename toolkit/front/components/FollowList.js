@@ -1,30 +1,30 @@
 import React from 'react';
-import ProTypes from 'prop-types';
-import { Button, Card, List } from 'antd';
+import PropTypes from 'prop-types';
+import { List, Button, Card } from 'antd';
 import { StopOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
-import { removeFollow, unfollow } from '../actions/user';
+
+import { UNFOLLOW_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
 
 const FollowList = ({ header, data, onClickMore, loading }) => {
   const dispatch = useDispatch();
-  const onCancel = (userId) => () => {
+  const onCancel = (id) => () => {
     if (header === '팔로잉') {
-      dispatch(unfollow({
-        userId,
-      }));
-    } else {
-      dispatch(removeFollow({
-        userId,
-      }));
+      dispatch({
+        type: UNFOLLOW_REQUEST,
+        data: id,
+      });
     }
+    dispatch({
+      type: REMOVE_FOLLOWER_REQUEST,
+      data: id,
+    });
   };
 
   return (
     <List
       style={{ marginBottom: 20 }}
-      grid={{
-        gutter: 4, xs: 2, md: 3,
-      }}
+      grid={{ gutter: 4, xs: 2, md: 3 }}
       size="small"
       header={<div>{header}</div>}
       loadMore={(
@@ -44,11 +44,12 @@ const FollowList = ({ header, data, onClickMore, loading }) => {
     />
   );
 };
+
 FollowList.propTypes = {
-  header: ProTypes.string.isRequired,
-  data: ProTypes.array.isRequired,
-  onClickMore: ProTypes.func.isRequired,
-  loading: ProTypes.bool.isRequired,
+  header: PropTypes.string.isRequired,
+  data: PropTypes.array.isRequired,
+  onClickMore: PropTypes.func.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 export default FollowList;
