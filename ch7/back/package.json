@@ -16,7 +16,7 @@
     "cors": "^2.8.5",
     "cross-env": "^7.0.2",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-session": "^1.17.1",
     "helmet": "^3.23.3",
     "hpp": "^0.2.3",
