@@ -22,7 +22,7 @@
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "^4.0.4",
-    "nodemon": "^2.0.4",
+    "nodemon": "^2.0.20",
     "webpack": "^4.43.0"
   }
 }
