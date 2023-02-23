@@ -18,7 +18,7 @@
     "forest-express-sequelize": "^6.0.0",
     "morgan": "1.9.1",
     "require-all": "^3.0.0",
-    "sequelize": "~5.15.1",
+    "sequelize": "~6.28.2",
     "mysql2": "~1.7.0"
   }
 }
