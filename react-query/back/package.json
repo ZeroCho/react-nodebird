@@ -27,7 +27,7 @@
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
     "pm2": "^5.1.1",
-    "sequelize": "^6.6.5",
+    "sequelize": "^6.28.2",
     "sequelize-cli": "^6.2.0"
   },
   "devDependencies": {
