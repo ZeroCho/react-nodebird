@@ -27,7 +27,7 @@
     "nodemailer": "^6.4.13",
     "passport": "^0.4.1",
     "passport-local": "^1.0.0",
-    "pm2": "^4.5.0",
+    "pm2": "^5.2.2",
     "sequelize": "^6.29.0",
     "sequelize-cli": "^5.5.1"
   },
