@@ -13,7 +13,7 @@ function goInsideRecursively(dir, parentPath = __dirname) {
         } else {
             if (d === 'package.json') {
                 console.log('npm update called at', path.join(parentPath, d));
-                const ls = spawn((process.platform === 'win32' ? 'npm.cmd' : 'npm'), ['install', '--package-lock-only'], { cwd: parentPath });
+                const ls = spawn((process.platform === 'win32' ? 'npm.cmd' : 'npm'), ['update'], { cwd: parentPath });
                 ls.stdout.on('data', (data) => {
                     console.log(`${path.join(parentPath, d)} install: ${data}`);
                 });
