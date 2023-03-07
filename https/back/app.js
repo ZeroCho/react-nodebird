@@ -31,7 +31,7 @@ if (process.env.NODE_ENV === 'production') {
   app.use(hpp());
   app.use(helmet({ contentSecurityPolicy: false }));
   app.use(cors({
-    origin: 'https://nodebird.com',
+    origin: ['https://nodebird.com', 'https://react.nodebird.com'],
     credentials: true,
   }));
 } else {
