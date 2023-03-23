@@ -4,7 +4,7 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
 
 module.exports = withBundleAnalyzer({
   images: {
-    domains: ['react-nodebird.images.ap-northeast-2.amazonaws.com', 'react-nodebird-images.s3.amazonaws.com'],
+    domains: ['react-nodebird.s3.ap-northeast-2.amazonaws.com', 'react-nodebird-s3.s3.amazonaws.com'],
   },
   compress: true,
   webpack(config, { webpack }) {

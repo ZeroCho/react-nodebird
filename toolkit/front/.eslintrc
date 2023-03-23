@@ -31,6 +31,7 @@
     "react/jsx-props-no-spreading": "off",
     "object-curly-newline": "off",
     "linebreak-style": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "max-len": "off"
   }
 }

@@ -1,15 +1,16 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Head from 'next/head';
 import { useSelector } from 'react-redux';
 import Router from 'next/router';
-import { message } from 'antd';
 import axios from 'axios';
 import useSWR from 'swr';
+
 import AppLayout from '../components/AppLayout';
-import FollowList from '../components/FollowList';
 import NicknameEditForm from '../components/NicknameEditForm';
-import { loadMyInfo } from '../actions/user';
+import FollowList from '../components/FollowList';
+import { loadMyInfo } from '../reducers/user';
 import wrapper from '../store/configureStore';
+import { backUrl } from '../config/config';
 
 const fetcher = (url) => axios.get(url, { withCredentials: true }).then((result) => result.data);
 
@@ -18,56 +19,43 @@ const Profile = () => {
   const [followersLimit, setFollowersLimit] = useState(3);
   const [followingsLimit, setFollowingsLimit] = useState(3);
 
+  const { data: followersData, error: followerError } = useSWR(`${backUrl}/user/followers?limit=${followersLimit}`, fetcher);
+  const { data: followingsData, error: followingError } = useSWR(`${backUrl}/user/followings?limit=${followingsLimit}`, fetcher);
+
   useEffect(() => {
     if (!(me && me.id)) {
-      message.warn('로그인 후 이용해 주시길 바랍니다.').then();
-      Router.push('/').then();
+      Router.push('/');
     }
   }, [me && me.id]);
-
-  const { data: followersData, error: followerError } = useSWR((me && me.id) ? `/user/followers?limit=${followersLimit}` : null, fetcher);
-  const { data: followingsData, error: followingError } = useSWR((me && me.id) ? `/user/followings?limit=${followingsLimit}` : null, fetcher);
 
   const loadMoreFollowings = useCallback(() => {
     setFollowingsLimit((prev) => prev + 3);
   }, []);
+
   const loadMoreFollowers = useCallback(() => {
     setFollowersLimit((prev) => prev + 3);
   }, []);
 
   if (!me) {
-    return null;
+    return '내 정보 로딩중...';
   }
 
-  // 주의 return 이 hooks 보다 위에 있으면 안됨
   if (followerError || followingError) {
-    console.error(followerError, followingError);
+    console.error(followerError || followingError);
     return <div>팔로잉/팔로워 로딩 중 에러가 발생합니다.</div>;
   }
 
   return (
-    <AppLayout>
+    <>
       <Head>
         <title>내 프로필 | NodeBird</title>
       </Head>
-      <NicknameEditForm />
-      {followingsData && (
-        <FollowList
-          header="팔로잉"
-          data={followingsData}
-          onClickMore={loadMoreFollowings}
-          loading={!followingsData && !followingError}
-        />
-      )}
-      {followersData && (
-        <FollowList
-          header="팔로워"
-          data={followersData}
-          onClickMore={loadMoreFollowers}
-          loading={!followersData && !followerError}
-        />
-      )}
-    </AppLayout>
+      <AppLayout>
+        <NicknameEditForm />
+        <FollowList header="팔로잉" data={followingsData} onClickMore={loadMoreFollowings} loading={!followingsData && !followingError} />
+        <FollowList header="팔로워" data={followersData} onClickMore={loadMoreFollowers} loading={!followersData && !followerError} />
+      </AppLayout>
+    </>
   );
 };
 

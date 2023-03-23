@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import ProTypes from 'prop-types';
+import React, { useCallback } from 'react';
+import PropTypes from 'prop-types';
 import Link from 'next/link';
-import {
-  Layout, Menu, Input, Row, Col,
-} from 'antd';
+import { Layout, Menu, Input, Row, Col } from 'antd';
 import styled, { createGlobalStyle } from 'styled-components';
 import { useSelector } from 'react-redux';
 import Router, { useRouter } from 'next/router';
+
 import UserProfile from './UserProfile';
 import LoginForm from './LoginForm';
+import useInput from '../hooks/useInput';
 
 const { Header, Content } = Layout;
 const Global = createGlobalStyle`
@@ -29,16 +29,14 @@ const Global = createGlobalStyle`
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `;
-function AppLayout({ children }) {
+
+const AppLayout = ({ children }) => {
+  const [searchInput, onChangeSearchInput] = useInput('');
   const { me } = useSelector((state) => state.user);
-  const [searchInput, setSearchInput] = useState('');
-  const onChangeSearchInput = useCallback((e) => {
-    setSearchInput(e.target.value);
-  }, [searchInput]);
+  const router = useRouter();
   const onSearch = useCallback(() => {
     Router.push(`/hashtag/${searchInput}`);
   }, [searchInput]);
-  const router = useRouter();
 
   return (
     <Layout className="layout">
@@ -76,10 +74,10 @@ function AppLayout({ children }) {
       </Content>
     </Layout>
   );
-}
+};
 
 AppLayout.propTypes = {
-  children: ProTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
 };
 
 export default AppLayout;

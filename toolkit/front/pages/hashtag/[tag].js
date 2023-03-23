@@ -1,12 +1,14 @@
+// hashtag/[tag].js
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
+
 import axios from 'axios';
+import { loadHashtagPosts } from '../../reducers/post';
 import PostCard from '../../components/PostCard';
-import { loadMyInfo } from '../../actions/user';
-import { loadHashtagPosts } from '../../actions/post';
-import AppLayout from '../../components/AppLayout';
 import wrapper from '../../store/configureStore';
+import { loadMyInfo } from '../../reducers/user';
+import AppLayout from '../../components/AppLayout';
 
 const Hashtag = () => {
   const dispatch = useDispatch();
@@ -16,13 +18,11 @@ const Hashtag = () => {
 
   useEffect(() => {
     const onScroll = () => {
-      if (hasMorePosts && !loadPostsLoading) {
-        if ((window.pageYOffset + document.documentElement.clientHeight)
-          > (document.documentElement.scrollHeight - 300)) {
-          const lastId = mainPosts[mainPosts.length - 1]?.id;
+      if (window.pageYOffset + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
+        if (hasMorePosts && !loadPostsLoading) {
           dispatch(loadHashtagPosts({
-            lastId,
-            hashtag: tag,
+            lastId: mainPosts[mainPosts.length - 1] && mainPosts[mainPosts.length - 1].id,
+            tag,
           }));
         }
       }
@@ -43,7 +43,7 @@ const Hashtag = () => {
 };
 
 // SSR (프론트 서버에서 실행)
-export const getServerSideProps = wrapper.getServerSideProps((store) => async ({req, params}) => {
+export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req, params }) => {
   const cookie = req ? req.headers.cookie : '';
   axios.defaults.headers.Cookie = '';
   // 쿠키가 브라우저에 있는경우만 넣어서 실행

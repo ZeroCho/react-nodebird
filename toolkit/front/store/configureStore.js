@@ -1,24 +1,19 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
-import logger from 'redux-logger';
-import rootReducer from '../reducers';
+import reducer from '../reducers';
 
-const isDev = process.env.NODE_ENV === 'development';
-const createStore = () => {
-  const middleware = getDefaultMiddleware();
-  if (isDev) {
-    middleware.push(logger);
-  }
-  const store = configureStore({
-    reducer: rootReducer,
-    middleware,
-    devTools: isDev,
-  });
-  return store;
-};
-
-const wrapper = createWrapper(createStore, {
-  debug: isDev,
+function getServerState() {
+  return typeof document !== 'undefined'
+    ? JSON.parse(document.querySelector('#__NEXT_DATA__').textContent)?.props.pageProps.initialState
+    : undefined;
+}
+const serverState = getServerState();
+console.log('serverState', serverState);
+const makeStore = () => configureStore({
+  reducer,
+  devTools: true,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
+  preloadedState: serverState, // SSR
 });
 
-export default wrapper;
+export default createWrapper(makeStore);

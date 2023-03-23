@@ -1,28 +1,22 @@
-import { createSlice } from '@reduxjs/toolkit';
-import _concat from 'lodash/concat';
-import _remove from 'lodash/remove';
-import _find from 'lodash/find';
-import {
-  addComment,
-  addPost,
-  likePost,
-  loadHashtagPosts,
-  loadPost,
-  loadPosts,
-  loadUserPosts,
-  removePost,
-  retweet,
-  unlikePost,
-  updatePost,
-  uploadImages,
-} from '../actions/post';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import _ from 'lodash';
+import axios from 'axios';
+import { HYDRATE } from 'next-redux-wrapper';
 
-// 기본 state
 export const initialState = {
   mainPosts: [],
-  hasMorePosts: true, // 다음 posts 여부
   singlePost: null,
   imagePaths: [],
+  hasMorePosts: true,
+  likePostLoading: false,
+  likePostDone: false,
+  likePostError: null,
+  unlikePostLoading: false,
+  unlikePostDone: false,
+  unlikePostError: null,
+  loadPostLoading: false,
+  loadPostDone: false,
+  loadPostError: null,
   loadPostsLoading: false,
   loadPostsDone: false,
   loadPostsError: null,
@@ -38,9 +32,6 @@ export const initialState = {
   addCommentLoading: false,
   addCommentDone: false,
   addCommentError: null,
-  likePostLoading: false,
-  likePostDone: false,
-  likePostError: null,
   uploadImagesLoading: false,
   uploadImagesDone: false,
   uploadImagesError: null,
@@ -49,7 +40,69 @@ export const initialState = {
   retweetError: null,
 };
 
-// toolkit 사용방법
+const loadPostsThrottle = async (lastId) => {
+  const response = await axios.get(`/posts?lastId=${lastId || 0}`);
+  return response.data;
+};
+export const loadPosts = createAsyncThunk('post/loadPosts', _.throttle(loadPostsThrottle, 5000));
+
+const loadHashtagPostsThrottle = async ({ lastId, tag }) => {
+  const response = await axios.get(`/hashtag/${encodeURIComponent(tag)}?lastId=${lastId || 0}`);
+  return response.data;
+};
+export const loadHashtagPosts = createAsyncThunk('post/loadHashtagPosts', _.throttle(loadHashtagPostsThrottle, 5000));
+
+const loadUserPostsThrottle = async ({ lastId, id }) => {
+  const response = await axios.get(`/user/${id}/posts?lastId=${lastId || 0}`);
+  return response.data;
+};
+export const loadUserPosts = createAsyncThunk('post/loadUserPosts', _.throttle(loadUserPostsThrottle, 5000));
+
+export const retweet = createAsyncThunk('post/retweet', async (data) => {
+  const response = await axios.post(`/post/${data}/retweet`);
+  return response.data;
+});
+
+export const uploadImage = createAsyncThunk('post/uploadImage', async (data) => {
+  const response = await axios.post('/post/images', data);
+  return response.data;
+});
+
+export const likePost = createAsyncThunk('post/likePost', async (data) => {
+  const response = await axios.patch(`/post/${data}/like`);
+  return response.data;
+});
+
+export const unlikePost = createAsyncThunk('post/unlikePost', async (data) => {
+  const response = await axios.delete(`/post/${data}/like`);
+  return response.data;
+});
+
+export const loadPost = createAsyncThunk('post/loadPost', async (data) => {
+  const response = await axios.get(`/post/${data}`);
+  return response.data;
+});
+
+export const addPost = createAsyncThunk('post/addPost', async (data) => {
+  const response = await axios.post('/post', data);
+  return response.data;
+});
+
+export const updatePost = createAsyncThunk('post/updatePost', async (data) => {
+  const response = await axios.patch(`/post/${data.PostId}`, data);
+  return response.data;
+});
+
+export const removePost = createAsyncThunk('post/removePost', async (data) => {
+  const response = await axios.delete(`/post/${data}`);
+  return response.data;
+});
+
+export const addComment = createAsyncThunk('post/addComment', async (data) => {
+  const response = await axios.post(`/post/${data.postId}/comment`, data); //
+  return response.data;
+});
+
 const postSlice = createSlice({
   name: 'post',
   initialState,
@@ -59,150 +112,11 @@ const postSlice = createSlice({
     },
   },
   extraReducers: (builder) => builder
-    // loadPosts
-    .addCase(loadPosts.pending, (state) => {
-      state.loadPostsLoading = true;
-      state.loadPostsDone = false;
-      state.loadPostsError = null;
-    })
-    .addCase(loadPosts.fulfilled, (state, action) => {
-      state.loadPostsLoading = false;
-      state.loadPostsDone = true;
-      state.mainPosts = _concat(state.mainPosts, action.payload);
-      state.hasMorePosts = action.payload.length === 10;
-    })
-    .addCase(loadPosts.rejected, (state, action) => {
-      state.loadPostsLoading = false;
-      state.loadPostsError = action.error.message;
-    })
-    // loadHashtagPosts
-    .addCase(loadHashtagPosts.pending, (state) => {
-      state.loadPostsLoading = true;
-      state.loadPostsDone = false;
-      state.loadPostsError = null;
-    })
-    .addCase(loadHashtagPosts.fulfilled, (state, action) => {
-      state.loadPostsLoading = false;
-      state.loadPostsDone = true;
-      state.mainPosts = _concat(state.mainPosts, action.payload);
-      state.hasMorePosts = action.payload.length === 10;
-    })
-    .addCase(loadHashtagPosts.rejected, (state, action) => {
-      state.loadPostsLoading = false;
-      state.loadPostsError = action.error.message;
-    })
-    // loadUserPosts
-    .addCase(loadUserPosts.pending, (state) => {
-      state.loadPostsLoading = true;
-      state.loadPostsDone = false;
-      state.loadPostsError = null;
-    })
-    .addCase(loadUserPosts.fulfilled, (state, action) => {
-      state.loadPostsLoading = false;
-      state.loadPostsDone = true;
-      state.mainPosts = _concat(state.mainPosts, action.payload);
-      state.hasMorePosts = action.payload.length === 10;
-    })
-    .addCase(loadUserPosts.rejected, (state, action) => {
-      state.loadPostsLoading = false;
-      state.loadPostsError = action.error.message;
-    })
-    // addPost
-    .addCase(addPost.pending, (state) => {
-      state.addPostLoading = true;
-      state.addPostDone = false;
-      state.addPostError = null;
-    })
-    .addCase(addPost.fulfilled, (state, action) => {
-      state.addPostLoading = false;
-      state.addPostDone = true;
-      state.mainPosts.unshift(action.payload);
-      state.imagePaths = [];
-    })
-    .addCase(addPost.rejected, (state, action) => {
-      state.addPostLoading = false;
-      state.addPostError = action.error.message;
-    })
-    // uploadImages
-    .addCase(uploadImages.pending, (state) => {
-      state.uploadImagesLoading = true;
-      state.uploadImagesDone = false;
-      state.uploadImagesError = null;
-    })
-    .addCase(uploadImages.fulfilled, (state, action) => {
-      state.uploadImagesLoading = false;
-      state.uploadImagesDone = true;
-      state.imagePaths = _concat(state.imagePaths, action.payload);
-    })
-    .addCase(uploadImages.rejected, (state, action) => {
-      state.uploadImagesLoading = false;
-      state.uploadImagesError = action.error.message;
-    })
-    // addComment
-    .addCase(addComment.pending, (state) => {
-      state.addCommentLoading = true;
-      state.addCommentDone = false;
-      state.addCommentError = null;
-    })
-    .addCase(addComment.fulfilled, (state, action) => {
-      const post = _find(state.mainPosts, { id: action.payload.PostId });
-      state.addCommentLoading = false;
-      state.addCommentDone = true;
-      post.Comments.unshift(action.payload);
-    })
-    .addCase(addComment.rejected, (state, action) => {
-      state.addCommentLoading = false;
-      state.addCommentError = action.error.message;
-    })
-    // removePost
-    .addCase(removePost.pending, (state) => {
-      state.removePostLoading = true;
-      state.removePostDone = false;
-      state.removePostError = null;
-    })
-    .addCase(removePost.fulfilled, (state, action) => {
-      state.removePostLoading = false;
-      state.removePostDone = true;
-      _remove(state.mainPosts, { id: action.payload.PostId });
-    })
-    .addCase(removePost.rejected, (state, action) => {
-      state.removePostLoading = false;
-      state.removePostError = action.error.message;
-    })
-    // likePost
-    .addCase(likePost.pending, (state) => {
-      state.likePostLoading = true;
-      state.likePostDone = false;
-      state.likePostError = null;
-    })
-    .addCase(likePost.fulfilled, (state, action) => {
-      const post = _find(state.mainPosts, { id: action.payload.PostId });
-      state.likePostLoading = false;
-      state.likePostDone = true;
-      post.Likers.push({ id: action.payload.UserId });
-    })
-    .addCase(likePost.rejected, (state, action) => {
-      state.likePostLoading = false;
-      state.likePostError = action.error.message;
-    })
-    // unlikePost
-    .addCase(unlikePost.pending, (state) => {
-      state.likePostLoading = true;
-      state.likePostDone = false;
-      state.likePostError = null;
-    })
-    .addCase(unlikePost.fulfilled, (state, action) => {
-      const post = _find(state.mainPosts, { id: action.payload.PostId });
-      state.likePostLoading = false;
-      state.likePostDone = true;
-      _remove(post.Likers, { id: action.payload.UserId });
-    })
-    .addCase(unlikePost.rejected, (state, action) => {
-      state.likePostLoading = false;
-      state.likePostError = action.error.message;
-    })
-    // retweet
-    .addCase(retweet.pending, (state) => {
+    .addCase([HYDRATE], (state, action) => ({
+      ...state,
+      ...action.payload.post,
+    }))
+    .addCase(retweet.pending, (state, action) => {
       state.retweetLoading = true;
       state.retweetDone = false;
       state.retweetError = null;
@@ -214,75 +128,171 @@ const postSlice = createSlice({
     })
     .addCase(retweet.rejected, (state, action) => {
       state.retweetLoading = false;
-      state.retweetError = action.error.message;
+      state.retweetError = action.error;
     })
-    // updatePost
-    .addCase(updatePost.pending, (state) => {
-      state.updatePostLoading = true;
-      state.updatePostDone = false;
-      state.updatePostError = null;
+    .addCase(uploadImage.pending, (draft, action) => {
+      draft.uploadImagesLoading = true;
+      draft.uploadImagesDone = false;
+      draft.uploadImagesError = null;
     })
-    .addCase(updatePost.fulfilled, (state, action) => {
-      const post = _find(state.mainPosts, { id: action.payload.PostId });
-      state.updatePostLoading = false;
-      state.updatePostDone = true;
-      post.content = action.payload.content;
+    .addCase(uploadImage.fulfilled, (draft, action) => {
+      draft.imagePaths = draft.imagePaths.concat(action.data);
+      draft.uploadImagesLoading = false;
+      draft.uploadImagesDone = true;
     })
-    .addCase(updatePost.rejected, (state, action) => {
-      state.updatePostLoading = false;
-      state.updatePostError = action.error.message;
+    .addCase(uploadImage.rejected, (draft, action) => {
+      draft.uploadImagesLoading = false;
+      draft.uploadImagesError = action.error;
     })
-    // loadPost
-    .addCase(loadPost.pending, (state) => {
+    .addCase(likePost.pending, (draft, action) => {
+      draft.likePostLoading = true;
+      draft.likePostDone = false;
+      draft.likePostError = null;
+    })
+    .addCase(likePost.fulfilled, (draft, action) => {
+      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+      post.Likers.push({ id: action.data.UserId });
+      draft.likePostLoading = false;
+      draft.likePostDone = true;
+    })
+    .addCase(likePost.rejected, (draft, action) => {
+      draft.likePostLoading = false;
+      draft.likePostError = action.error;
+    })
+    .addCase(unlikePost.pending, (draft, action) => {
+      draft.unlikePostLoading = true;
+      draft.unlikePostDone = false;
+      draft.unlikePostError = null;
+    })
+    .addCase(unlikePost.fulfilled, (draft, action) => {
+      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+      post.Likers = post.Likers.filter((v) => v.id !== action.data.UserId);
+      draft.unlikePostLoading = false;
+      draft.unlikePostDone = true;
+    })
+    .addCase(unlikePost.rejected, (draft, action) => {
+      draft.unlikePostLoading = false;
+      draft.unlikePostError = action.error;
+    })
+    .addCase(loadPost.pending, (draft, action) => {
+      draft.loadPostLoading = true;
+      draft.loadPostDone = false;
+      draft.loadPostError = null;
+    })
+    .addCase(loadPost.fulfilled, (draft, action) => {
+      draft.loadPostLoading = false;
+      draft.loadPostDone = true;
+      draft.singlePost = action.data;
+    })
+    .addCase(loadPost.rejected, (draft, action) => {
+      draft.loadPostLoading = false;
+      draft.loadPostError = action.error;
+    })
+    .addCase(loadPosts.pending, (state, action) => {
       state.loadPostsLoading = true;
       state.loadPostsDone = false;
       state.loadPostsError = null;
     })
-    .addCase(loadPost.fulfilled, (state, action) => {
-      console.log(action.payload);
+    .addCase(loadPosts.fulfilled, (state, action) => {
       state.loadPostsLoading = false;
       state.loadPostsDone = true;
-      state.singlePost = action.payload;
+      state.mainPosts = state.mainPosts.concat(action.payload);
+      state.hasMorePosts = action.payload.length === 10;
     })
-    .addCase(loadPost.rejected, (state, action) => {
+    .addCase(loadPosts.rejected, (state, action) => {
       state.loadPostsLoading = false;
-      state.loadPostsError = action.error.message;
+      state.loadPostsError = action.error;
+    })
+    .addCase(loadUserPosts.pending, (state, action) => {
+      state.loadPostsLoading = true;
+      state.loadPostsDone = false;
+      state.loadPostsError = null;
+    })
+    .addCase(loadUserPosts.fulfilled, (state, action) => {
+      state.loadPostsLoading = false;
+      state.loadPostsDone = true;
+      state.mainPosts = state.mainPosts.concat(action.payload);
+      state.hasMorePosts = action.payload.length === 10;
+    })
+    .addCase(loadUserPosts.rejected, (state, action) => {
+      state.loadPostsLoading = false;
+      state.loadPostsError = action.error;
+    })
+    .addCase(loadHashtagPosts.pending, (state, action) => {
+      state.loadPostsLoading = true;
+      state.loadPostsDone = false;
+      state.loadPostsError = null;
+    })
+    .addCase(loadHashtagPosts.fulfilled, (state, action) => {
+      state.loadPostsLoading = false;
+      state.loadPostsDone = true;
+      state.mainPosts = state.mainPosts.concat(action.payload);
+      state.hasMorePosts = action.payload.length === 10;
+    })
+    .addCase(loadHashtagPosts.rejected, (state, action) => {
+      state.loadPostsLoading = false;
+      state.loadPostsError = action.error;
+    })
+    .addCase(addPost.pending, (draft, action) => {
+      draft.addPostLoading = true;
+      draft.addPostDone = false;
+      draft.addPostError = null;
+    })
+    .addCase(addPost.fulfilled, (draft, action) => {
+      draft.addPostLoading = false;
+      draft.addPostDone = true;
+      draft.mainPosts.unshift(action.data);
+      draft.imagePaths = [];
+    })
+    .addCase(addPost.rejected, (draft, action) => {
+      draft.addPostLoading = false;
+      draft.addPostError = action.error;
+    })
+    .addCase(updatePost.pending, (draft, action) => {
+      draft.updatePostLoading = true;
+      draft.updatePostDone = false;
+      draft.updatePostError = null;
+    })
+    .addCase(updatePost.fulfilled, (draft, action) => {
+      draft.updatePostLoading = false;
+      draft.updatePostDone = true;
+      draft.mainPosts.find((v) => v.id === action.data.PostId).content = action.data.content;
+    })
+    .addCase(updatePost.rejected, (draft, action) => {
+      draft.updatePostLoading = false;
+      draft.updatePostError = action.error;
+    })
+    .addCase(removePost.pending, (draft, action) => {
+      draft.removePostLoading = true;
+      draft.removePostDone = false;
+      draft.removePostError = null;
+    })
+    .addCase(removePost.fulfilled, (draft, action) => {
+      draft.removePostLoading = false;
+      draft.removePostDone = true;
+      draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data.PostId);
+    })
+    .addCase(removePost.rejected, (draft, action) => {
+      draft.removePostLoading = false;
+      draft.removePostError = action.error;
+    })
+    .addCase(addComment.pending, (draft, action) => {
+      draft.addCommentLoading = true;
+      draft.addCommentDone = false;
+      draft.addCommentError = null;
+    })
+    .addCase(addComment.fulfilled, (draft, action) => {
+      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+      console.log('draft', draft, 'post', post, 'Comments', post.Coments);
+      post.Comments.unshift(action.data);
+      draft.addCommentLoading = false;
+      draft.addCommentDone = true;
+    })
+    .addCase(addComment.rejected, (draft, action) => {
+      draft.addCommentLoading = false;
+      draft.addCommentError = action.error;
     })
     .addDefaultCase((state) => state),
 });
 
 export default postSlice;
-
-// import faker from 'faker';
-// export const generateDummyPost = (number) => Array(number).fill().map(() => ({
-//   id: shortid.generate(),
-//   User: {
-//     id: shortid.generate(),
-//     nickname: faker.name.findName(),
-//   },
-//   content: faker.lorem.paragraph(),
-//   Images: [{
-//     id: shortid.generate(),
-//     src: faker.image.image(),
-//   }, {
-//     id: shortid.generate(),
-//     src: faker.image.image(),
-//   }, {
-//     id: shortid.generate(),
-//     src: faker.image.image(),
-//   }],
-//   Comments: [{
-//     User: {
-//       id: shortid.generate(),
-//       nickname: faker.name.findName(),
-//     },
-//     content: faker.lorem.sentence(),
-//   }, {
-//     User: {
-//       id: shortid.generate(),
-//       nickname: faker.name.findName(),
-//     },
-//     content: faker.lorem.sentence(),
-//   }],
-// }));
-//

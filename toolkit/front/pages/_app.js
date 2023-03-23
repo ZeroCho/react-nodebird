@@ -1,14 +1,17 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
+import { Provider } from 'react-redux';
 import 'antd/dist/antd.css';
 import wrapper from '../store/configureStore';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 
-function App({ Component, pageProps }) {
+function NodeBird({ Component, ...rest }) {
+  const { store, props } = wrapper.useWrappedStore(rest);
+  const { pageProps } = props;
   return (
-    <>
+    <Provider store={store}>
       <Head>
         <meta charSet="utf-8" />
         <meta
@@ -19,12 +22,16 @@ function App({ Component, pageProps }) {
         <title>NodeBird</title>
       </Head>
       <Component {...pageProps} />
-    </>
+    </Provider>
   );
 }
-App.propTypes = {
+NodeBird.propTypes = {
   Component: PropTypes.elementType.isRequired,
   pageProps: PropTypes.any.isRequired,
 };
-// redux, saga 설정
-export default wrapper.withRedux(App);
+
+export function reportWebVitals(metric) {
+  console.log(metric);
+}
+
+export default NodeBird;
