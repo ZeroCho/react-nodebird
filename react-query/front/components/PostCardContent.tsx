@@ -30,6 +30,11 @@ const PostCardContent: VFC<Props> = ({ postData, editMode, onChangePost, onCance
     setEditText(e.target.value);
   }, []);
 
+  const onClickCancel = useCallback(() => {
+    setEditText(postData);
+    onCancelUpdate();
+  });
+
   return (
     // 첫 번째 게시글 #해시태그 #해시태그
     <div>
@@ -40,7 +45,7 @@ const PostCardContent: VFC<Props> = ({ postData, editMode, onChangePost, onCance
             <Button loading={loading} onClick={onChange}>
               수정
             </Button>
-            <Button danger onClick={onCancelUpdate}>
+            <Button danger onClick={onClickCancel}>
               취소
             </Button>
           </Button.Group>
