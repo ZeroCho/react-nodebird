@@ -136,7 +136,7 @@ const postSlice = createSlice({
       draft.uploadImagesError = null;
     })
     .addCase(uploadImage.fulfilled, (draft, action) => {
-      draft.imagePaths = draft.imagePaths.concat(action.data);
+      draft.imagePaths = draft.imagePaths.concat(action.payload);
       draft.uploadImagesLoading = false;
       draft.uploadImagesDone = true;
     })
@@ -150,8 +150,8 @@ const postSlice = createSlice({
       draft.likePostError = null;
     })
     .addCase(likePost.fulfilled, (draft, action) => {
-      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-      post.Likers.push({ id: action.data.UserId });
+      const post = draft.mainPosts.find((v) => v.id === action.payload.PostId);
+      post.Likers.push({ id: action.payload.UserId });
       draft.likePostLoading = false;
       draft.likePostDone = true;
     })
@@ -165,8 +165,8 @@ const postSlice = createSlice({
       draft.unlikePostError = null;
     })
     .addCase(unlikePost.fulfilled, (draft, action) => {
-      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
-      post.Likers = post.Likers.filter((v) => v.id !== action.data.UserId);
+      const post = draft.mainPosts.find((v) => v.id === action.payload.PostId);
+      post.Likers = post.Likers.filter((v) => v.id !== action.payload.UserId);
       draft.unlikePostLoading = false;
       draft.unlikePostDone = true;
     })
@@ -182,7 +182,7 @@ const postSlice = createSlice({
     .addCase(loadPost.fulfilled, (draft, action) => {
       draft.loadPostLoading = false;
       draft.loadPostDone = true;
-      draft.singlePost = action.data;
+      draft.singlePost = action.payload;
     })
     .addCase(loadPost.rejected, (draft, action) => {
       draft.loadPostLoading = false;
