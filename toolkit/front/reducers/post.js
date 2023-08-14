@@ -112,7 +112,7 @@ const postSlice = createSlice({
     },
   },
   extraReducers: (builder) => builder
-    .addCase([HYDRATE], (state, action) => ({
+    .addCase(HYDRATE, (state, action) => ({
       ...state,
       ...action.payload.post,
     }))
@@ -241,7 +241,7 @@ const postSlice = createSlice({
     .addCase(addPost.fulfilled, (draft, action) => {
       draft.addPostLoading = false;
       draft.addPostDone = true;
-      draft.mainPosts.unshift(action.data);
+      draft.mainPosts.unshift(action.payload);
       draft.imagePaths = [];
     })
     .addCase(addPost.rejected, (draft, action) => {
@@ -256,7 +256,7 @@ const postSlice = createSlice({
     .addCase(updatePost.fulfilled, (draft, action) => {
       draft.updatePostLoading = false;
       draft.updatePostDone = true;
-      draft.mainPosts.find((v) => v.id === action.data.PostId).content = action.data.content;
+      draft.mainPosts.find((v) => v.id === action.payload.PostId).content = action.payload.content;
     })
     .addCase(updatePost.rejected, (draft, action) => {
       draft.updatePostLoading = false;
@@ -270,7 +270,7 @@ const postSlice = createSlice({
     .addCase(removePost.fulfilled, (draft, action) => {
       draft.removePostLoading = false;
       draft.removePostDone = true;
-      draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data.PostId);
+      draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.payload.PostId);
     })
     .addCase(removePost.rejected, (draft, action) => {
       draft.removePostLoading = false;
@@ -282,9 +282,9 @@ const postSlice = createSlice({
       draft.addCommentError = null;
     })
     .addCase(addComment.fulfilled, (draft, action) => {
-      const post = draft.mainPosts.find((v) => v.id === action.data.PostId);
+      const post = draft.mainPosts.find((v) => v.id === action.payload.PostId);
       console.log('draft', draft, 'post', post, 'Comments', post.Coments);
-      post.Comments.unshift(action.data);
+      post.Comments.unshift(action.payload);
       draft.addCommentLoading = false;
       draft.addCommentDone = true;
     })

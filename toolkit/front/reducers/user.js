@@ -100,14 +100,14 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     addPostToMe(draft, action) {
-      draft.me.Posts.unshift({ id: action.data });
+      draft.me.Posts.unshift({ id: action.payload });
     },
     removePostOfMe(draft, action) {
-      draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.data);
+      draft.me.Posts = draft.me.Posts.filter((v) => v.id !== action.payload);
     },
   },
   extraReducers: (builder) => builder
-    .addCase([HYDRATE], (state, action) => ({
+    .addCase(HYDRATE, (state, action) => ({
       ...state,
       ...action.payload.user,
     }))
@@ -118,7 +118,7 @@ const userSlice = createSlice({
       draft.loadMyInfoDone = false;
     })
     .addCase(loadMyInfo.fulfilled, (draft, action) => {
-      console.log('data', action.payload);
+      console.log('payload', action.payload);
       draft.loadMyInfoLoading = false;
       draft.me = action.payload || null;
       draft.loadMyInfoDone = true;
@@ -149,7 +149,7 @@ const userSlice = createSlice({
     })
     .addCase(removeFollower.fulfilled, (state, action) => {
       state.removeFollowerLoading = false;
-      state.me.Followers = state.me.Followers.filter((v) => v.id !== action.data.UserId);
+      state.me.Followers = state.me.Followers.filter((v) => v.id !== action.payload.UserId);
       state.removeFollowerDone = true;
     })
     .addCase(removeFollower.rejected, (draft, action) => {
@@ -163,7 +163,7 @@ const userSlice = createSlice({
     })
     .addCase(loadFollowings.fulfilled, (draft, action) => {
       draft.loadFollowingsLoading = false;
-      draft.me.Followings = action.data;
+      draft.me.Followings = action.payload;
       draft.loadFollowingsDone = true;
     })
     .addCase(loadFollowings.rejected, (draft, action) => {
@@ -177,7 +177,7 @@ const userSlice = createSlice({
     })
     .addCase(loadFollowers.fulfilled, (draft, action) => {
       draft.loadFollowersLoading = false;
-      draft.me.Followers = action.data;
+      draft.me.Followers = action.payload;
       draft.loadFollowersDone = true;
     })
     .addCase(loadFollowers.rejected, (draft, action) => {
@@ -191,7 +191,7 @@ const userSlice = createSlice({
     })
     .addCase(loadUser.fulfilled, (draft, action) => {
       draft.loadUserLoading = false;
-      draft.userInfo = action.data;
+      draft.userInfo = action.payload;
       draft.loadUserDone = true;
     })
     .addCase(loadUser.rejected, (draft, action) => {
@@ -205,7 +205,7 @@ const userSlice = createSlice({
     })
     .addCase(follow.fulfilled, (draft, action) => {
       draft.followLoading = false;
-      draft.me.Followings.push({ id: action.data.UserId });
+      draft.me.Followings.push({ id: action.payload.UserId });
       draft.followDone = true;
     })
     .addCase(follow.rejected, (draft, action) => {
@@ -219,7 +219,7 @@ const userSlice = createSlice({
     })
     .addCase(unfollow.fulfilled, (draft, action) => {
       draft.unfollowLoading = false;
-      draft.me.Followings = draft.me.Followings.filter((v) => v.id !== action.data.UserId);
+      draft.me.Followings = draft.me.Followings.filter((v) => v.id !== action.payload.UserId);
       draft.unfollowDone = true;
     })
     .addCase(unfollow.rejected, (draft, action) => {
@@ -259,7 +259,7 @@ const userSlice = createSlice({
       draft.changeNicknameDone = false;
     })
     .addCase(changeNickname.fulfilled, (draft, action) => {
-      draft.me.nickname = action.data.nickname;
+      draft.me.nickname = action.payload.nickname;
       draft.changeNicknameLoading = false;
       draft.changeNicknameDone = true;
     })
