@@ -16,4 +16,6 @@ const makeStore = () => configureStore({
   preloadedState: serverState, // SSR
 });
 
-export default createWrapper(makeStore);
+export default createWrapper(makeStore, {
+  debug: process.env.NODE_ENV !== 'production',
+});

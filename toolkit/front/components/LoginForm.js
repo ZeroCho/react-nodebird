@@ -15,7 +15,7 @@ const FormWrapper = styled(Form)`
   padding: 10px;
 `;
 
-const LoginForm = () => {
+function LoginForm() {
   const dispatch = useDispatch();
   const { logInLoading, logInError } = useSelector((state) => state.user);
   const [email, onChangeEmail] = useInput('');
@@ -52,10 +52,10 @@ const LoginForm = () => {
       </div>
       <ButtonWrapper>
         <Button type="primary" htmlType="submit" loading={logInLoading}>로그인</Button>
-        <Link href="/signup"><a><Button>회원가입</Button></a></Link>
+        <Link href="/signup"><Button>회원가입</Button></Link>
       </ButtonWrapper>
     </FormWrapper>
   );
-};
+}
 
 export default LoginForm;

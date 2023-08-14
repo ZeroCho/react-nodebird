@@ -22,7 +22,7 @@ import FollowButton from './FollowButton';
 
 moment.locale('ko');
 
-const PostCard = ({ post }) => {
+function PostCard({ post }) {
   const dispatch = useDispatch();
   const { removePostLoading } = useSelector((state) => state.post);
   const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -115,7 +115,7 @@ const PostCard = ({ post }) => {
               <Card.Meta
                 avatar={(
                   <Link href={`/user/${post.Retweet.User.id}`} prefetch={false}>
-                    <a><Avatar>{post.Retweet.User.nickname[0]}</Avatar></a>
+                    <Avatar>{post.Retweet.User.nickname[0]}</Avatar>
                   </Link>
                 )}
                 title={post.Retweet.User.nickname}
@@ -129,7 +129,7 @@ const PostCard = ({ post }) => {
               <Card.Meta
                 avatar={(
                   <Link href={`/user/${post.User.id}`} prefetch={false}>
-                    <a><Avatar>{post.User.nickname[0]}</Avatar></a>
+                    <Avatar>{post.User.nickname[0]}</Avatar>
                   </Link>
                 )}
                 title={post.User.nickname}
@@ -151,7 +151,7 @@ const PostCard = ({ post }) => {
                   author={item.User.nickname}
                   avatar={(
                     <Link href={`/user/${item.User.id}`} prefetch={false}>
-                      <a><Avatar>{item.User.nickname[0]}</Avatar></a>
+                      <Avatar>{item.User.nickname[0]}</Avatar>
                     </Link>
                   )}
                   content={item.content}
@@ -163,7 +163,7 @@ const PostCard = ({ post }) => {
       )}
     </div>
   );
-};
+}
 
 PostCard.propTypes = {
   post: PropTypes.shape({

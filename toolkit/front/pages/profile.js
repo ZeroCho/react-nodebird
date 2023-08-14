@@ -12,9 +12,9 @@ import { loadMyInfo } from '../reducers/user';
 import wrapper from '../store/configureStore';
 import { backUrl } from '../config/config';
 
-const fetcher = (url) => axios.get(url, { withCredentials: true }).then((result) => result.data);
+const fetcher = (url) => axios.get(url).then((result) => result.data);
 
-const Profile = () => {
+function Profile() {
   const { me } = useSelector((state) => state.user);
   const [followersLimit, setFollowersLimit] = useState(3);
   const [followingsLimit, setFollowingsLimit] = useState(3);
@@ -57,7 +57,7 @@ const Profile = () => {
       </AppLayout>
     </>
   );
-};
+}
 
 // SSR (프론트 서버에서 실행)
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {

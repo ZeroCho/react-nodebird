@@ -9,7 +9,7 @@ import { loadMyInfo } from '../reducers/user';
 import { loadPosts } from '../reducers/post';
 import wrapper from '../store/configureStore';
 
-const Home = (props) => {
+function Home(props) {
   console.log('props', props);
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
@@ -42,7 +42,7 @@ const Home = (props) => {
       {mainPosts.map((post) => <PostCard key={post.id} post={post} />)}
     </AppLayout>
   );
-};
+}
 
 // SSR (프론트 서버에서 실행)
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req }) => {
@@ -55,22 +55,7 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async ({
   }
   await store.dispatch(loadPosts());
   await store.dispatch(loadMyInfo());
-
-  return {
-    props: {
-      // initialState: {
-      //   user: {
-      //     ...userInitialState,
-      //     me: myInfo,
-      //   },
-      //   post: {
-      //     ...postInitialState,
-      //     mainPosts: posts,
-      //     hasMorePosts: posts.length === 10,
-      //   },
-      // },
-    },
-  };
+  console.log('state', store.getState());
 });
 
 export function reportWebVitals(metric) {

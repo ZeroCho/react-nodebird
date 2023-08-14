@@ -30,7 +30,7 @@ const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `;
 
-const AppLayout = ({ children }) => {
+function AppLayout({ children }) {
   const [searchInput, onChangeSearchInput] = useInput('');
   const { me } = useSelector((state) => state.user);
   const router = useRouter();
@@ -47,8 +47,8 @@ const AppLayout = ({ children }) => {
           mode="horizontal"
           defaultSelectedKeys={[router.pathname]}
           items={[
-            { label: <Link href="/"><a>노드버드</a></Link>, key: '/' },
-            { label: <Link href="/profile"><a>프로필</a></Link>, key: '/profile' },
+            { label: <Link href="/">노드버드</Link>, key: '/' },
+            { label: <Link href="/profile">프로필</Link>, key: '/profile' },
             { label: <SearchInput
               enterButton
               value={searchInput}
@@ -74,7 +74,7 @@ const AppLayout = ({ children }) => {
       </Content>
     </Layout>
   );
-};
+}
 
 AppLayout.propTypes = {
   children: PropTypes.node.isRequired,

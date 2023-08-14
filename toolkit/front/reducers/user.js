@@ -59,9 +59,10 @@ export const loadFollowers = createAsyncThunk('user/loadFollowers', async (data)
   return response.data;
 });
 
-export const loadMyInfo = createAsyncThunk('user/loadMyInfo', async (data) => {
+export const loadMyInfo = createAsyncThunk('user/loadMyInfo', async () => {
   const response = await axios.get('/user');
-  return response.data;
+  console.log('=>(user.js:65) response', response.data);
+  return response.data || null;
 });
 
 export const loadUser = createAsyncThunk('user/loadUser', async (data) => {
@@ -79,7 +80,7 @@ export const unfollow = createAsyncThunk('user/unfollow', async (data) => {
   return response.data;
 });
 
-export const logout = createAsyncThunk('user/logout', async (data) => {
+export const logout = createAsyncThunk('user/logout', async () => {
   const response = await axios.post('/user/logout');
   return response.data;
 });
@@ -110,7 +111,24 @@ const userSlice = createSlice({
       ...state,
       ...action.payload.user,
     }))
-    .addCase(logIn.pending, (state, action) => {
+    .addCase(loadMyInfo.pending, (draft) => {
+      console.log('pending');
+      draft.loadMyInfoLoading = true;
+      draft.loadMyInfoError = null;
+      draft.loadMyInfoDone = false;
+    })
+    .addCase(loadMyInfo.fulfilled, (draft, action) => {
+      console.log('data', action.payload);
+      draft.loadMyInfoLoading = false;
+      draft.me = action.payload || null;
+      draft.loadMyInfoDone = true;
+    })
+    .addCase(loadMyInfo.rejected, (draft, action) => {
+      console.log('rejected');
+      draft.loadMyInfoLoading = false;
+      draft.loadMyInfoError = action.error;
+    })
+    .addCase(logIn.pending, (state) => {
       state.logInLoading = true;
       state.logInError = null;
       state.logInDone = false;
@@ -124,7 +142,7 @@ const userSlice = createSlice({
       state.logInLoading = false;
       state.logInError = action.error.message;
     })
-    .addCase(removeFollower.pending, (state, action) => {
+    .addCase(removeFollower.pending, (state) => {
       state.removeFollowerLoading = true;
       state.removeFollowerError = null;
       state.removeFollowerDone = false;
@@ -138,7 +156,7 @@ const userSlice = createSlice({
       draft.removeFollowerLoading = false;
       draft.removeFollowerError = action.error;
     })
-    .addCase(loadFollowings.pending, (draft, action) => {
+    .addCase(loadFollowings.pending, (draft) => {
       draft.loadFollowingsLoading = true;
       draft.loadFollowingsError = null;
       draft.loadFollowingsDone = false;
@@ -152,7 +170,7 @@ const userSlice = createSlice({
       draft.loadFollowingsLoading = false;
       draft.loadFollowingsError = action.error;
     })
-    .addCase(loadFollowers.pending, (draft, action) => {
+    .addCase(loadFollowers.pending, (draft) => {
       draft.loadFollowersLoading = true;
       draft.loadFollowersError = null;
       draft.loadFollowersDone = false;
@@ -166,21 +184,7 @@ const userSlice = createSlice({
       draft.loadFollowersLoading = false;
       draft.loadFollowersError = action.error;
     })
-    .addCase(loadMyInfo.pending, (draft, action) => {
-      draft.loadMyInfoLoading = true;
-      draft.loadMyInfoError = null;
-      draft.loadMyInfoDone = false;
-    })
-    .addCase(loadMyInfo.fulfilled, (draft, action) => {
-      draft.loadMyInfoLoading = false;
-      draft.me = action.data;
-      draft.loadMyInfoDone = true;
-    })
-    .addCase(loadMyInfo.rejected, (draft, action) => {
-      draft.loadMyInfoLoading = false;
-      draft.loadMyInfoError = action.error;
-    })
-    .addCase(loadUser.pending, (draft, action) => {
+    .addCase(loadUser.pending, (draft) => {
       draft.loadUserLoading = true;
       draft.loadUserError = null;
       draft.loadUserDone = false;
@@ -194,7 +198,7 @@ const userSlice = createSlice({
       draft.loadUserLoading = false;
       draft.loadUserError = action.error;
     })
-    .addCase(follow.pending, (draft, action) => {
+    .addCase(follow.pending, (draft) => {
       draft.followLoading = true;
       draft.followError = null;
       draft.followDone = false;
@@ -208,7 +212,7 @@ const userSlice = createSlice({
       draft.followLoading = false;
       draft.followError = action.error;
     })
-    .addCase(unfollow.pending, (draft, action) => {
+    .addCase(unfollow.pending, (draft) => {
       draft.unfollowLoading = true;
       draft.unfollowError = null;
       draft.unfollowDone = false;
@@ -222,12 +226,12 @@ const userSlice = createSlice({
       draft.unfollowLoading = false;
       draft.unfollowError = action.error;
     })
-    .addCase(logout.pending, (draft, action) => {
+    .addCase(logout.pending, (draft) => {
       draft.logOutLoading = true;
       draft.logOutError = null;
       draft.logOutDone = false;
     })
-    .addCase(logout.fulfilled, (draft, action) => {
+    .addCase(logout.fulfilled, (draft) => {
       draft.logOutLoading = false;
       draft.logOutDone = true;
       draft.me = null;
@@ -236,12 +240,12 @@ const userSlice = createSlice({
       draft.logOutLoading = false;
       draft.logOutError = action.error;
     })
-    .addCase(signup.pending, (draft, action) => {
+    .addCase(signup.pending, (draft) => {
       draft.signUpLoading = true;
       draft.signUpError = null;
       draft.signUpDone = false;
     })
-    .addCase(signup.fulfilled, (draft, action) => {
+    .addCase(signup.fulfilled, (draft) => {
       draft.signUpLoading = false;
       draft.signUpDone = true;
     })
@@ -249,7 +253,7 @@ const userSlice = createSlice({
       draft.signUpLoading = false;
       draft.signUpError = action.error;
     })
-    .addCase(changeNickname.pending, (draft, action) => {
+    .addCase(changeNickname.pending, (draft) => {
       draft.changeNicknameLoading = true;
       draft.changeNicknameError = null;
       draft.changeNicknameDone = false;
