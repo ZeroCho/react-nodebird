@@ -11,7 +11,7 @@ import { loadPost } from '../../reducers/post';
 import AppLayout from '../../components/AppLayout';
 import PostCard from '../../components/PostCard';
 
-const Post = () => {
+function Post() {
   const router = useRouter();
   const { id } = router.query;
   const { singlePost } = useSelector((state) => state.post);
@@ -20,11 +20,15 @@ const Post = () => {
   //   return <div>로딩중...</div>;
   // }
 
+  if (!singlePost) {
+    return null;
+  }
+
   return (
     <AppLayout>
       <Head>
         <title>
-          {singlePost.User.nickname}
+          {singlePost?.User.nickname}
           님의 글
         </title>
         <meta name="description" content={singlePost.content} />
@@ -36,7 +40,7 @@ const Post = () => {
       <PostCard post={singlePost} />
     </AppLayout>
   );
-};
+}
 
 // SSR (프론트 서버에서 실행)
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req, params }) => {
@@ -47,7 +51,8 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async ({
   if (req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  await store.dispatch(loadPost({ postId: params.id }));
+  console.log('params.id', params.id);
+  await store.dispatch(loadPost(params.id));
   await store.dispatch(loadMyInfo());
 
   return {

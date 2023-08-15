@@ -17,7 +17,8 @@ function User(props) {
   const router = useRouter();
   const { id } = router.query;
   const { mainPosts, hasMorePosts, loadPostsLoading } = useSelector((state) => state.post);
-  const { userInfo, me } = useSelector((state) => state.user);
+  const userInfo = useSelector((state) => state.user.userInfo);
+  const me = useSelector((state) => state.user.me);
 
   useEffect(() => {
     const onScroll = () => {
@@ -96,8 +97,8 @@ export const getServerSideProps = wrapper.getServerSideProps((store) => async ({
   if (req && cookie) {
     axios.defaults.headers.Cookie = cookie;
   }
-  await store.dispatch(loadUserPosts({ userId: params.id }));
-  await store.dispatch(loadUser({ userId: params.id }));
+  await store.dispatch(loadUserPosts({ id: params.id }));
+  await store.dispatch(loadUser(params.id));
   await store.dispatch(loadMyInfo());
 
   return {
