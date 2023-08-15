@@ -5,12 +5,13 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import axios from 'axios';
+import wrapper from '../../store/configureStore';
 import { loadUserPosts } from '../../reducers/post';
 import { loadMyInfo, loadUser } from '../../reducers/user';
 import PostCard from '../../components/PostCard';
 import AppLayout from '../../components/AppLayout';
 
-const User = (props) => {
+function User(props) {
   console.log('user props', props);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -84,7 +85,7 @@ const User = (props) => {
       ))}
     </AppLayout>
   );
-};
+}
 
 // SSR (프론트 서버에서 실행)
 export const getServerSideProps = wrapper.getServerSideProps((store) => async ({ req, params }) => {

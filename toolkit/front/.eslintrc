@@ -5,7 +5,11 @@
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    }
+    },
+    "babelOptions": {
+      "presets": ["next/babel"]
+    },
+    "requireConfigFile": false
   },
   "env": {
     "browser": true,

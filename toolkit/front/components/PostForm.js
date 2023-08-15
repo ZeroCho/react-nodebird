@@ -56,7 +56,7 @@ const PostForm = () => {
         placeholder="어떤 신기한 일이 있었나요?"
       />
       <div>
-        <input type="file" name="image" multiple hidden ref={imageInput} onChange={onChangeImages} />
+        <input type="file" name="image" multiple hidden ref={imageInput} onChange={onChangeImages} style={{ display: 'none' }} />
         <Button onClick={onClickImageUpload}>이미지 업로드</Button>
         <Button type="primary" style={{ float: 'right' }} htmlType="submit">짹짹</Button>
       </div>

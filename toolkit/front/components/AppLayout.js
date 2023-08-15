@@ -39,7 +39,7 @@ function AppLayout({ children }) {
   }, [searchInput]);
 
   return (
-    <Layout className="layout">
+    <Layout className="layout" style={{ minHeight: '100vh' }}>
       <Global />
       <Header style={{ position: 'fixed', zIndex: 1, width: '100%' }}>
         <Menu

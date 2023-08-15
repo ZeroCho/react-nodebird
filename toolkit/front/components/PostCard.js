@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
-import { Card, Popover, Button, Avatar, List, Comment } from 'antd';
+import { Card, Popover, Button, Avatar, List } from 'antd';
+import { Comment } from '@ant-design/compatible';
 import {
   RetweetOutlined, HeartOutlined, MessageOutlined, EllipsisOutlined, HeartTwoTone,
 } from '@ant-design/icons';

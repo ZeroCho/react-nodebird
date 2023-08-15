@@ -20,6 +20,7 @@ function UserProfile() {
         <div key="followings"><Link href="/profile">팔로잉<br />{me.Followings.length}</Link></div>,
         <div key="followings"><Link href="/profile">팔로워<br />{me.Followers.length}</Link></div>,
       ]}
+      extra={<Button key="logout" onClick={onLogOut} loading={logOutLoading}>로그아웃</Button>}
     >
       <Card.Meta
         avatar={(
@@ -29,7 +30,6 @@ function UserProfile() {
         )}
         title={me.nickname}
       />
-      <Button onClick={onLogOut} loading={logOutLoading}>로그아웃</Button>
     </Card>
   );
 }

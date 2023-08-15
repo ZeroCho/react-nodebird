@@ -7,6 +7,12 @@ module.exports = withBundleAnalyzer({
     domains: ['react-nodebird.s3.ap-northeast-2.amazonaws.com', 'react-nodebird-s3.s3.amazonaws.com'],
   },
   compress: true,
+  compiler: {
+    styledComponents: {
+      ssr: true,
+      displayName: true,
+    },
+  },
   webpack(config, { webpack }) {
     const prod = process.env.NODE_ENV === 'production';
     return {
